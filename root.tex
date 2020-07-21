@@ -1,0 +1,131 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                         % you want to use the \thanks command
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{mathrsfs}
+\usepackage{amsbsy}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{varwidth}
+\usepackage{algorithm}
+\usepackage{tabularx}
+\usepackage{yhmath}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage[table]{xcolor}
+\definecolor{grey}{rgb}{0.9,0.9,0.9}
+\usepackage[noend]{algpseudocode}
+\usepackage[top=60pt,left=48pt,right=48pt,bottom=45pt]{geometry}	
+\usepackage{dsfont}
+\usepackage{environ}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{algorithm}
+\usepackage{accents}\newcommand\addtag{\refstepcounter{equation}\tag{\theequation}}
+\usepackage{etoolbox}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{enumerate}
+\usepackage{hyperref}
+\usepackage{relsize}
+\usepackage{gensymb}
+\usepackage{cleveref}
+\usepackage{threeparttable}
+\usepackage{colortbl}
+\definecolor{Gray}{gray}{0.9}
+\newcommand{\comFB}[1]{\noindent\colorbox{yellow}{\parbox{\dimexpr\columnwidth-1\fboxsep}{[FB: #1]}}}
+%%% Customized commands
+%%% example
+\newcommand\myNewCommand{\mathbf{\texttt{my new command}}}
+
+\newcommand{\mvec}[1]{\bm{#1}}
+\newcommand{\dmvec}[1]{\dot{\mvec{{#1}}}}
+\newcommand{\ddmvec}[1]{\ddot{\mvec{{#1}}}}
+
+\newcommand{\st}{\text{s.t.}}
+\newcommand{\g}{\mvec{g}}
+\newcommand{\q}{\mvec{q}}
+\newcommand{\dq}{\dmvec{q}}
+\newcommand{\ddq}{\ddmvec{q}} 
+\title{\LARGE \bf BiorbdOptim}
+\author{author$\#1$\textsuperscript{a,*}, author$\#2$\textsuperscript{a}, author$\#3$\textsuperscript{b}  and  author$\#4$\textsuperscript{a}% <-this % stops a space
+\thanks{\textsuperscript{a}\,Laboratoire de Simulation et Modélisation du Mouvement, Faculté de Médecine, Université de Montréal, Laval, QC, Canada}%
+\thanks{\textsuperscript{b}\,other, elsewhere}%
+\thanks{\textsuperscript{*}\,author$\#1$@umontreal.ca}
+}
+
+%%% User commands
+
+\usepackage{pdfrender}
+\DeclareRobustCommand*{\pmbb}[1]{%
+  \textpdfrender{
+    TextRenderingMode=Stroke,
+    LineWidth=.1pt,
+  }{#1}%
+}
+\NewEnviron{comeq}{%
+\par\vspace{0ex}
+\begin{mdframed}[outerlinewidth=0.5,leftmargin=10,rightmargin=-10pt,backgroundcolor=white,hidealllines=true,leftline=true,
+innertopmargin=0pt,splittopskip=0, skipbelow=\baselineskip, innerbottommargin=0pt%
+skipabove=0ex]%
+\vspace{-0ex}\hspace{0pt}\textit{Proof:}%
+\itshape
+\begin{equation*} 
+\begin{split}
+\BODY
+\end{split}
+\end{equation*}
+\end{mdframed}
+}
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}}
+\def\abs{\operatorname{abs}}
+\def\argmax{\operatornamewithlimits{arg\,max}}
+\def\argmin{\operatornamewithlimits{arg\,min}}
+\def\diag{\operatorname{Diag}}
+\newcommand{\eqRef}[1]{(\ref{#1})}
+\newcommand{\dbtilde}[1]{\accentset{\approx}{#1}}
+
+\hyphenpenalty=10000
+
+\begin{document}
+
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+
+\input{sections/abstract}
+
+\section{Introduction}\label{sec:introduction}
+\input{sections/introduction}
+
+\section{Methods}\label{sec:methods}
+\input{sections/methods}
+
+\section{Results}\label{sec:results}
+\input{sections/results}
+
+\section{Discussion}\label{sec:discussion}
+\input{sections/discussion}
+
+\section*{Acknowledgment}
+
+This work was supported by ...
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{biblio}
+
+\newpage
+\input{sections/appendix}\label{sec:appendix}
+
+\end{document}
