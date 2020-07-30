@@ -1,20 +1,21 @@
-In what follows, several cases of application are presented to illustrate the versatility of BiorbdOptim and to give a practical overview on how to use the various features of the software.
-The performances as well as the links to the detailed implementations of each example are listed in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}.
+In this section, some applications are presented to illustrate the versatility of BiorbdOptim and to give a practical overview on how to use its various features.
+The performances and the Github links of each OCP are listed in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}.
 
 
 \subsection{Muscle activation driven pointing task}
 
-The goal of this example was to achieve a muscle activation driven pointing task with a 2-DoFs and 6-muscles arm model. 
-The terms of the objective function are detailed in Tab.~\ref{tab:Muscle_activation_driven_pointing_task}.
-The pointing tasks in itself resulted from the Mayer term ($\#1$, heaviest weight), which consisted in aligning two markers, the first one fixed in the ulna frame of reference and the second one fixed in the scene.
-Terms $\#2$ and $\#3$ were added for control regularization while $\#4$ served as state regularization. 
-In addition to muscle-induced torques, the formulation allowed additional pure torques directly at the joints to compensate for the weaknesses of the model.
-The motion lasted for 2 seconds and was discretized using 51 shooting nodes.
+The goal of this example was to achieve a muscle activation driven pointing task using a 2-DoF, 6-muscle arm model. 
+In addition to muscle-induced torques, pure torques could compensate for the model weaknesses.
+The movement lasted for 2 seconds and was discretized using 51 shooting nodes.
+
+Term $\#1$ of the objective function (Tab.~\ref{tab:Muscle_activation_driven_pointing_task}) corresponds to the pointing tasks described by a Mayer term (heaviest weight), to superimpose two markers, the first one fixed in the ulna system of coordinates and the second one fixed in the scene.
+Terms $\#2$ and $\#3$ were added for control regularization (muscle activation and torques) and $\#4$ for state regularization. 
+
 %
 
 %
 \begin{table}[h!]
-\caption{\small Muscle activation driven pointing task objective terms}
+\caption{\small Objective terms of the activation-driven pointing task}
 \label{tab:Muscle_activation_driven_pointing_task}
 \centering
 \begin{tabular}{c c c c}
@@ -34,28 +35,11 @@ $\#4$ & Lagrange & MINIMIZE\_ STATE & $1e1$ \\
 %
 
 %
-The problem was solved with both solvers available (IPOPT and ACADOS) resulting in two significantly different solutions. 
-Both are displayed in Fig.~\ref{fig:snapshots_activation_driven_pointing} to illustrate the pitfalls of local minima as well as the benefits of having access to several solvers with minimal effort.  
-Indeed, the ACADOS solution (Fig.~\ref{fig:snapshots_activation_driven_pointing}, top) makes good use of gravity to minimize the control inputs, while the IPOPT solution (Fig.~\ref{fig:snapshots_activation_driven_pointing}, bottom) ends up with a much larger objective function, being struck in a local minimum (still achieving the task though). 
+The problem was solved with IPOPT and ACADOS resulting in two significantly different solutions with ACADOS proving a 16 times smaller optimized cost (Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}), which illustrate the pitfalls of local minima as well as the benefits of having access to different solvers with minimal effort.  
+Indeed, the ACADOS-based solution (Fig.~\ref{fig:snapshots_activation_driven_pointing}, top) makes good use of gravity to minimize the control inputs, while the IPOPT-based solution (Fig.~\ref{fig:snapshots_activation_driven_pointing}, bottom) moved the arm in the opposite direction and was stuck in a local minimum (still achieving the task though). 
+It is worth noting that no constraint was given about the shoulder range of motion to ensure physiological muscle trajectories. 
  
  
-%
-\begin{table}[h!]
-\caption{\small Performance of each example and links to detailed implementations}
-\label{tab:Perfs_and_detailed_implementations_of_each_example}
-\centering
-\begin{tabular}{c c c c}
-&  & \multicolumn{2}{c}{Convergence time (s)} \\
-\cmidrule[\heavyrulewidth]{3-4}
-Example & Link & IPOPT & ACADOS \\ 
-\midrule
-Muscle activation driven pointing task & \href{https://github.com/pyomeca/BiorbdOptim/blob/master/examples/muscle_driven_ocp/static_arm.py}{$\star$} & $10.10$ & $0.2018$  \\ 
-\midrule
-$\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\ 
-\bottomrule
-\end{tabular}
-\end{table}
-%
 
 %
 \begin{figure*}[t!]
@@ -66,4 +50,33 @@ $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\
 \caption{Snapshots of an optimized muscle activation driven pointing task. Top: using ACADOS, optimized value = $427.5$. Bottom: using IPOPT, optimized value = $6959.3$.}
 \label{fig:snapshots_activation_driven_pointing}
 \end{figure*}
+%
+
+%
+\begin{table*}[t!]
+\caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. When running with IPOpt, 6 threads were systematically used. $^\star$ stands for free time OCP, otherwise it is fixed.}
+\label{tab:Perfs_and_detailed_implementations_of_each_example}
+\centering
+\begin{tabular}{l rl rl rl}
+\toprule
+& \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
+\cmidrule[\heavyrulewidth](lr){2-3}
+\cmidrule[\heavyrulewidth](lr){4-5}
+\cmidrule[\heavyrulewidth](lr){6-7}
+                           & IPOpt  & ACADOS & IPOpt & ACADOS & IPOpt & ACADOS\\
+\# states $\xt$            & 4      & 4      & --    & --     & --    & --\\
+\# control $\ut$           & 8      & 8      & --    & --     & --    & --\\
+\# shooting nodes          & 51     & 51     & --    & --     & --    & --\\
+\# NLP iterations          & 27     & 21     & --    & --     & --    & --\\
+OCP duration (s)           & 2      & 2      & --    & --     & --    & --\\
+Optimized cost             & 6959.3 & 427.5  & --    & --     & --    & --\\
+Time to convergence (s)    & 9.9    & 0.19   & --    & --     & --    & --\\
+%Example & Link & IPOPT & ACADOS \\ 
+%\midrule
+%Muscle activation driven pointing task & \href{https://github.com/pyomeca/BiorbdOptim/blob/master/examples/muscle_driven_ocp/static_arm.py}{$\star$} & $10.10$ & $0.2018$  \\ 
+%\midrule
+%$\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\ 
+\bottomrule
+\end{tabular}
+\end{table*}
 %
