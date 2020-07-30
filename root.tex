@@ -45,9 +45,7 @@
 \definecolor{Gray}{gray}{0.9}
 \newcommand{\comFB}[1]{\noindent\colorbox{yellow}{\parbox{\dimexpr\columnwidth-1\fboxsep}{[FB: #1]}}}
 %%% Customized commands
-%%% example
-\newcommand\myNewCommand{\mathbf{\texttt{my new command}}}
-
+%%% math commands
 \newcommand{\mvec}[1]{\bm{#1}}
 \newcommand{\dmvec}[1]{\dot{\mvec{{#1}}}}
 \newcommand{\ddmvec}[1]{\ddot{\mvec{{#1}}}}
@@ -55,12 +53,15 @@
 \newcommand{\xt}{\mvec{x}(t)}
 \newcommand{\ut}{\mvec{u}(t)}
 
-
 \newcommand{\st}{\text{s.t.}}
 \newcommand{\g}{\mvec{g}}
 \newcommand{\q}{\mvec{q}}
 \newcommand{\dq}{\dmvec{q}}
 \newcommand{\ddq}{\ddmvec{q}} 
+
+%%% table commands
+\newcommand{\mymultirow}[2]{\parbox[t]{2mm}{\multirow{#1}{*}{\rotatebox[origin=c]{90}{#2}}}}
+%%% Document
 \title{\LARGE \bf BiorbdOptim, a New Software for Musculoskeletal Optimal Control in Biomechanics}
 \author{author$\#1$\textsuperscript{a,*}, author$\#2$\textsuperscript{a}, author$\#3$\textsuperscript{b}  and  author$\#4$\textsuperscript{a}% <-this % stops a space
 \thanks{\textsuperscript{a}\,Laboratoire de Simulation et Modélisation du Mouvement, Faculté de Médecine, Université de Montréal, Laval, QC, Canada}%

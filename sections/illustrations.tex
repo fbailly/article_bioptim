@@ -57,26 +57,27 @@ It is worth noting that no constraint was given about the shoulder range of moti
 \caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. When running with IPOpt, 6 threads were systematically used. $^\star$ stands for free time OCP, otherwise it is fixed.}
 \label{tab:Perfs_and_detailed_implementations_of_each_example}
 \centering
-\begin{tabular}{l rl rl rl}
-\toprule
-& \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
-\cmidrule[\heavyrulewidth](lr){2-3}
-\cmidrule[\heavyrulewidth](lr){4-5}
-\cmidrule[\heavyrulewidth](lr){6-7}
-                           & IPOpt  & ACADOS & IPOpt & ACADOS & IPOpt & ACADOS\\
-\# states $\xt$            & 4      & 4      & --    & --     & --    & --\\
-\# control $\ut$           & 8      & 8      & --    & --     & --    & --\\
-\# shooting nodes          & 51     & 51     & --    & --     & --    & --\\
-\# NLP iterations          & 27     & 21     & --    & --     & --    & --\\
-OCP duration (s)           & 2      & 2      & --    & --     & --    & --\\
-Optimized cost             & 6959.3 & 427.5  & --    & --     & --    & --\\
-Time to convergence (s)    & 9.9    & 0.19   & --    & --     & --    & --\\
+\begin{tabular}{c l rl rl rl}
+\cmidrule[\heavyrulewidth](lr){2-8}
+& & \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
+\cmidrule[\heavyrulewidth](lr){3-4}
+\cmidrule[\heavyrulewidth](lr){5-6}
+\cmidrule[\heavyrulewidth](lr){7-8}
+
+\mymultirow{4}{Setup} & \# states $\xt$            & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
+                      & \# control $\ut$           & \multicolumn{2}{c}{8}  & --    & --     & --    & --\\
+                      & \# shooting nodes          & \multicolumn{2}{c}{51} & --    & --     & --    & --\\
+                      & OCP duration (s)           & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
+                      &                            & IPOpt  & ACADOS        & IPOpt & ACADOS & IPOpt & ACADOS\\
+\mymultirow{3}{Solve} & \# NLP iterations          & 27     & 21            & --    & --     & --    & --\\
+                      & Optimized cost             & 6959.3 & 427.5         & --    & --     & --    & --\\
+                      & Time to convergence (s)    & 9.9    & 0.19          & --    & --     & --    & --\\
 %Example & Link & IPOPT & ACADOS \\ 
 %\midrule
 %Muscle activation driven pointing task & \href{https://github.com/pyomeca/BiorbdOptim/blob/master/examples/muscle_driven_ocp/static_arm.py}{$\star$} & $10.10$ & $0.2018$  \\ 
 %\midrule
 %$\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\ 
-\bottomrule
+\cmidrule[\heavyrulewidth](lr){2-8}
 \end{tabular}
 \end{table*}
 %
