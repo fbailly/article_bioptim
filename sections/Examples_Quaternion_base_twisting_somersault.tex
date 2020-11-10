@@ -1,38 +1,48 @@
-The goal of this example was to complete a backward somersault, while maximizing the twist rotation.
+The goal was to maximize the twist rotation ($\phi$) in a backward somersault.
 The model is composed of a 6-DoF root segment and two 1-DoF torque actuated arms.
-The OCP was solved for two models, the root rotations of the first one were expressed as euler rotations whereas they were expressed as a quaternion for the second one.
-The movement lasted for approximately 1 second and was discretized using 100 shooting nodes.
+The OCP was solved for two models.
+First, rotations of the root segment were expressed as Euler angles.
+They were expressed as a quaternion for the second model.
+The objective functions were written as follow:
 
-Term $\#1$ of the objective function (Tab.~\ref{tab:Quaternion_base_twisting_somersault}) corresponds to maximizing the twist velocity and term $\#2$ is for control regularization.
-
-
-\begin{table}[h!]
-\caption{\small Objective terms of quaternion base maximally twisting somersault}
-\label{tab:Quaternion_base_twisting_somersault}
-\centering
-\begin{tabular}{c c c c}
-\toprule 
-& Type & Function & Weight \\ 
-\midrule
-$\#1$ & Lagrange & MINIMIZE\_TWIST & $-1e1$ \\ 
-\midrule
-$\#2$ & Lagrange & MINIMIZE\_ TORQUE & $1e-6$ \\ 
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{eqnarray}\label{eq:ocp_Trampo}
+\mathcal{J} = -\underbrace{\int_0^T \dot{\phi} dt}_{MINIMIZE\_TWIST}  +  1\times 10^{-6} \underbrace{\sum_{i=1}^{2}\int_0^T \tau_{i}^2 dt}_{MINIMIZE\_ TORQUE},
+\end{eqnarray}
+where T in the duration of the movement and $\tau_{i}$ is the torque control of the $i^{th}$ arm DoF.
+The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds to maximizing the twist velocity and the second term is for control regularization.
 
 
+The movement lasted for approximately 1 second and was discretized in 100 shooting nodes.
 The solutions for both models were similar (Fig.~\ref{snapshots_quaternion_base_twisting_somersault}) highlighting the equivalence of the two rotation representations.
-While euler angles have the advantage to be easily interpretable, they suffer from the loss of a DoF at the gimbal lock.
-Therefore the use of quaternion representation is advantageous when a joint is free to rotate on a wide three-dimensional range for motion.
+Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the gimbal lock.
+The use of quaternion representation is advantageous for numerical stability when a joint is free to rotate on a wide three-dimensional range for motion.
 
 
 \begin{figure*}[t!]
 \centering
-\includegraphics[width=\textwidth]{figures/activation_pointing_snapshots_acados.png}\\
-\caption{Snapshots of a maximally twisting somersault driven by torque actuation. Top: euler angles. Bottom: quaternion. Changer la figure !!!!!!!!!!!!!!!!!!!!!!}
+\includegraphics[width=\textwidth]{figures/Euler_Bioptim_MaxVrille.png}\\
+\vspace*{0.5em}
+\includegraphics[width=\textwidth]{figures/Quat_Bioptim_MaxVrille.png}
+\caption{Snapshots of a maximally twisting somersault driven by torque actuation. Top: Euler angles. Bottom: quaternion.}
 \label{fig:snapshots_quaternion_base_twisting_somersault}
 \end{figure*}
+
+
+% \begin{table}[h!]
+% \caption{\small Objective terms of quaternion base maximally twisting somersault}
+% \label{tab:Quaternion_base_twisting_somersault}
+% \centering
+% \begin{tabular}{c c c c}
+% \toprule 
+% & Type & Function & Weight \\ 
+% \midrule
+% $\#1$ & Lagrange & MINIMIZE\_TWIST & $-1e1$ \\ 
+% \midrule
+% $\#2$ & Lagrange & MINIMIZE\_ TORQUE & $1e-6$ \\ 
+% \bottomrule
+% \end{tabular}
+% \end{table}
+
 
 
 
