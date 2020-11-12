@@ -1,1 +1,58 @@
-The discussion
+The objective of bioptim is to solve a variety of biomechanical OCPs with minimal programming with high performance in terms of computational time and cost value. The main observation of the summary Table X of the six examples are: 
+i) the ability to use torque-drive to excitation-driven models (and their combination) and dynamics with/without contact 
+ii) a combination of cost functions and constraints 
+iii) solve advanced OCPs in a few seconds or minutes, that were previously known to take hours. 
+iv) easily switch from one NLP solver to another.
+
+
+Through various examples, we highlighted key features of bioptim including 
+
+
+\subsection{Utiliser des solveurs spécifiques et open source à DMS (Acados)}
+
+Bioptim takes advantage of several open source libraries to achieve a robust and/or fast convergence, especially CasADi combined with NLP solver namely ipopt or Acados, respectively. Whereas the choice of ipopt or Acados requires limited effort for the user, basic knowledge of both NLP solvers may help to determine appropriate weightings and best options. 
+By comparison to previous studies, OCPs were solved much faster  (e.g. XXXX s in [Colombe] vs XX s here; )
+
+
+
+
+\subsection{Différenciation algorithmique (ADOL-C dans Moco pour les collocations) … MX vs SX}
+
+
+
+\subsection{DMS (privilégié dans biorbdoptim) vs direct collocation (\href{https://link.springer.com/chapter/10.1007/978-3-540-36119-0_4}{link})}
+
+
+While the debate remains about the performance of direct collocations versus DMS, the development of bioptim was mainly oriented toward DMS, especially for the parallel computing. Nevertheless, existing collocations (Legendre) available in CasADi can be used and Acados proposes both explicit and implicit Runge-Kutta, the latter being a collocation approach. While implicit RK showed better convergence according to our own experience with Acados, explicit RK4 shows faster convergence in most of our implemented examples (those of the present paper and those available with biorbdoptim to present most of the features). In contrast to several papers [REFS], DMS was not a limitation to the performance (cost value and time to convergence) in our OCPs and is used in the most advanced real-time XXXX (Acados)
+
+ 
+
+\subsection{“Python based but fast” … biomécanique communauté d’utilisateurs}
+
+Since bioptim is written 100% in Python to define the OCP,  the user can easily combine existing cost functions or constraints (xx in-built functions; see Table X) and implement new ones, switch from one to another to relax the problem for example. The C++ MSK library (biordb) which is CasAdi compatible allows us to build the kinematics, dynamics, XXXX function in either MX () or SX graphs. Acados requires SX graphs which need more memory but are faster (see Table X) whereas both options are possible when using ipopt. 
+
+Its performance is not affected by our Python architecture since the components of the OCP (i.e. continuity constraints which rely on the forward and muscle activation dynamics, paths constraints, Mayer and Lagrange costs) are all expressed as CasAdi trees for algorithmic differentiation and evaluation in C++ by the CasADi virtual machine.  
+
+Inspired by the  real-time graphics from MUSCOD-II, biordbdoptim proposes a series of figures to analyze the solution at each iteration with  minimal computational cost thanks to a XXX protocole. Other save and load options are valuable for post-processing analysis.
+
+\subsection{Custom en python et pas en C++}
+
+
+\subsection{Multiphase}
+
+\subsection{Cost vs constraints … relâcher le problème simplement}
+
+\subsection{Limitations}
+
+Bioptim is already a mature solution for solving OCP in biomechanics, however some limitations should be raised. First, it is based on the musculoskeletal package developed in our laboratory, namely, biorbd. While the strength of biorbd is to be fast, XXX, and CasADi-friendly for the algorithmic differentiation of most of the kinematic and dynamic functions [REF], it is not as advanced as OpenSim or Anybody in terms of biomechanical features. The few examples (section X) highlighted simple to advanced models. Currently, biorbd does not include a model builder with a GUI. Some Opensim models can be translated to biorbd’s models using Python’s functions [LINK] but our MSK library does not support multiple wrapping objects, non-orthogonal DoFs between two bodies, compliant contact force models (e.g. [SmoothSphereHalfSpaceForce [52]]) or muscle-tendon equilibrium yet. As seen in Mocco and other MSK models for OCPs, wrapping objects are rare due to computational cost and required optimization when a line of action is in contact with more than one object. Via points [REF] and pre-processed moment arms (to be expressed as polynomial functions of crossed DoFs) are often preferred. In example X, the model differences (Opensim vs Biorbd), especially at the knee may explain the XXXX. Muscle-tendon equilibrium and model builder are already planned and the former will either required an additional optimisation procedure to achieve the equilibrium as in CEINMS [REF] or adding the length of muscle part with explicit constraints of XXXX in the OCP like in [REF]. Algorithms available in RBDL (core of biorbd for XXX) for ellipsoid foot model XXXXX (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6693511/).  
+
+A second limitation, which is to be adressed, is the fact that bioptim does not support multithreading in all conditions, e.g.: multiphase or multi-trial OCPs, Acados (despite its nfold faster convergence compared to Ipopt in multithread). Based on our experience about multithreading based on the architecture of bioptim (only the integration of the different shooting intervals are parallelized), the best advantage was found when the Hessian is calculated by algorithmic differentiation. Being the most costly part of the OCP, multithreading gives nearly linear reduction of the convergence time up to X threads. Such a gain is not found when the Hessian is updated using the BFGS quasi-Newton algorithm (i.e. the ‘limited-memory’ option in ipopt).  
+
+\subsection{Future directions}
+Realtime estimation using MHE
+
+MOOCP .. using front pareto
+
+Prediction of adaptations due to muscular fatigue using NMPC
+
+In line with the current studies of our research group, the future developments will first include nonlinear model predictive control and MHE (see example X) to predict optimal performances in repetitive tasks that generate muscular fatigue and real time estimation of joint torques and muscle forces, respectively. As shown in our previous studies [REFS] the analysis of a series near-optimal solutions is relevant in sport (but also in rehabilitation and ergonomics) and further efforts about multiobjective OCP of human performances are anticipated. 

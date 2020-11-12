@@ -1,1 +1,26 @@
-The introduction
+
+Many approaches coexist to discretize and solve OCPs. In sports biomechanics, joint angle-driven algorithms are XXXX in which the joint angle time histories are xxx by series of quintic polynomial functions [REF Yeadon, Begon] or quartic splines [REF Leboeuf, Huchez]. 
+Whereas evolutionary algorithms 
+
+
+The number of papers about optimal control or dynamic optimisation is growing in robotics and biomechanics (Fig. X), probably because of increasing computer power but also the emergence of advanced open source (and proprietary) librairies for algorithmic differentiation and NLP solvers. 
+Tools dedicated to OCP in biomechanics are rare. As shown by the recently launched MOCCO, four interrelated components are required: i) musculoskeletal modeling software (multibody kinematics and dynamics, muscle dynamics, etc.), ii) a method for automatic differentiation, iii) a discretization approach, and iv) a nonlinear programming (NLP) solver. Generic optimal control software (e.g. GPOPS-II [ref], Muscod-II [ref], Acado [ref]) provides solutions for component ii to iv but xxx. Since biomechanics is a community of software users [REFS], we believe that dedicated optimal control software will request a graphic user interface or at least a complete interface with a open source high-level language (e.g. Python) with a low-level core (C++) for efficiency. 
+
+When developing such software, we should consider that human movements are often multiphase (i.e. with different dynamics due to change in contact forces), [trouver d’autres], and models should be personalized, which may require several trials and some parameters’ identification. 
+Moreover, in contrast to the inverse flow which relies on measures, solving the ordinary differential equations (ODEs) of motion may result in unanticipated behaviours , ranging from non-physiological states to singularities. Either convenient constraints’ definition  and XXXXX, 
+
+Lifting and relaxing OCPs,  
+DMS et DC
+Constraints vs cost
+
+
+While CasADi is used in MOCCO mainly for its interface to ipopt (ADOL-C being used for automatic differentiation),  this tool was first and foremost designed for algorithmic differentiation and is consequently widely used for NLP to reduce the cost and increase the accuracy of gradient and Hessian compared to finite-difference method. Acados, a recent NLP solver dedicated to DMS, was recently launched by the same research group as CasADi taking advantage of the algorithmic differentiation for real-time applications. Some applications, such as the real-time estimation of muscle forces, presently solved by inverse approach [REF] (from inverse dynamics to static optimization) or hybrid approach like the EMG-assisted algorithm in CEINMS [REF], become possible [citer article François-Amedeo]
+
+
+The objective of the present paper is to introduce an innovative optimal control software for OCPs in biomechanics with the following features: 
+Written in Python with 
+Real-time capability 
+
+
+
+The paper is organized as follow: 
