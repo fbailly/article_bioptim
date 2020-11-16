@@ -1,4 +1,4 @@
-The objective of bioptim is to solve a variety of biomechanical OCPs with minimal programming with high performance in terms of computational time and cost value. The main observation of the summary Table X of the six examples are: 
+The objective of \textit{Bioptim} is to solve a variety of biomechanical OCPs with minimal programming with high performance in terms of computational time and cost value. The main observation of the summary Table X of the six examples are: 
 i) the ability to use torque-drive to excitation-driven models (and their combination) and dynamics with/without contact 
 ii) a combination of cost functions and constraints 
 iii) solve advanced OCPs in a few seconds or minutes, that were previously known to take hours. 
@@ -36,6 +36,9 @@ Its performance is not affected by our Python architecture since the components 
 Inspired by the  real-time graphics from MUSCOD-II, biordbdoptim proposes a series of figures to analyze the solution at each iteration with  minimal computational cost thanks to a XXX protocole. Other save and load options are valuable for post-processing analysis.
 
 \subsection{Custom en python et pas en C++}
+
+\subsection{Fast resolution = multistart}
+Fast solvers offer the opportunity to use multistart on complex problems in order to circumvent the obstacle of local minima \cite{huchez2015local, bailly2020optimal} or to get meaningful initial solutions from simpler problems, for guiding the resolution of the sought problem.
 
 
 \subsection{Multiphase}
