@@ -1,1 +1,6 @@
-The method
+\subsection{Implementation and dependencies}
+
+\textit{Bioptim} is the top layer of a succession of software on which it depends to perform various calculations (\textit{Biorbd}: dynamics; \textit{CasADi}: automatic differentiation; \textit{IPOpt, Acados}: optimization; \textit{Bioviz}: visualization).
+Within this software bundle, Bioptim's main role is to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user.
+Therefore, it was chosen to be written in Python for its flexibility and its widespread use among researchers.
+However, all intensive calculations behind the interface are performed in C or C++, keeping it both fast and easy to customize.
