@@ -41,6 +41,7 @@
 \usepackage{gensymb}
 \usepackage{cleveref}
 \usepackage{threeparttable}
+\usepackage{xspace} 
 \usepackage{colortbl}
 \definecolor{Gray}{gray}{0.9}
 \newcommand{\comFB}[1]{\noindent\colorbox{yellow}{\parbox{\dimexpr\columnwidth-1\fboxsep}{[FB: #1]}}}
@@ -99,6 +100,13 @@ skipabove=0ex]%
 \def\diag{\operatorname{Diag}}
 \newcommand{\eqRef}[1]{(\ref{#1})}
 \newcommand{\dbtilde}[1]{\accentset{\approx}{#1}}
+\newcommand{\state}{\mathbf{x}}
+\newcommand{\dstate}{\dot{\mathbf{x}}}
+\newcommand{\control}{\mathbf{u}}
+\newcommand{\param}{\mathbf{p}}
+\newcommand{\bioptim}{\textit{Bioptim}\xspace}
+
+
 
 \hyphenpenalty=10000
 
