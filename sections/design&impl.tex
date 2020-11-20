@@ -13,6 +13,15 @@ Within this software bundle, Bioptim's main role is to shape the problem in orde
 Therefore, it was chosen to be written in Python for its flexibility and its widespread use among researchers.
 However, all intensive calculations behind the interface are performed in C or C++, keeping \bioptim both fast and easy to customize.
 
+\begin{figure}[t!]
+\centering
+\includegraphics[width=0.9\columnwidth]{figures/design.eps}
+\caption{\bioptim design flowchart.}
+\label{fig:dependencies}
+\vspace*{-0.5cm}
+\end{figure}
+
+
 \subsection{Design}
 \bioptim shapes and solves optimal control problems whose two required entries are a model (.\textit{bioMod} file) and an OCP.
 The model file contains the geometrical characteristics, the mass and inertia parameters, the geometrical markers and possibly the muscular information of the model. 
