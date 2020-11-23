@@ -1,15 +1,15 @@
 \begin{figure}[t!]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
-\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team.}
+\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:dependencies}.}
 \label{fig:dependencies}
 \vspace*{-0.5cm}
 \end{figure}
 
 
 \subsection{Implementation and dependencies}
-\bioptim is the top layer of a succession of software on which it depends to perform various calculations (\textit{Biorbd}: dynamics; \textit{CasADi}: automatic differentiation; \textit{IPOpt, Acados}: optimization; \textit{Bioviz}: visualization).
-Within this software bundle, Bioptim's main role is to shape the problem in order to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
+\bioptim is the top layer of a succession of software on which it depends to perform various calculations (\textit{Biorbd}: dynamics and MSK modeling; \textit{CasADi}: automatic differentiation; \textit{IPOpt, Acados}: optimization; \textit{Bioviz}: visualization).
+Within this software bundle, \bioptim 's main role is to shape the problem in order to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
 Therefore, it was chosen to be written in Python for its flexibility and its widespread use among researchers.
 However, all intensive calculations behind the interface are performed in C or C++, keeping \bioptim both fast and easy to customize.
 
@@ -24,9 +24,9 @@ However, all intensive calculations behind the interface are performed in C or C
 
 \subsection{Design}
 \bioptim shapes and solves optimal control problems whose two required entries are a model (.\textit{bioMod} file) and an OCP.
-The model file contains the geometrical characteristics, the mass and inertia parameters, the geometrical markers and possibly the muscular information of the model. 
+The model file contains the geometrical characteristics, the segment inertias, the geometrical markers, the actuators of the model (muscles and joint torques accounting for angle/angular velocity/torque relationships) as well as bounds on joint kinematics and torques. 
 It also allows the user to design or import meshes for visualization purposes.
-The OCP is implemented as a succession of nonlinear problems (NLPs) for allowing the formulation of multi-stage OCPs. Each NLP has the following attributes: a dynamics type, a list of objective function, constraints, initial guesses, a number of shooting points and the duration of the problem.
+The OCP is implemented as a combination of nonlinear problems (NLPs) for allowing the formulation of multi-staged OCPs. Each NLP has the following attributes: a dynamics type, an objective function, constraints, a number of shooting points, the duration of the problem and initial guesses.
 Based on these inputs, \bioptim properly sets up the multiple shooting transcription of the OCP, with appropriate continuity constraints in the case of multiple NLPs, and shapes it up to feed the chosen non-linear solver (Ipopt or Acados). 
 
 \subsubsection{Dynamics types}
@@ -39,13 +39,13 @@ Then, it implements the ordinary differential equation governing the state trans
 \label{eq:state_transition}
 \]
 
-\noindent More than ten dynamics are implemented in \bioptim , among which the controls can be muscle excitations/muscle activations/joint torques, the states can be joint kinematics/muscle activations, including/excluding contacts, etc.
+\noindent More than 10 dynamics are implemented in \bioptim \footnote{\href{https://github.com/pyomeca/bioptim/blob/master/bioptim/dynamics/dynamics_functions.py}{github link}}, among which the controls can be muscle excitations/muscle activations/joint torques, the states can be joint kinematics/muscle activations, including/excluding contacts, etc.
 Even if these dynamics types exhaustively span the current usages in biomechanics, a custom dynamics type is also pre-implemented to allow easy problem customization.
 
 \subsubsection{Objective functions}
 Accordingly to the optimal control formalism, there are two main types of objective functions, namely Lagrange and Mayer. Lagrange types are running objectives, integrated over the NLP duration. Mayer types are time-specific objectives. Classically, they correspond to a terminal objective, but to be more versatile, they can be defined at any instant in \bioptim.
 
-These objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. A lot of objective function types are already implemented in \bioptim ($>20$), among which tracking/minimizing, on the states/controls/geometrical markers/contact forces/problem duration, etc. Should one go missing, a custom objective type is also pre-implemented.
+These objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. A lot of objective function types are already implemented in \bioptim ($>\!20$), among which tracking/minimizing, on the states/controls/markers/contact forces/problem duration, etc. Should one go missing, a custom objective type is also pre-implemented.
 
 When declaring the desired list of objective function for a given NLP, each objective function type is associated with a weight, and the user can flexibly choose on which components of the vector variables the objective must apply. If applicable (for tracking objective functions mainly), the user must also specify the numerical target of the objective.
 
