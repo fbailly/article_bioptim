@@ -1,12 +1,3 @@
-\begin{figure}[t!]
-\centering
-\includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
-\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:dependencies}.}
-\label{fig:dependencies}
-\vspace*{-0.5cm}
-\end{figure}
-
-
 \subsection{Implementation and dependencies}
 \bioptim is the top layer of a succession of software on which it depends to perform various calculations (\textit{Biorbd}: dynamics and MSK modeling; \textit{CasADi}: automatic differentiation; \textit{IPOpt, Acados}: optimization; \textit{Bioviz}: visualization).
 Within this software bundle, \bioptim 's main role is to shape the problem in order to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
