@@ -8,7 +8,7 @@ The objective functions were written as follow:
 \begin{eqnarray}\label{eq:ocp_Trampo}
 \mathcal{J} = -\underbrace{\int_0^T \dot{\phi}~dt}_{MINIMIZE\_TWIST}  +~\omega_1 \underbrace{\int_0^T \sum_{i=1}^{2}~\tau_{i}^2~dt}_{MINIMIZE\_ TORQUE},
 \end{eqnarray}
-with $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau_{i}$ the torque control of the $i^{th}$ arm DoF.
+\comment{with}{Je pense qu'il faut standadiser la nomenclature. Ici, on n'utilise pas les termes de bioptim, je pense qu'on devrait, mais je préfère la façon que c'est exprimé ici (avec un underbrace) et le weight qui est mis dans le paragraphe plutôt que directement dans l'équation} $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau_{i}$ the torque control of the $i^{th}$ arm DoF.
 The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds to maximizing the twist velocity and the second term is for control regularization.
 
 

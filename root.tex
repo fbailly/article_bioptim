@@ -54,7 +54,7 @@
 \newcommand{\xt}{\mvec{x}(t)}
 \newcommand{\ut}{\mvec{u}(t)}
 
-\newcommand{\st}{\text{s.t.}}
+% \newcommand{\st}{\text{s.t.}}  % This conflicts with soul and does not seem to be used anyway
 \newcommand{\g}{\mvec{g}}
 \newcommand{\q}{\mvec{q}}
 \newcommand{\dq}{\dmvec{q}}
@@ -107,7 +107,11 @@ skipabove=0ex]%
 \newcommand{\bioptim}{\textit{Bioptim}\xspace}
 
 
-
+% Revision tools 
+\usepackage{soul}  
+\newcommand\comment[2]{\hl{#1}}
+\newcommand\addref{\comment{REF}{}}
+\newcommand\xx{\comment{XX}{}}
 \hyphenpenalty=10000
 
 \begin{document}
@@ -125,13 +129,14 @@ skipabove=0ex]%
 \input{sections/design&impl}
 
 \section{Examples}\label{sec:Examples}
-\include{sections/Examples}
+\input{sections/examples}
 
 \section{Discussion}\label{sec:discussion}
 \input{sections/discussion}
 
 \section*{Acknowledgment}
-This study and the biorbdp library development was partly funded by scholarships of the  Vanier program (BM) and the TransMedTech Institute XXX Apogée Canada (FB) and MB NSERC Discovey Programme (XXXX). Biorbdoptim acts as a catalyst in our group and several students contribute to this library; thank you to Amedeo, Ariane, André, Kilperic. 
+This study and the biorbd library development was partly funded by scholarships of the  Vanier program (BM) and the TransMedTech Institute XXX Apogée Canada (FB) and MB NSERC Discovey Programme (XXXX). 
+Bioptim acts as a catalyst in our group and several students contribute to this library; thank you to \comment{Amedeo}{Probablement à retirer d'ici s'il est dans les auteurs}, Ariane, André, \comment{Kilperic}{Paul, Théophile}. 
 
 
 

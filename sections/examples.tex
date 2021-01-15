@@ -1,5 +1,5 @@
 In the following, seven applications are presented to illustrate the versatility of \bioptim and give a practical overview on how to use its main features.
-The performances and the Github links of each OCP are summarized in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}.
+The \comment{performances}{Ajouter la RMS avec le single shooting} and the Github links of each OCP are summarized in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}.
 
 
 \subsection{Muscle activation driven pointing task}
@@ -20,13 +20,13 @@ The performances and the Github links of each OCP are summarized in Tab.~\ref{ta
 \centering
 \begin{tabular}{c l rl rl rl}
 \cmidrule[\heavyrulewidth](lr){2-8}
-& & \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
+& & \multicolumn{2}{l}{\comment{Activation-driven}{Aligner la ligne au dessus de ACADOS avec le centre produit par Ipopt et ACADOS} pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
 \cmidrule[\heavyrulewidth](lr){3-4}
 \cmidrule[\heavyrulewidth](lr){5-6}
 \cmidrule[\heavyrulewidth](lr){7-8}
 
 \mymultirow{4}{Setup} & \# states $\xt$            & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
-                      & \# control $\ut$           & \multicolumn{2}{c}{8}  & --    & --     & --    & --\\
+                      & \# control $\ut$           & \multicolumn{2}{c}{\comment{8}{2 états et 8 controles?}}  & --    & --     & --    & --\\
                       & \# shooting nodes          & \multicolumn{2}{c}{51} & --    & --     & --    & --\\
                       & OCP duration (s)           & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
                       &                            & IPOpt  & ACADOS        & IPOpt & ACADOS & IPOpt & ACADOS\\
