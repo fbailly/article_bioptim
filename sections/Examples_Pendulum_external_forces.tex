@@ -3,11 +3,9 @@ The mass is actuated by vertical force and the pendulum is passive (2-DoF).
 The spring is modelled by an external force of the following form:
 
 \[
-\resizebox{0.9\columnwidth}{!}{$
 \begin{aligned}
-	\mathcal{F_{ext}} = -k*Mass\_position
+F_{ext} = -k*Mass\_position
 \end{aligned}
-$}
 \addtag
 \label{eq:f_ext}
 \]
@@ -19,21 +17,11 @@ The first term of the objective function (Eq.~\ref{eq:ocp_Pendulum}) corresponds
 The second and third were added for control regularization.
 The objective functions, composed of Lagrange terms, was formulated as follow:
 
-\[
-\resizebox{0.9\columnwidth}{!}{$
-\begin{aligned}
-	\mathcal{J} = &~\text{track\_state}\\
-	&+ \int 10~(\text{min\_muscle\_ctrl}+\text{min\_torque}+\text{min\_state}),
-\end{aligned}
-$}
-\addtag
-\label{eq:ocp_Pendulum}
-\]
 
-\begin{eqnarray}\label{eq:ocp_Pendulum}
-\mathcal{J} = \underbrace{\int_{T/2}^T (q_{mass} + 0.5)^2}~dt}_{TRACK\_STATE}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{MINIMIZE\_ TORQUE},
-\end{eqnarray}
-\noindent with q_{mass} the position of the mass, $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau_$ the force control of the mass.
+\[\label{eq:ocp_Pendulum}
+\mathcal{J} = \underbrace{\int_{T/2}^T (q_{mass} + 0.5)^2~dt}_{TRACK\_STATE}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{MINIMIZE\_ TORQUE},
+\]
+\noindent with $q_{mass}$ the position of the mass, $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau$ the force control of the mass.
 
 
 The movement was unactuated for 5 seconds, then actuated for a supplementary 5 seconds and each phase was discretized using 51 shooting nodes.
