@@ -1,10 +1,18 @@
-The goal was to estimate joint torques \comment{which are dynamically consistent}{Ceci est vrai en permanence, pas besoin de le mentionner je pense (dans le cas d'un article dédié à la marche peut-être, mais ici, ça l'est par définition)} during one gait cycle from the first heel strike to the end of the swing phase using a 3D one-leg torque driven model with 12 DoFs.  \\
+This example is a tracking problem. 
+Markers trajectories, ground reaction forces and moments were tracked. 
+The goal was to estimate muscles activation during one gait cycle from the first heel strike to the end of the swing phase using a 3D one-leg model with 12 DoFs and 17 muscles. 
+Residual torques were also added to compensate model weaknesses providing pure joint torque in addition to muscle-induced ones.\\
 
-\comment{The experimental joint angles}{Donc c'est du tracking? Il faut le dire dans le paragraphe précédent} \comment{$q_m$}{$q_p$ n'a pas été déclaré, ni les \omega, ni OC} (obtained from markers using an extended Kalman filter), ground reaction forces $F_m$ and moments \comment{$M_m$}{Pas la même nomenclature que dans l'équation} were \comment{tracked}{Ah! Je ne vois pas le but de faire deux paragraphes alors}:
+This tracking optimization consisted in the minimization between predicted $m_p$ and measured $m_m$ markers trajectories. 
+During the stance phase, predicted forces $F_c$ at C contact point and computed moments 
+were compared to measured ground reaction forces $F_m$ and moments $M_{m,O}$.
+To predict muscle activity, the objective function consisted in finding the least squared muscle activations $a_{i}$. 
+The objective functions are written as follow :\\
+
 
 \begin{eqnarray}
 \label{eq:ocp_q}
-\mathcal{J} = \sum_{i=1}^{N_i}\Bigg(\underbrace{\omega_1(\|q_p - q_m\|^{2})}_{TRACK\_STATE}
+\mathcal{J} = \sum_{i=1}^{N_i}\Bigg(\underbrace{\omega_1(\|m_p - m_m\|^{2})}_{TRACK\_MARKERS}
 \label{eq:ocp_forces}
 \end{eqnarray}
 \begin{eqnarray}
@@ -12,19 +20,24 @@ The goal was to estimate joint torques \comment{which are dynamically consistent
 \end{eqnarray}
 \begin{eqnarray}
 \label{eq:ocp_moments}
-+ \underbrace{\omega_3(\|\sum_{c=1}^{N_c}OC\times F_c - M_{m,O}\|^{2})}_{TRACK\_MOMENTS}\bigg) 
++ \underbrace{\omega_3(\|\sum_{c=1}^{N_c}OC\times F_c - M_{m,O}\|^{2})}_{TRACK\_MOMENTS}
+\end{eqnarray}
+\begin{eqnarray}
+\label{eq:ocp_muscles}
++ \underbrace{\omega_4\int_0^T \sum_{i=1}^{N_i}~a_{i}^2~dt}_{MINIMIZE\_ ACTIVATION}\bigg)  
 \end{eqnarray}
 
-\noindent where $N_i$ and $N_c$ are the number of time frames and contact points, respectively. 
+where $\omega_1$, $\omega_2$, $\omega_3$, $\omega_4$ are weighting factors, $T$ is the the duration, $N_i$ and $N_c$ are the number of time frames and contact points of the current phase. \\
 
-The interaction between the ground and the foot was modelled using a 4-contact \comment{point}{points?} model located at the heel and the forefoot (first and fifth metatarsi and toes - digit of the second toe). 
+
+The interaction between the ground and the foot was modelled using a 4-contact points model located at the heel and the forefoot (first, fifth metatarsi and hallux). 
 The stance phase was divided in three to follow the natural rolling movement of the foot from heel strike to toe off: heel, flatfoot and forefoot contacts. 
-A constraint of \comment{non-slipping}{Dire ce que ça fait, sinon c'est trop obscur} (NON\_SLIPPING) and \comment{unilateral contact force}{Dire ce que ça fait, sinon c'est trop obscur} (CONTACT\_FORCE) were added for each stance phase. 
-The use of the IMPACT state transition allowed to represent the gain of contact(s) from a system without any contact (swing phase) to a system with contacts (heel strike) [\addref\ thesis Felis - articles?].  
+A constraint of non-slipping (NON\_SLIPPING) and unilateral contact force (CONTACT\_FORCE) were added. 
+It prevents the foot from slipping and penetrating the ground. 
+The use of the IMPACT state transition allowed to represent the gain of contact(s) from a system without any contact (swing phase) to a system with contacts (heel strike) [thesis Felis - articles?].  \\
 
-
-Based on force plateform data and markers position, each phase had a definite time inducing a complete simulation time of 0.93 s and was discretized in 94 intervals. 
-The solution was able to reproduce a complete gait cycle [value RMSE - better with 3 contact points?] (Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
+Based on force plateform data and markers position, each phase had a definite time inducing a complete simulation time of 0.93 s and was discretized in 94 intervals.
+(Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
 
 \begin{figure*}[t!]
 \centering
