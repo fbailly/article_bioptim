@@ -13,7 +13,7 @@ It allows the solver to get the best jump with the shortest time.
 
 Using ipopt solver, the problem was first launched using the BFGS hessian approximation feature for 200 iterations.
 Then if the maximum number of iterations is reached,
-the solution is re-optimized for 1000 iterations using a warm start with the results.
+the solution was re-optimized with a exact hessian computations with up to 1000 iterations using a warm start.
 
 \begin{figure*}[t!]
 \includegraphics[width=\textwidth/2]{figures/graph_force_vitesse_longueur.png}\\
