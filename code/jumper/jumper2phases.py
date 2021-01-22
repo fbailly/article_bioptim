@@ -334,3 +334,6 @@ if __name__ == "__main__":
 
     toc = time() - tic
     print(f"Time to solve : {toc}sec")
+
+    result = ShowResult(ocp, sol)
+    result.animate(nb_frames=241)
