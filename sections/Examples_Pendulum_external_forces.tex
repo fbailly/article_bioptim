@@ -20,7 +20,7 @@ f_s = -k*q_m,
 with k the spring stiffness constant.\\
 The OCP was composed of two phases each lasting for $\SI{5}{s}$, with 50 shooting nodes.
 In the first phase, no objective function was minimized and $f$ was constrained to $0$ letting the mass oscillating freely. 
-Then, in the second phase, a cost function (Eq.\ref{eq:ocp_Pendulum}) was minimized, for stabilizing the mass around a targeted position (Fig.~\ref{fig:Mass_Pendulum_Fext_graphs}).
+Then, in the second phase, a cost function (Eq.\ref{eq:ocp_Pendulum}) was minimized, to enforce a specific position for the mass.
 Theis objective function, exclusively composed of Lagrange terms, was formulated as follow:
 \[
 \mathcal{J} = \underbrace{\int_{T/2}^T (q_m - q_m^*)^2~dt}_{\mathtt{TRACK\_STATE}}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{\mathtt{MIN\_ TORQUE}},
@@ -30,10 +30,12 @@ Theis objective function, exclusively composed of Lagrange terms, was formulated
 
 \noindent with $q_m$ and $q_m^* = -0.5m$ respectively the optimized and reference positions of the mass, $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau$ the force control of the mass.
 The first term of the objective function (Eq.~\ref{eq:ocp_Pendulum}) acts as a position controller for the mass.
-\comment{The second and third}{je n'en vois qu'un} were added for control regularization.
+The second as added for control regularization.
 
-\hl{commenter resultats}
-This example highlights the possibility of using optimal control to find activation patterns compensating for external passive forces (e.g., \comment{ortheses flexibility, }{trouver d'autre}).
+
+During the first phase, the mass is oscillating passively around it's stationary position due to the force exerted by the spring.
+However, when the mass gain the ability to react actively with force actuation, it stabilizes around the targeted position (Fig.~\ref{fig:Mass_Pendulum_Fext_graphs}).
+This example highlights the possibility of using optimal control to find activation patterns compensating for external passive forces (e.g., ortheses flexibility, contact surface deformation, interaction between two models, ...).
 
 \begin{figure*}[t!]
 \centering
