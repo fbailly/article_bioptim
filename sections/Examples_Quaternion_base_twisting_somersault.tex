@@ -1,21 +1,20 @@
-In this example of sports biomechanics, the goal was to maximize the twist rotation ($\phi$) in a backward somersault.
-The model is composed of a 6-DoF root segment and two 1-DoF torque actuated arms.
-The OCP was solved for two models.
-First, rotations of the root segment were expressed as Euler angles.
-They were expressed as a quaternion for the second model.
-The objective functions were written as follow:
+In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of a 8-DoF model in a backward somersault.
+The model was composed of a 6-DoF root segment and two 1-DoF torque actuated shoulder joints.
+Two different numerical description of the root segment rotations were used (Euler angles and quaternions).
+The objective function was as follows:
 
 \begin{eqnarray}\label{eq:ocp_Trampo}
 \mathcal{J} = \omega_1 \underbrace{\int_0^T \dot{\phi}~dt}_{MINIMIZE\_TWIST}  +~\omega_2 \underbrace{\int_0^T \sum_{i=1}^{2}~\tau_{i}^2~dt}_{MINIMIZE\_ TORQUE},
 \end{eqnarray}
-with $\omega_1 = -1$ and $\omega_2 = 1\times 10^{-6}$, T the duration of the movement and $\tau_{i}$ the torque control of the $i^{th}$ arm DoF.
-The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds to maximizing the twist velocity and the second term is for control regularization.
+with $\omega_1 = -1$ (resulting in the maximization of the first term) and $\omega_2 = 1\times 10^{-6}$, T the duration of the movement and $\tau_{i}$ the torque control input of the $i^{th}$ arm DoF.
+The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds to maximizing the twist velocity and the second term serves as control regularization.
 
 
-The movement lasted for approximately 1 second and was discretized in 80 shooting nodes.
-The solutions for both models were similar (Fig.~\ref{snapshots_quaternion_base_twisting_somersault}) highlighting the equivalence of the two rotation representations.
-Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the gimbal lock.
-The use of quaternion representation is advantageous for numerical stability when a joint is free to rotate on a wide three-dimensional range for motion.
+The movement lasted for approximately 1 second and was discretized with 80 shooting nodes.
+The solutions for both models were \comment{similar}{ce n'est pas vraiment le cas, commenter} (Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}) highlighting the equivalence of the two rotation representations.
+Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the Gimbal lock (leading to numerical instabilities).
+The use of a quaternion-based representation is tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
+Quaternion's integration must be handled with care~\cite{bailly2020optimal}, which was taken care of in \textit{bioptim}.
 
 
 \begin{figure*}[t!]
