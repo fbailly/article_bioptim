@@ -1,26 +1,25 @@
-Bioptim was used to optimize joint kinematics and kinetics that maximize vertical jump height.
-Using a joint torque driven model, we simulated only the push-off phase that was divided into two phases:
-first phase with two contact points (heel and toe),
-and second phase with one contact (toe). Phase times were bounded: [0.2, 1.0] and [0.05, 1.0].
+The goal was to find a minimal-time push-off phase for a \hl{XXX-DoF torque-driven} model while maximizing its jump height ($h$).
+The push-off (impulsion before take-off) was divided into two phases with the following properties: \textit{1)} two contact points (heel and toe), duration $\in [0.2, 1.0]s$ and \textit{2)} one contact (toe), duration $\in [0.05, 1.0]s$.
+The joint actuators bounds were modeled using a custom nonlinear constraint to account for torque/angle/angular-velocity relationships using the \verb?gauss3p? function of \textit{biorbd} \comment{based on predetermined factors}{je ne comprends pas} (\ref{fig:graph_force_vitesse_longueur}).
+For each phase, the objective function was formulated as follow:
 
-The actuators bounds were modeled using a custom nonlinear constraint to account for the torque-angle-angular
-velocity relationship using the gauss3p function of biorbd based on predetermined factors
-(\ref{fig:graph_force_vitesse_longueur}).
+\[
+\mathcal{J} = XXX.
+\addtag
+\label{eq:cost_jumper}
+\]
 
-The first term of the objective function corresponds to the jump height.
-The second term of the objective function corresponds to the time variation.
-It allows the solver to get the best jump with the shortest time.
+The first term of Eq.~\ref{eq:cost_jumper} corresponds to maximizing the jump height.
+The second term of the objective function serves for finding a minimal-time solution.
 
-Using ipopt solver, the problem was first launched using the BFGS hessian approximation feature for 200 iterations.
-Then if the maximum number of iterations is reached,
-the solution was re-optimized with a exact hessian computations with up to 1000 iterations using a warm start.
+Using \textit{ipopt}, the problem was first approximately solved using the BFGS hessian approximation for 200 iterations maximum.
+Then, \comment{if this maximum number of iterations was reached}{ne parler que de la solution présentée. Est-ce que le max_iter a effectivement été atteint ?}, the solution was re-optimized, using a warm-start, with exact-hessian computations for up to 1000 iterations .
 
-The height of the jump is 1,35m.
-The strategy used is XXX with a proximo-distal shift of the joints (hip, knee then ankle) highlighted by the
-activation of the hip, then the knee and finally the ankle.
+The optimized ump height was 1,35m in \hl{XXX}s.
+\comment{The used strategy is XXX with a proximo-distal shift of the joints (hip, knee then ankle) highlighted by the activation of the hip, then the knee and finally the ankle.}{à terminer}
 
-\begin{figure*}[t!]
-\includegraphics[width=\textwidth/2]{figures/graph_force_vitesse_longueur.png}\\
-\caption{Surface getting torque range from q and qdot}
+\begin{figure}[h!]
+\includegraphics[width=\columnwidth]{figures/graph_force_vitesse_longueur.png}\\
+\caption{Surface representing the nonlinear constraint which account for torque/angle/angular-velocity relationships in the model of the jumper.}
 \label{fig:graph_force_vitesse_longueur}
-\end{figure*}
+\end{figure}
