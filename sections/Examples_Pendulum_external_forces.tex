@@ -1,4 +1,4 @@
-This sping-mass-pendulum-based example is presented to introduce \textit{bioptim}'s ability to use of external forces.
+This spring-mass-pendulum-based example is presented to introduce \textit{bioptim}'s ability to use of external forces.
 The goal was to maintain the position of a $\SI{1}{kg}$ mass hanging on a linear spring attached to the ground.
 A $\SI{0.2}{m}$-long pendulum weighting $\SI{10}{kg}$ was attached to the mass and free to rotate in one dimension (Fig.~\ref{fig:Mass_Pendulum_Model}).
 In addition to the spring force, the mass was actuated by a vertical force (e.g., somebody pulling on it) while the pendulum rotation was passive.
@@ -9,29 +9,30 @@ The system therefore comprised two DoFs, the mass position ($q_m$) and the pendu
 \caption{Definition of the spring-mass-pendulum model.}
 \label{fig:Mass_Pendulum_Model}
 \end{figure}
-The spring force was:
+The spring force $f_s$ was:
 \[
 \begin{aligned}
-F_{ext} = -k*q_m,
+f_s = -k*q_m,
 \end{aligned}
 \addtag
 \label{eq:f_ext}
 \]
 with k the spring stiffness constant.\\
-The objective function, composed of Lagrange terms, was formulated as follow:
+The OCP was composed of two phases each lasting for $\SI{5}{s}$, with 50 shooting nodes.
+In the first phase, no objective function was minimized and $f$ was constrained to $0$ letting the mass oscillating freely. 
+Then, in the second phase, a cost function (Eq.\ref{eq:ocp_Pendulum}) was minimized, for stabilizing the mass around a targeted position (Fig.~\ref{fig:Mass_Pendulum_Fext_graphs}).
+Theis objective function, exclusively composed of Lagrange terms, was formulated as follow:
 \[
-\mathcal{J} = \underbrace{\int_{T/2}^T (q_m + 0.5)^2~dt}_{\mathtt{TRACK\_STATE}}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{\mathtt{MIN\_ TORQUE}},
+\mathcal{J} = \underbrace{\int_{T/2}^T (q_m - q_m^*)^2~dt}_{\mathtt{TRACK\_STATE}}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{\mathtt{MIN\_ TORQUE}},
 \addtag
 \label{eq:ocp_Pendulum}
 \]
 
-\noindent with $q_m$ the position of the mass, $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau$ the force control of the mass.
+\noindent with $q_m$ and $q_m^* = -0.5m$ respectively the optimized and reference positions of the mass, $\omega_1 = 1\times 10^{-6}$, T the duration of the movement and $\tau$ the force control of the mass.
 The first term of the objective function (Eq.~\ref{eq:ocp_Pendulum}) acts as a position controller for the mass.
 \comment{The second and third}{je n'en vois qu'un} were added for control regularization.
 
-The OCP was composed of two phases each lasting for $\SI{5}{s}$, with 50 shooting nodes.
-In the first phase, no objective function was minimized and $f$ was constrained to $0$ letting the mass oscillating freely. 
-Then, in the second phase, $\mathcal{J}$ was minimized, stabilizing the mass around the targeted position (Fig.~\ref{fig:Mass_Pendulum_Fext_graphs}).
+\hl{commenter resultats}
 This example highlights the possibility of using optimal control to find activation patterns compensating for external passive forces (e.g., \comment{ortheses flexibility, }{trouver d'autre}).
 
 \begin{figure*}[t!]
