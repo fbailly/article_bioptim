@@ -20,7 +20,7 @@ F_{ext} = -k*q_m,
 with k the spring stiffness constant.\\
 The objective function, composed of Lagrange terms, was formulated as follow:
 \[
-\mathcal{J} = \underbrace{\int_{T/2}^T (q_m + 0.5)^2~dt}_{TRACK\_STATE}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{MINIMIZE\_ TORQUE},
+\mathcal{J} = \underbrace{\int_{T/2}^T (q_m + 0.5)^2~dt}_{\mathtt{TRACK\_STATE}}  +~\omega_1 \underbrace{\int_{T/2}^T ~\tau^2~dt}_{\mathtt{MIN\_ TORQUE}},
 \addtag
 \label{eq:ocp_Pendulum}
 \]
