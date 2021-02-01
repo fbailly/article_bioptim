@@ -19,7 +19,7 @@ $}
 \label{eq:ocp_exMHE}  
 \]  
 
-\noindent where $\omega_1 =1e3$, $\omega_2 = 10$ and $t_{mhe}$ is duration of each sub-problem. $q^*_{r}$, $q_{e}$ and $u$ are respectively the reference and estimated joint angles, and muscles activations. 
+\noindent where $\omega_1 =1e3$, $\omega_2 = 10$ and $t_{mhe}$ is duration of each sub-problem. $q_{e}$, $q^*_{r}$  and $u$ are respectively the reference and estimated joint angles, and muscles activations. 
 
 In this example, reference data of an $8~s$ series of 4 arm elevations were generated at 100~Hz, by computer simulation, with co-activation on two antagonists muscles groups (triceps and biceps).
 Using a windows size of 7 nodes, the estimator ran at about 50~Hz (one in two reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., four times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
