@@ -11,7 +11,8 @@ The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds t
 
 
 The movement lasted for approximately 1 second and was discretized with 80 shooting nodes.
-The solutions for both models were \comment{similar}{ce n'est pas vraiment le cas, commenter} (Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}) highlighting the equivalence of the two rotation representations.
+The kinematics of the solutions are different for the two types of models (Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}) because of the differences in the geometry of the solution fields and the presence of local minima.
+However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
 Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the Gimbal lock (leading to numerical instabilities).
 The use of a quaternion-based representation is tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
 Quaternion's integration must be handled with care~\cite{bailly2020optimal}, which was taken care of in \textit{bioptim}.
