@@ -1,12 +1,12 @@
-This example is presented to introduce \textit{bioptim}'s ability to manage real-time estimation.
-The goal was to perform real-time estimation of dynamically consistent joint kinematics and muscle forces, using a moving horizon estimation (MHE). 
-In this example, a shoulder elevation motion is performed with a 4-DoFs arm actuated by 19 Hill-type muscle elements.
-The control inputs of the model are the muscle activations.
+This example is presented to introduce \textit{bioptim}'s ability to provide real-time estimation of biomechanical variables.
+The goal was to perform a real-time estimation of dynamically consistent joint kinematics and muscle forces, using a moving horizon estimation (MHE). 
+In this example, a shoulder elevation motion was performed with a 4-DoFs arm actuated by 19 Hill-type muscle elements.
+The control inputs of the model were the muscle activations.
 The MHE implementation consists in splitting the OCP into a succession of smaller one for processing fixed-size subsets of the tracking data moving forward in time. 
 Each time one subproblem is solved, a new measurement is acquired, the oldest one is discarded and a new subproblem is defined. 
-Due to their similarities, the solution of the previous OCP is a good initial guess for the new one. 
-The dynamic consistency of the final solution is enforced by continuity constraints on the initial state. 
-Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: the first one corresponds to the tracking of reference joint angles, the second and third ones correspond to states and muscle activations regularization (i.e., least-square criteria): 
+Due to their similarities, the solution of the previous OCP is a good initial guess to the new one. 
+The dynamical consistency of the final solution is enforced by continuity constraints on the initial state. 
+Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: the first one corresponded to the tracking of reference joint angles, the second and third ones corresponded to states and muscle activations regularization (i.e., least-square criteria): 
 
 \[ 
 \resizebox{0.9\columnwidth}{!}{$ 
@@ -23,25 +23,25 @@ $}
 \noindent where $\omega_1 =1e5$, $\omega_2 = 100$, $\omega_3 = 1e4$ and $t_{mhe}$ is duration of each sub-problem. $q_{e}$, $q^*_{r}$  and $u$ are respectively the reference and estimated joint angles, and muscles activations. 
 
 In this example, reference data of an $8~s$ series of 4 arm elevations were generated at 100~Hz, by computer simulation.
-Zero-mean Gaussian noise were created to mimic the errors associated with experimental joints angle measurements.
-The standard deviation was five percent of joint angles values \cite{REFestimationerror}.
+Centered Gaussian noise was added to $q^*_{r}$, to work with experimental-like joints angle measurements.
+Its standard deviation was five percent of joint angles values \cite{REFestimationerror}.
 Using a windows size of 7 nodes, the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
-The estimator was able to forecast the movement kinematics (Fig.~\ref{fig:joint_angles_MHE}) with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ and to produce a realistic estimation of muscle forces close to the reference (Fig.~\ref{fig:muscle_forces_MHE}) with a root mean square error of $10.6\pm13.6\text{~}N$. 
-For a more in-depth analysis of the real-time capabilities of \textit{bioptim}, see \cite{bailly2020real}.
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}). 
+For a more in-depth analysis of the real-time estimation capabilities of \textit{bioptim}, see \cite{bailly2020real}.
  
 
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
-\caption{Time histories of estimate joint angles (blue) and noisy reference joint angles (orange).} 
+\caption{Time series of \comment{estimated}{changer dans la légende: blue: estimation, orange: reference.} joint angles (blue) and noisy reference joint angles (orange).} 
 \label{fig:joint_angles_MHE} 
 \end{figure*} 
 
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
-\caption{Time histories of estimate muscle forces (blue) and reference muscle forces (orange) with significative action on motion (peaks force $>$ 15~N). 
-Muscles' abbreviations stand for (from left to right and top to bottom): Triceps Long head, Lateral and Medial, Brachial, Brachioradialis, Deltoid Anterior and Middle, Infraspinatus, Subscapularis, Biceps Brachial Long and Short head.} 
+\caption{Time series of \comment{estimated}{idem pour la legende} muscle forces (blue) and ground truth muscle forces (orange) \comment{with significative action on motion (peaks force $>$ 15~N)}{Only the muscles with XXX are represented ??? If so, should appear in the text as well}. 
+Muscle abbreviations stand for (from left to right and top to bottom): Triceps Long head, Lateral and Medial, Brachial, Brachioradialis, Deltoid Anterior and Middle, Infraspinatus, Subscapularis, Biceps Brachial Long and Short head.} 
 \label{fig:muscle_forces_MHE} 
 \end{figure*} 
 
