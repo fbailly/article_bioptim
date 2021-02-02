@@ -1,4 +1,4 @@
-In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of a 8-DoF model in a backward somersault and to illustrate \textit{bioptim}'s ability to \hl{XXX}.
+In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of a 8-DoF model in a backward somersault and to illustrate \textit{bioptim}'s ability to handle quaternionic representations of rotations.
 The model was composed of a 6-DoF root segment and two 1-DoF torque actuated shoulder joints.
 Two different numerical description of the root segment rotations were used (Euler angles and quaternions).
 The objective function was as follows:
@@ -11,19 +11,18 @@ The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds t
 
 
 The movement lasted for approximately 1 second and was discretized with 80 shooting nodes.
-The kinematics of the solutions are different for the two types of models (Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}) because of the differences in the geometry of the solution fields and the presence of local minima.
-However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
+The kinematics of the solutions are different for the two types of models (Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}) because of the presence of local minima.
+However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer together the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
 Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the Gimbal lock (leading to numerical instabilities).
-The use of a quaternion-based representation is tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
+The use of a quaternion-based representation tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
 Quaternion's integration must be handled with care~\cite{bailly2020optimal}, which was taken care of in \textit{bioptim}.
-
 
 \begin{figure*}[t!]
 \centering
 \includegraphics[width=\textwidth]{figures/Euler_Bioptim_MaxVrille_dos.png}\\
 \vspace*{0.5em}
 \includegraphics[width=\textwidth]{figures/Quat_Bioptim_MaxVrille_dos.png}
-\caption{Snapshots of a maximally twisting somersault driven by shoulder torque actuators and a free base expressed by Euler angles (top) or quaternions (bottom).}
+\caption{Snapshots of maximally twisting somersaults driven by shoulder torque actuators and a free base whose rotation is either expressed by Euler angles (top) or by quaternions (bottom).}
 \label{fig:snapshots_quaternion_base_twisting_somersault}
 \end{figure*}
 
