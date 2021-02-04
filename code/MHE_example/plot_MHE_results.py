@@ -54,7 +54,7 @@ for i in range(biorbd_model.nbQ()):
     plt.title(Q_name[i])
     if i == 0:
         plt.legend(
-            labels=["Estimate joint angle", "Reference joint angle"],
+            labels=["Estimation", "Reference"],
             bbox_to_anchor=(1.1, 1.25),
             loc="upper center", borderaxespad=0.0,
             ncol=2,
@@ -93,7 +93,7 @@ for i in range(len(muscles_names)):
     plt.plot(t_u, significant_fref[i, :-Ns_mhe], alpha=0.8)
     plt.title(muscles_names[i])
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))
-plt.legend(labels=["Estimate muscle force", "Reference muscle force"],
+plt.legend(labels=["Estimation", "Reference"],
            bbox_to_anchor=(1.05, 0.80),
            loc="upper left",
            frameon=False)
