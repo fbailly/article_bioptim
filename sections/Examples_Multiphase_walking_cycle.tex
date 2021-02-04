@@ -1,6 +1,6 @@
 This example is presented to introduce \textit{bioptim}'s ability to deal with a multiphase locomotion estimation problem with muscle actuation and contact forces.
 The goal was to estimate muscles activation by tracking markers trajectories and ground reaction forces and moments. 
-The model was a 3D leg with 12 DoFs (6 DoFs pelvis + \hl{XXX hip + XXX ... }right lower limb), driven by 17 muscle activations and residual joint torques to compensate for potential actuation weaknesses. 
+The model was a 3D leg with 12 DoFs (6 DoFs pelvis + 3 DoFs hip + 1 DoF knee + 2 DoFs ankle), driven by 17 muscle activations and residual joint torques to compensate for potential actuation weaknesses. 
 The gait cycle was defined from the first heel strike to the end of the swing phase discretized into shooting 90 intervals. 
 To follow the natural rolling of the foot, the stance was divided into three phases (heel, flatfoot and forefoot contacts) of fixed duration deduced from experimental force platform data and markers position ($0.05$, $0.36$ and $0.16$s).
 The swing phase lasted 0.38 s. 
@@ -32,14 +32,13 @@ In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to 
 
 Fig.~\ref{fig:snapshots_multiphase_walking_cycle} shows the leg motion during the walking cycle. 
 The root mean square tracking error on markers trajectories was 0.027 m (mean error on pelvic and foot markers was 0.0075 m and 0.0147 m, respectively). 
-Concerning ground reaction forces tracking, the root mean square error was 4.85 N with an average $R^2$ at 0.9.
-\hl{Il sort d'ou ce R2 ? Je suis parti du principe que tu avais fait une RMSE. Si ce n'est pas le cas, justifier pourquoi et detailler la methode.} 
-Gluteal muscles were only activated during the stance phase and especially during the early flatfoot phase for the gluteus maximus with a maximal activation of 0.2. 
-For the thigh muscles, the semimembranous, semitendinous and biceps femoris were activated during the early stance phase and terminal swing (maximal activation of 0.3, 0.4 and 0.4, respectively). 
-The knee extensors, vastus lateralis, medialis and intermedius followed the same pattern and were mainly activated during the flatfoot phase. 
-However, maximal activation of the rectus femoris appeared at early forefoot phase and early swing. 
-Leg muscles were highly activated (saturation of gastocnemius lateralis and medialis) at the end of the stance and the early swing phase. 
-\hl{Ce serait bien de mettre des plots des muscles principaux alignes avec le snapshot en dessous pour que l'on voit les timelines d'activations. Et peut etre un mot sur ces resultats au regard de la litterature...} 
+Concerning ground reaction forces tracking, the root mean square error was 4.85 N.
+Gluteal muscles were only activated during the stance phase. The Gluteus Maximus was mainly activated during the early flatfoot phase with a maximal activation of 0.2 allowing to prepare the stance phase. 
+For the thigh muscles, the semimembranous, semitendinous and biceps femoris were activated during the early stance phase and terminal swing (maximal activation of 0.3, 0.4 and 0.4, respectively) which is coherent with the activity patterns recorded from Winter (1991) [Winter DA (1991). The Biomechanics and Motor Control of Human Gait: Normal, Elderly and Pathological.].  
+The knee extensors, vastus lateralis, medialis and intermedius followed the same pattern and were mainly activated during the flatfoot phase (ie loading response). Chang et al. (2007) observed a significant pre-swing and initial swing activity for those muscles which was found a bit earlier in this simulatiom (terminal stance).
+However, while they observed highest activity of the rectus femoris at late swing and loading response (early flatfoot phase), the maximal activation appeared at  forefoot phase (terminal stance) and pre swing. [Chang et al (2007). https://doi.org/10.1016/j.jelekin.2006.02.003]["Five basic muscle activation patterns account for muscle activity during human locomotion" Ivanko et al. (2004)] 
+Leg muscles were highly activated (saturation of gastocnemius lateralis and medialis) at the terminal stance and early swing. The tibialis anterior is the sole muscle for dorsiflexion and the only antagonist of the triceps surae in this model which could explain its high activity at the same time. 
+
 \begin{figure*}[t!]
 \centering
 \includegraphics[width=\textwidth]{figures/multiphase_walking_cycle.png}\\
