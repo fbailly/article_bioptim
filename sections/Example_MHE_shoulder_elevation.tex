@@ -14,16 +14,18 @@ The first term of the objective function (Eq.~\ref{eq:ocp_exMHE}) corresponds to
 The shoulder elevation movement was generated with co-activation on two antagonists' muscles groups (triceps, biceps). It lasted for 8s and was discretized using 800 shooting nodes. A windows size of 7 nodes which allows the estimator to run around 50Hz, four times faster than standard biofeedback (13Hz), was chosen. Whereas reference data were generated at 100Hz, only one in two frames was sent to the estimator to correspond with experimental conditions.
  
 The estimator was able to forecast the movement kinematic (Fig.~\ref{fig:angulare_angle_MHE}) with a consistent dynamic (Fig.~\ref{fig:muscles_excitations_MHE}). Due to cocontraction, the estimated muscles activations are lower than reference motion activations but with similar pattern. 
+\begin{figure*}[t!] 
+\centering 
+\includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
+\caption{Time series of estimated joint angles (blue) and noisy reference joint angles (orange).} 
+\label{fig:joint_angles_MHE} 
+\end{figure*} 
 
-\begin{figure*}[t!]
-\centering
-\includegraphics[width=\textwidth]{figures/Articular_angle_MHE.png}\\
-\caption{Representation of estimate articlation angles (blue cross) and reference articulation angles (orange line).}
-\label{fig:angulare_angle_MHE}
-\end{figure*}
-\begin{figure*}[t!]
-\centering
-\includegraphics[width=\textwidth]{figures/Muscles_excitations_MHE.png}\\
-\caption{Representation of estimate muscles activations (blue) and co-contracted muscles activations (orange) with significative action on motion (activation $>$ 1e-3).}
-\label{fig:muscles_excitations_MHE}
-\end{figure*}
+\begin{figure*}[t!] 
+\centering 
+\includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
+\caption{Time series of estimated muscle forces (blue) and ground truth muscle forces (orange). 
+Only the muscles with significative action (peaks force $>$ 15~N) are represented.
+Muscle abbreviations stand for (from left to right and top to bottom): Triceps Long head, Lateral and Medial, Brachial, Brachioradialis, Deltoid Anterior and Middle, Infraspinatus, Subscapularis, Biceps Brachial Long and Short head.} 
+\label{fig:muscle_forces_MHE} 
+\end{figure*} 
