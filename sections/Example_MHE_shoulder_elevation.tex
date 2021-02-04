@@ -24,25 +24,24 @@ $}
 
 In this example, reference data of an $8~s$ series of 4 arm elevations were generated at 100~Hz, by computer simulation.
 Centered Gaussian noise was added to $q^*_{r}$, to work with experimental-like joints angle measurements.
-Its standard deviation was five percent of joint angles values \cite{REFestimationerror}.
+Its standard deviation was five percent of joint angles values.
 Using a windows size of 7 nodes, the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
-The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}). 
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented). 
 For a more in-depth analysis of the real-time estimation capabilities of \textit{bioptim}, see \cite{bailly2020real}.
  
-
+ 
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
-\caption{Time series of \comment{estimated}{changer dans la légende: blue: estimation, orange: reference.} joint angles (blue) and noisy reference joint angles (orange).} 
+\caption{Time series of estimated joint angles (blue) and noisy reference joint angles (orange).} 
 \label{fig:joint_angles_MHE} 
 \end{figure*} 
 
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
-\caption{Time series of \comment{estimated}{idem pour la legende} muscle forces (blue) and ground truth muscle forces (orange) \comment{with significative action on motion (peaks force $>$ 15~N)}{Only the muscles with XXX are represented ??? If so, should appear in the text as well}. 
+\caption{Time series of estimated muscle forces (blue) and ground truth muscle forces (orange). 
+Only the muscles with significative action (peaks force $>$ 15~N) are represented.
 Muscle abbreviations stand for (from left to right and top to bottom): Triceps Long head, Lateral and Medial, Brachial, Brachioradialis, Deltoid Anterior and Middle, Infraspinatus, Subscapularis, Biceps Brachial Long and Short head.} 
 \label{fig:muscle_forces_MHE} 
 \end{figure*} 
-
-
