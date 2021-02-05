@@ -27,8 +27,8 @@ from bioptim import (
     Node,
     ConstraintList,
     ConstraintFcn,
-    StateTransitionList,
-    StateTransitionFcn,
+    PhaseTransitionList,
+    PhaseTransitionFcn,
     Solver,
 )
 
@@ -181,9 +181,52 @@ def track_sum_contact_moments(pn: PenaltyNodes, CoP: np.ndarray, M_ref: np.ndarr
     return val
 
 
-def prepare_ocp(
-    biorbd_model, final_time, nb_shooting, markers_ref, grf_ref, q_ref, qdot_ref, M_ref, CoP, nb_threads,
-):
+def prepare_ocp(biorbd_model: tuple,
+                final_time: list,
+                nb_shooting: list,
+                markers_ref: list,
+                grf_ref: list,
+                q_ref: list,
+                qdot_ref: list,
+                M_ref: list,
+                CoP: list,
+                nb_threads:int
+               ) -> OptimalControlProgram:
+    """
+    Prepare the ocp
+    
+    Parameters
+    ----------
+    biorbd_model: tuple
+        Tuple of bioMod (1 bioMod for each phase)
+    final_time: list
+        List of the time at the final node.
+        The length of the list corresponds to the phase number 
+    nb_shooting: list
+        List of the number of shooting points
+    markers_ref: list
+        List of the array of markers trajectories to track 
+    grf_ref: list
+        List of the array of ground reaction forces to track 
+    q_ref: list
+        List of the array of joint trajectories.
+        Those trajectories were computed using Kalman filter
+        They are used as initial guess 
+    qdot_ref: list
+        List of the array of joint velocities.
+        Those velocities were computed using Kalman filter
+        They are used as initial guess 
+    M_ref: list
+        List of the array of ground reaction moments to track
+    CoP: list
+        List of the array of the measured center of pressure trajectory
+    nb_threads:int
+        The number of threads used
+        
+    Returns
+    -------
+    The OptimalControlProgram ready to be solved
+    """
 
     # Problem parameters
     nb_phases = len(biorbd_model)
@@ -200,7 +243,7 @@ def prepare_ocp(
     markers_pelvis = [0,1,2,3]
     markers_anat = [4,9,10,11,12,17,18]
     markers_tissus = [5,6,7,8,13,14,15,16]
-    markers_pied = [19,20,21,22,23,24,25]
+    markers_foot = [19,20,21,22,23,24,25]
     objective_functions = ObjectiveList()
     for p in range(nb_phases):
         objective_functions.add(ObjectiveFcn.Lagrange.TRACK_STATE, weight=1, index=range(nb_q), target=q_ref[p], phase=p, quadratic=True)
@@ -208,7 +251,7 @@ def prepare_ocp(
                                 phase=p, quadratic=True)
         objective_functions.add(ObjectiveFcn.Lagrange.TRACK_MARKERS, weight=100000, index=markers_pelvis, target=markers_ref[p][:, markers_pelvis, :],
                                 phase=p, quadratic=True)
-        objective_functions.add(ObjectiveFcn.Lagrange.TRACK_MARKERS, weight=100000, index=markers_pied, target=markers_ref[p][:, markers_pied, :],
+        objective_functions.add(ObjectiveFcn.Lagrange.TRACK_MARKERS, weight=100000, index=markers_foot, target=markers_ref[p][:, markers_foot, :],
                                 phase=p, quadratic=True)
         objective_functions.add(ObjectiveFcn.Lagrange.TRACK_MARKERS, weight=100, index=markers_tissus, target=markers_ref[p][:, markers_tissus, :],
                                 phase=p, quadratic=True)
@@ -324,10 +367,10 @@ def prepare_ocp(
         phase=2,
     )
 
-    # State Transitions
-    state_transitions = StateTransitionList()
-    state_transitions.add(StateTransitionFcn.IMPACT, phase_pre_idx=0)
-    state_transitions.add(StateTransitionFcn.IMPACT, phase_pre_idx=1)
+    # Phase Transitions
+    phase_transitions = PhaseTransitionList()
+    phase_transitions.add(PhaseTransitionFcn.IMPACT, phase_pre_idx=0)
+    phase_transitions.add(PhaseTransitionFcn.IMPACT, phase_pre_idx=1)
 
     # Path constraint
     x_bounds = BoundsList()
@@ -366,7 +409,7 @@ def prepare_ocp(
         u_bounds,
         objective_functions,
         constraints,
-        state_transitions=state_transitions,
+        phase_transitions=phase_transitions,
         nb_threads=nb_threads,
     )
 
