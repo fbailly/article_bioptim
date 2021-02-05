@@ -69,15 +69,26 @@ def get_last_contact_force_null(pn: PenaltyNodes, contact_name: str) -> MX:
     return val
 
 # --- track grf ---
-def track_sum_contact_forces(ocp, nlp, t, x, u, p, grf):
+def track_sum_contact_forces(pn: PenaltyNodes, grf: np.ndarray) -> MX:
     """
     Adds the objective that the mismatch between the
     sum of the contact forces and the reference ground reaction forces should be minimized.
+    
+    Parameters
+    ----------
+    pn: PenaltyNodes
+        The penalty node elements
+    grf: np.ndarray
+        Array of the measured ground reaction forces 
+        
+    Returns
+    -------
+    The cost that should be minimize in the MX format. 
     """
 
-    ns = nlp.ns  # number of shooting points for the phase
+    ns = pn.nlp.ns  # number of shooting points for the phase
     val = []     # init
-    cn = nlp.model.contactNames() # contact name for the model
+    cn = pn.nlp.model.contactNames() # contact name for the model
 
     # --- compute forces ---
     forces={} # define dictionnary with all the contact point possible
@@ -92,15 +103,15 @@ def track_sum_contact_forces(ocp, nlp, t, x, u, p, grf):
         for f in forces:
             forces[f].append(0.0) # init: put 0 if the contact point is not activated
 
-        force = nlp.contact_forces_func(x[n], u[n], p) # compute force
+        force = pn.nlp.contact_forces_func(pn.x[n], pn.u[n], pn.p) # compute force
         for i, c in enumerate(cn):
             if c.to_string() in forces: # check if contact point is activated
                 forces[c.to_string()][n] = force[i]  # put corresponding forces in dictionnary
 
         # --- tracking forces ---
-        val = vertcat(val, grf[0, t[n]] - (forces["Heel_r_X"][n] + forces["Meta_1_r_X"][n] + forces["Meta_5_r_X"][n] + forces["Toe_r_X"][n]))
-        val = vertcat(val, grf[1, t[n]] - (forces["Heel_r_Y"][n] + forces["Meta_1_r_Y"][n] + forces["Meta_5_r_Y"][n] + forces["Toe_r_Y"][n]))
-        val = vertcat(val, grf[2, t[n]] - (forces["Heel_r_Z"][n] + forces["Meta_1_r_Z"][n] + forces["Meta_5_r_Z"][n] + forces["Toe_r_Z"][n]))
+        val = vertcat(val, grf[0, pn.t[n]] - (forces["Heel_r_X"][n] + forces["Meta_1_r_X"][n] + forces["Meta_5_r_X"][n] + forces["Toe_r_X"][n]))
+        val = vertcat(val, grf[1, pn.t[n]] - (forces["Heel_r_Y"][n] + forces["Meta_1_r_Y"][n] + forces["Meta_5_r_Y"][n] + forces["Toe_r_Y"][n]))
+        val = vertcat(val, grf[2, pn.t[n]] - (forces["Heel_r_Z"][n] + forces["Meta_1_r_Z"][n] + forces["Meta_5_r_Z"][n] + forces["Toe_r_Z"][n]))
     return val
 
 
