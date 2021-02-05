@@ -7,6 +7,7 @@ mesh points.
 """
 
 import biorbd
+import numpy as np
 from bioptim import (
     OptimalControlProgram,
     ObjectiveList,
@@ -29,6 +30,7 @@ def prepare_ocp(
     n_shooting: int,
     use_sx: bool,
     use_exc: bool,
+    weights: np.array(4),
     ode_solver: OdeSolver = OdeSolver.RK4,
 ) -> OptimalControlProgram:
     """
@@ -57,11 +59,11 @@ def prepare_ocp(
 
     # Add objective functions
     objective_functions = ObjectiveList()
-    objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_TORQUE, weight=0.1)
-    objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_STATE)
-    objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_MUSCLES_CONTROL)
+    objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_TORQUE, weight=weights[0])
+    objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_STATE, weight=weights[1])
+    objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_MUSCLES_CONTROL, weight=weights[2])
     objective_functions.add(
-        ObjectiveFcn.Mayer.SUPERIMPOSE_MARKERS, first_marker_idx=0, second_marker_idx=1, weight=1000000)
+        ObjectiveFcn.Mayer.SUPERIMPOSE_MARKERS, first_marker_idx=0, second_marker_idx=1, weight=weights[3])
 
     # Dynamics
     dynamics = DynamicsList()
@@ -74,16 +76,18 @@ def prepare_ocp(
     x_bounds = BoundsList()
     x_bounds.add(bounds=QAndQDotBounds(biorbd_model))
 
-    # Force initial position
-    x_bounds[0][0:4, 0] = (1.24, 1.55, 0, 0)
-
     # Add muscle to the bounds
     if use_exc:
-        activation_min, activation_max, activation_init = 0, 1, 0.5
+        activation_min, activation_max, activation_init = 0, 1, 0
         x_bounds[0].concatenate(
             Bounds([activation_min] * biorbd_model.nbMuscles(), [activation_max] * biorbd_model.nbMuscles())
         )
 
+    # Force initial position
+    if use_sx:
+        x_bounds[0][:, 0] = [1.24, 1.55, 0, 0] + [0]*biorbd_model.nbMuscles()
+    else:
+        x_bounds[0][:, 0] = [1.0, 1.3, 0, 0] + [0] * biorbd_model.nbMuscles()
     # Initial guess
     x_init = InitialGuessList()
     if use_exc:
@@ -125,10 +129,14 @@ if __name__ == "__main__":
     """
     Prepare and solve and animate a reaching task ocp
     """
-    use_IPOPT = False
-    use_exc = False
+    use_IPOPT = True
+    use_exc = True
+    if use_IPOPT:
+        weights = np.array([100, 1, 1, 100000])
+    else:
+        weights = np.array([1000, 1, 1, 1000000])
     ocp = prepare_ocp(biorbd_model_path="arm26.bioMod", final_time=2, n_shooting=50,
-                      use_exc=use_exc, use_sx=not use_IPOPT)
+                      use_exc=use_exc, use_sx=not use_IPOPT, weights=weights)
 
     # --- Solve the program --- #
     if use_IPOPT:
