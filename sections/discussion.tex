@@ -1,74 +1,76 @@
-The objective of \textit{Bioptim} is to solve a variety of biomechanical OCPs with minimal programming with high performance in terms of computational time and cost value. 
-The main observation of the summary Table X of the six examples are: 
-i) the ability to use torque-drive to excitation-driven models (and their combination) and dynamics with/without contact 
-ii) a combination of cost functions and constraints 
-iii) solve advanced OCPs in a few seconds or minutes, that were previously known to take hours. 
-iv) easily switch from one NLP solver to another.
+The purpose of \textit{bioptim} is to solve a variety of biomechanical OCPs with both minimal user effort and high performances in terms of computational time. 
+The main features illustrated by the six provided examples are (Tab.~X): 
+\begin{itemize}
+\item the possibility to use torque-, activation- or excitation-driven models (and their combinations)
+\item a variety of ready-to-use cost functions, constraints and dynamics (with and without contacts)...
+\item ... easily customizable in Python when required by the user;
+\item the possibility to solve advanced OCPs (possibly multi-phased) in a few seconds or minutes, that were previously taking hours;
+\item the interface with two different NLP solvers
+\end{itemize}
+In the following, several aspects of \textit{bioptim} are discussed.
 
 
-Through various examples, we highlighted key features of bioptim including 
+\subsection{Direct multiple shooting-based}
 
+While the debate remains about the performances of direct collocations versus DMS \cite{diehl2006fast}\hl{[donner d'autres favorables a DC]}, the development of \textit{bioptim} was oriented toward DMS, because: \textit{i)} it allows to select effortlessly an arbitrary accuracy for the integration (e.g., order and numbers of RK steps); \textit{ii)} it allows to use DMS-based fast NLP solvers such as \acados.
+Concerning the integration, either internally or via \acados, several schemes are implemented in \textit{bioptim} (RK4, RK8, IRK).
+While IRK showed better convergence in our experience with hard problems in \acados, in most of the cases, RK4 showed to be a good speed/robustness trade-off. 
+In contrast to what is claimed in [\addref], DMS is not a limitation to the performances (cost value and time to convergence), since, in our experience, the performances of \textit{bioptim} often outperform state-of-the-art results.
 
-\subsection{Utiliser des solveurs spécifiques et open source à DMS (Acados)}
+\subsection{Automatic differentiation}
 
-Bioptim takes advantage of several open source libraries to achieve a robust and/or fast convergence, especially CasADi combined with NLP solver, namely ipopt or Acados, respectively. 
-Whereas the choice of ipopt or Acados requires limited effort for the user, basic knowledge of both NLP solvers may help to determine appropriate weightings and best options. 
-By comparison to previous studies, OCPs were solved much faster  (e.g. XXXX s in [Colombe] vs XX s here; )
+One of the reasons explaining the performances of \bioptim is the rewriting of the core software, \textit{RBDL} and \textit{biorbd} implementing the dynamics, into \textit{casadi} symbolics to automatically provide the exact Jacobians and Hessians of the resulting NLP.  
+This feature is somewhat more computationally expensive than finite differences, but the gain in accuracy for the calculation of derivatives often leads to shorter convergence times (due to much less iterations) and to optimal solutions reached with lower tolerances.
+This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because talking about \ipopt for instance, an optimal solution obtained with a convergence criterion of $1e-2$ is very unlikely to be dynamically consistent; 
+it would diverge when forward integrating the controls in a single-shooting manner. 
+By experience, a lower tolerance ($1e-6$. $1e-8$) only reachable with exact derivatives could lead to better forward dynamics results.
 
+\subsection{Python based but fast!}
 
+\bioptim was thought as an interface, and was therefore written in Python to allow the user to easily combine existing cost functions or constraints and self-implemented ones, to switch from one solver to another, etc. 
+We believe this feature to be of importance given that the biomechanics community is known to be mainly made of software users rather than developers.
+Therefore, providing a custom interface in Python rather than in C++ [MOCO], was a driving objective of our work to facilitate a rapid appropriation by the community.
+Since flexibility and ease-of-use should not compromise the performances, all the inside computations are expressed as C++ CasAdi graphs, interfaced with C++ NLP solvers.
+These graphs can either be built in \texttt{casadi.MX()} or \texttt{casadi.SX()} which requires more RAM for building the problem but is faster to solve.
+While both may be used with \ipopt, \acados is only compatible with \texttt{casadi.SX()}.\\
+Based on the \bioviz Python library, \bioptim proposes a series of online-generated figures, inspired by the  real-time graphics from \muscodii \hl{[ref]}, to analyze the iterations of the solvers.
+This is made with minimal computational cost thanks to a \hl{XXX} protocole. 
+Our implementation leverages the \textit{Python pickle} library for easily saving and loading OCPs for, e.g., post-processing analysis.
 
+\subsection{Fast vs robust NLP solvers}
 
-\subsection{Différenciation algorithmique (ADOL-C dans Moco pour les collocations) … MX vs SX}
-
-
-
-\subsection{DMS (privilégié dans biorbdoptim) vs direct collocation (\href{https://link.springer.com/chapter/10.1007/978-3-540-36119-0_4}{link})}
-
-
-While the debate remains about the performance of direct collocations versus DMS, the development of bioptim was mainly oriented toward DMS, especially for the parallel computing. 
-Nevertheless, existing collocations (Legendre) \comment{available in CasADi}{Ça été implémenté à la main, ce qui permet de l'utiliser avec Paramètres, forces externes et autres, ça n'est donc plus via CasADi} can be used and Acados proposes both explicit and implicit Runge-Kutta, the latter being a collocation approach. 
-While implicit RK showed better convergence according to our own experience with Acados, explicit RK4 shows faster convergence in most of our implemented examples (those of the present paper and those available with \comment{biorbdoptim}{bioptim?} to present most of the features). 
-In contrast to several papers [\addref], DMS was not a limitation to the performance (cost value and time to convergence) in our OCPs and is used in the most advanced real-time XXXX (Acados)
-
- 
-
-\subsection{“Python based but fast” … biomécanique communauté d’utilisateurs}
-
-Since bioptim is written 100% in Python to define the OCP,  the user can easily combine existing cost functions or constraints (xx in-built functions; see Table X) and implement new ones, switch from one to another to relax the problem for example. The C++ MSK library (biordb) which is CasAdi compatible allows us to build the kinematics, dynamics, XXXX function in either MX () or SX graphs. Acados requires SX graphs which need more memory but are faster (see Table X) whereas both options are possible when using ipopt. 
-
-Its performance is not affected by our Python architecture since the components of the OCP (i.e. continuity constraints which rely on the forward and muscle activation dynamics, paths constraints, Mayer and Lagrange costs) are all expressed as CasAdi trees for algorithmic differentiation and evaluation in C++ by the CasADi virtual machine.  
-
-Inspired by the  real-time graphics from MUSCOD-II, biordbdoptim proposes a series of figures to analyze the solution at each iteration with  minimal computational cost thanks to a XXX protocole. 
-Other save and load options are valuable for post-processing analysis.
-
-\subsection{Custom en python et pas en C++}
-
-\subsection{Fast resolution = multistart}
-Fast solvers offer the opportunity to use multistart on complex problems in order to circumvent the obstacle of local minima \cite{huchez2015local, bailly2020optimal} or to get meaningful initial solutions from simpler problems, for guiding the resolution of the sought problem.
-
+Fast solvers, such as \acados, offer the opportunity to use multi-start approaches on complex problems in order to circumvent the obstacle of local minima \cite{huchez2015local, bailly2020optimal} or to get meaningful initial solutions from simpler problems, for guiding the resolution of the harder problems.
+On the other hand, robust solvers, such as \ipopt, are convenient when the user lacks information about the sought solutions and thus cannot guide the solver through a good initial guess.
+For biomechanics applications, the complementary characteristics of the interfaced solvers is a really useful tool.
 
 \subsection{Multiphase}
 
+Biomechanics studies often face changing dynamics or objective functions due to the loss or gain of contacts or time-varying biomechanical tasks.
+When tracking such a motion or trying to predict it, these changes translate into multi-phase OCP.
+This is currently one of the drawbacks of \moco, which does not provide this feature.
+\bioptim, however, is able to handle multi-phase OCPs, although they can currently only be solved with ipopt (see Ex. \hl{XXX} and \hl{XXX}).
+
+
 \subsection{Cost vs constraints … relâcher le problème simplement}
+
+\hl{???}
+
+For a more in-depth analysis of the real-time estimation capabilities of \bioptim, see \cite{bailly2020real}.
 
 \subsection{Limitations}
 
-Bioptim is already a mature solution for solving OCP in biomechanics, however some limitations should be raised. 
-First, it is based on the musculoskeletal package developed \comment{in our laboratory}{La mention ``our'' sonne bizarre pour moi... simplement mentionner biorbd et que c'est moins mature que OpenSim?}, namely, biorbd. 
-While the strength of biorbd is to be fast, XXX, and CasADi-friendly for the algorithmic differentiation of most of the kinematic and dynamic functions [\addref], it is not as advanced as OpenSim or Anybody in terms of biomechanical features. 
-The few examples (section X) highlighted simple to advanced models.
-Currently, biorbd does not include a model builder with a GUI. 
-Some Opensim models can be translated to biorbd’s models using Python’s functions [LINK] but our MSK library does not support multiple wrapping objects, non-orthogonal DoFs between two bodies, compliant contact force models (e.g. [SmoothSphereHalfSpaceForce [52]]) or muscle-tendon equilibrium yet. 
-As seen in Mocco and other MSK models for OCPs, wrapping objects are rare due to computational cost and required optimization when a line of action is in contact with more than one object. 
+\bioptim is already a mature solution for solving biomechanical OCP. 
+However some limitations should be raised. 
+First, it is based on  \biorbd which is not as advanced as \opensim or \anybody in terms of biomechanical features and audience.
+Nevertheless,  \biorbd is actively maintained, fast and \casadi-compatible for automatic differentiation.
+The variety of proposed examples highlighted simple to advanced models.
+Even if defining a new model was made straightforward thanks to the \texttt{.bioMod} file format, \textit{biorbd} does not include a GUI for building models. 
+Some Opensim models can be translated into \texttt{.bioMod} \hl{[LINK]} but our library does not yet support multiple wrapping objects, non-orthogonal DoFs between bodies, compliant contact force models (e.g. [SmoothSphereHalfSpaceForce [52]]) or muscle-tendon equilibrium. 
+As seen in \textit{Moco}, wrapping objects are rare due to computational cost and required optimization when a line of action is in contact with more than one object, which compromises automatic differentiation. 
 Via points [\addref] and pre-processed moment arms (to be expressed as polynomial functions of crossed DoFs) are often preferred. 
-In example X, the model differences (Opensim vs Biorbd), especially at the knee may explain the XXXX. 
-Muscle-tendon equilibrium and model builder are already planned and the former will either required an additional optimisation procedure to achieve the equilibrium as in CEINMS [\addref] or adding the length of muscle part with explicit constraints of XXXX in the OCP like in [\addref]. 
-Algorithms available in RBDL (core of biorbd for XXX) for ellipsoid foot model XXXXX (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6693511/).  
+\hl{In example X, the model differences (Opensim vs Biorbd), especially at the knee may explain the XXXX.} 
 
-A second limitation, which is to be adressed, is the fact that bioptim does not support multithreading in all conditions, e.g.: multiphase or multi-trial OCPs, Acados (despite its nfold faster convergence compared to Ipopt in multithread). 
-\comment{Based on our experience about multithreading based on the architecture of bioptim}{Je ne suis pas sûr de comprendre la phrase} (only the integration of the different shooting intervals are parallelized), the best advantage was found when the Hessian is calculated by algorithmic differentiation. 
-Being the most costly part of the OCP, multithreading gives nearly linear reduction of the convergence time up to X threads. 
-Such a gain is not found when the Hessian is updated using the BFGS quasi-Newton algorithm (i.e. the ‘limited-memory’ option in ipopt).  
+%Algorithms available in RBDL (core of biorbd for XXX) for ellipsoid foot model XXXXX (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6693511/).    
 
 \subsection{Future directions}
 Realtime estimation using MHE
@@ -76,6 +78,8 @@ Realtime estimation using MHE
 MOOCP .. using front pareto
 
 Prediction of adaptations due to muscular fatigue using NMPC
+
+Muscle-tendon equilibrium and model builder are already planned and the former will either required an additional optimisation procedure to achieve the equilibrium as in CEINMS [\addref] or adding the length of muscle part with explicit constraints of XXXX in the OCP like in [\addref]. 
 
 In line with the current studies of our research group, the future developments will first include \comment{nonlinear}{uniformiser l'écriture de ce mot} model predictive control and MHE (see example X) to predict optimal performances in repetitive tasks that generate muscular fatigue and real time estimation of joint torques and muscle forces, respectively. 
 As shown in our previous studies [\addref] the analysis of a series near-optimal solutions is relevant in sport (but also in rehabilitation and ergonomics) and further efforts about multiobjective OCP of human performances are anticipated. 
