@@ -4,17 +4,13 @@ gravity 0 -9.81 0
 // SEGMENT DEFINITION
 
 segment base
-    meshfile vtp/ground_ribs.vtp
+    //meshfile vtp/ground_ribs.vtp
 endsegment
 
     // Markers
     marker    target
         parent    base
-        position    0.15 0.15 0.17
-    endmarker
-    marker    r_acromion
-        parent    base
-        position    -0.01256 0.04 0.17
+        position    -0.15 0.08 0.12
     endmarker
 
 
@@ -38,7 +34,7 @@ segment r_humerus_rotation1
         0.05894291073968768    0.0    0.9982613551938856    0.0
         0.0    0.0    0.0    1.0
     rotations z
-    rangesQ	-1 pi
+    rangesQ	-2*pi 2*pi
 endsegment
 
 
@@ -75,16 +71,6 @@ segment r_humerus
     meshfile vtp/arm_r_humerus.vtp
 endsegment
 
-    // Markers
-    marker    r_humerus_epicondyle
-        parent    r_humerus
-        position    0.0050000000000000001 -0.29039999999999999 0.029999999999999999
-    endmarker
-    marker    COM_arm
-        parent    r_humerus
-        position    0 -0.18049599999999999 0
-    endmarker
-
 
 segment r_ulna_radius_hand_translation
     parent r_humerus
@@ -106,7 +92,7 @@ segment r_ulna_radius_hand_rotation1
         -0.06148106796684942    3.469446951953614e-18    0.9981082497813831    0.0
         0.0    0.0    0.0    1.0
     rotations z
-    rangesQ	0 pi
+    rangesQ	-0.1 pi
 endsegment
 
 
@@ -144,13 +130,9 @@ segment r_ulna_radius_hand
 endsegment
 
     // Markers
-    marker    r_radius_styloid
-        parent    r_ulna_radius_hand
-        position    -0.0011000000000000001 -0.23558999999999999 0.094299999999999995
-    endmarker
     marker    COM_hand
         parent    r_ulna_radius_hand
-        position    0 -0.181479 0
+        position    0 -0.22 0
     endmarker
 
 
