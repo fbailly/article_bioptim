@@ -29,8 +29,7 @@ $}
 \noindent where $\omega_1$=1e5, $\omega_2$=0.1, $\omega_3$=0.1, $\omega_4$=10 are  weighting factors and $T$ is the the duration of the current phase.\\
 
 Non-slipping ($\mathtt{NON\_SLIPPING}$) and unilateral contact force ($\mathtt{CONTACT\_FORCE}$) constraints were added to prevent the foot from slipping and pulling from the ground. 
-In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to represent the gain or loss of contact(s) in the dynamics (e.g., swing phase to heel strike [Felis (2016)]) \\
-% ~\cite{felis_2016_contact}[Felis (2016). Synthesis of Full-Body 3-D Human Gait using Optimal Control Methods. doi:10.1109/ICRA.2016.7487294]
+In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to represent the gain or loss of contact(s) in the dynamics (e.g., swing phase to heel strike ~\cite{felis_synthesis_2016}) \\
 
 Tracking experimental data allowed to reproduce leg motion during the walking cycle (Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
 The root mean square tracking error on markers trajectories was $27$ mm (mean error on pelvic and foot markers was $7.5$ mm and $14.7$ mm, respectively). 
@@ -38,8 +37,7 @@ Concerning ground reaction forces tracking, the root mean square error was $4.85
 Gluteal muscles were mainly activated during the stance and with a significant activity during the swing phase (Fig.~\ref{fig:muscles_activation_gait} for all activations). 
 The Gluteus Maximus was mainly activated during the early flatfoot phase with a maximal activation of $0.2$ allowing to prepare the stance phase. 
 For the thigh muscles, the semimembranous, semitendinous and biceps femoris were activated during the early stance phase and terminal swing (maximal activation of $0.3$, $0.4$ and $0.4$, respectively). 
-Those results were similar to the characteristic average activity patterns of the lower limb muscles during locomotion described by Winter (1991). 
-% ~\cite{winter_1991} [Winter DA (1991). The Biomechanics and Motor Control of Human Gait: Normal, Elderly and Pathological.]
+Those results were similar to the characteristic average activity patterns of the lower limb muscles during locomotion described by Winter (1991) ~\cite{winter_biomechanics_1991}. 
 The knee extensors, vastus lateralis, medialis and intermedius followed the same pattern and were mainly activated during the flatfoot phase (ie loading response).
 However, the highest activity of the rectus femoris appeared at forefoot phase (terminal stance) and pre swing.
 Leg muscles were highly activated (saturation of gastocnemius lateralis and medialis) at the terminal stance and early swing. The tibialis anterior is the sole muscle for dorsiflexion and the only antagonist of the triceps surae in this model which could explain its high activity at the same time. 
