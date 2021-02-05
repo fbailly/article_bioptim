@@ -65,10 +65,11 @@
 \newcommand{\mymultirow}[2]{\parbox[t]{2mm}{\multirow{#1}{*}{\rotatebox[origin=c]{90}{#2}}}}
 %%% Document
 \title{\LARGE \bf Bioptim, a Python interface for Musculoskeletal Optimal Control in Biomechanics}
-\author{author$\#1$\textsuperscript{a,*}, author$\#2$\textsuperscript{a}, author$\#3$\textsuperscript{b}  and  author$\#4$\textsuperscript{a}% <-this % stops a space
+\author{Benjamin Michaud\textsuperscript{a,*,$\dagger$}, François Bailly\textsuperscript{a,$\dagger$}, Amedeo Ceglia\textsuperscript{a}, Eve Charbonneau\textsuperscript{a}, Léa Sanchez\textsuperscript{a}  and  Mickael Begon\textsuperscript{a}% <-this % stops a space
+
+\thanks{\textsuperscript{$\dagger$}\,These authors have contributed equally to this work and share first authorship.}
 \thanks{\textsuperscript{a}\,Laboratoire de Simulation et Modélisation du Mouvement, Faculté de Médecine, Université de Montréal, Laval, QC, Canada}%
-\thanks{\textsuperscript{b}\,other, elsewhere}%
-\thanks{\textsuperscript{*}\,author$\#1$@umontreal.ca}
+\thanks{\textsuperscript{*}\,BENJAM@umontreal.ca}
 }
 
 %%% User commands
@@ -106,6 +107,17 @@ skipabove=0ex]%
 \newcommand{\control}{\mathbf{u}}
 \newcommand{\param}{\mathbf{p}}
 \newcommand{\bioptim}{\textit{Bioptim}\xspace}
+\newcommand{\casadi}{\textit{Casadi}\xspace}
+\newcommand{\biorbd}{\textit{Biorbd}\xspace}
+\newcommand{\acados}{\textit{Acados}\xspace}
+\newcommand{\ipopt}{\textit{Ipopt}\xspace}
+\newcommand{\bioviz}{\textit{Bioviz}\xspace}
+\newcommand{\moco}{\textit{Moco}\xspace}
+\newcommand{\opensim}{\textit{Opensim}\xspace}
+\newcommand{\acado}{\textit{Acado}\xspace}
+\newcommand{\gpopsii}{\textit{Gpops-II}\xspace}
+\newcommand{\muscodii}{\textit{Muscod-II}\xspace}
+\newcommand{\anybody}{\textit{Anybody}\xspace}
 
 
 % Revision tools 
@@ -137,11 +149,7 @@ skipabove=0ex]%
 
 \section*{Acknowledgment}
 This study and the biorbd library development was partly funded by scholarships of the  Vanier program (BM) and the TransMedTech Institute XXX Apogée Canada (FB) and MB NSERC Discovey Programme (XXXX). 
-Bioptim acts as a catalyst in our group and several students contribute to this library; thank you to \comment{Amedeo}{Probablement à retirer d'ici s'il est dans les auteurs}, Ariane, André, \comment{Kilperic}{Paul, Théophile}. 
-
-
-
-
+Bioptim acts as a catalyst in our group and several students contribute to this library; thank you to Paul, Théophile, Ariane, André, Kilperic. 
 
 \bibliographystyle{IEEEtran}
 \bibliography{biblio}
