@@ -1,34 +1,31 @@
 This example is presented to introduce \textit{bioptim}'s ability to provide real-time estimation of biomechanical variables.
 The goal was to perform a real-time estimation of dynamically consistent joint kinematics and muscle forces, using a moving horizon estimation (MHE). 
-In this example, a shoulder elevation motion was performed with a 4-DoFs arm actuated by 19 Hill-type muscle elements.
-The control inputs of the model were the muscle activations.
+A shoulder elevation motion was performed with a 4-DoFs ($q$) arm actuated by 19 Hill-type muscle elements.
+The control inputs of the model were the muscle activations ($a$).
 The MHE implementation consists in splitting the OCP into a succession of smaller one for processing fixed-size subsets of the tracking data moving forward in time. 
 Each time one subproblem is solved, a new measurement is acquired, the oldest one is discarded and a new subproblem is defined. 
 Due to their similarities, the solution of the previous OCP is a good initial guess to the new one. 
 The dynamical consistency of the final solution is enforced by continuity constraints on the initial state. 
-Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: the first one corresponded to the tracking of reference joint angles, the second and third ones corresponded to states and muscle activations regularization (i.e., least-square criteria): 
+Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($q^*$), states and muscle activations regularizations (i.e., least-square criteria): 
 
 \[ 
 \resizebox{0.9\columnwidth}{!}{$ 
 \begin{aligned}
-\mathcal{J} = &\int_t^{t+t_{mhe}}\underbrace{\omega_1´(\|q_{e} - q^*_{r}\|^{2})}_{\mathtt{TRACK\_STATE}}~ 
-+ ~ \underbrace{\omega_2\|q_{e}\|^2}_{\mathtt{MIN\_STATE}} 
-+ ~ \underbrace{\omega_3\|u\|^2}_{\mathtt{MIN\_ACTIVATION}}~dt, 
+\mathcal{J} = &\int_t^{t+t_{mhe}}\underbrace{\omega_1´(\|q - q^*\|^{2})}_{\mathtt{TRACK\_STATE}}~ 
++ ~ \underbrace{\omega_2\|q\|^2}_{\mathtt{MIN\_STATE}} 
++ ~ \underbrace{\omega_3\|a\|^2}_{\mathtt{MIN\_ACTIVATION}}~dt, 
 \end{aligned}  
 $}  
 \addtag  
 \label{eq:ocp_exMHE}  
 \]  
 
-\noindent where $\omega_1 =1e5$, $\omega_2 = 100$, $\omega_3 = 1e4$ and $t_{mhe}$ is duration of each sub-problem. $q_{e}$, $q^*_{r}$  and $u$ are respectively the reference and estimated joint angles, and muscles activations. 
+\noindent where $\omega_1 =1e5$, $\omega_2 = 100$, $\omega_3 = 1e4$ and $t_{mhe}$ is duration of each sub-problem. 
 
-In this example, reference data of an $8~s$ series of 4 arm elevations were generated at 100~Hz, by computer simulation.
-Centered Gaussian noise was added to $q^*_{r}$, to work with experimental-like joints angle measurements.
-Its standard deviation was five percent of joint angles values.
+In this example, reference data of an $8~s$ series of four arm elevations were generated at 100~Hz, by computer simulation.
+Centered Gaussian noise (mean = 0, std = $0.005q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
 Using a windows size of 7 nodes, the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
-The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented). 
-For a more in-depth analysis of the real-time estimation capabilities of \textit{bioptim}, see \cite{bailly2020real}.
- 
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented).  
  
 \begin{figure*}[t!] 
 \centering 
