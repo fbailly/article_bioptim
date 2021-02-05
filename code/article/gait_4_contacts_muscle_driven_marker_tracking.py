@@ -1,3 +1,10 @@
+"""
+This is an example on gait biomechanics.
+Experimental data (markers trajectories, ground reaction forces and moments) are tracked.
+
+
+"""
+
 import numpy as np
 from casadi import dot, Function, vertcat, MX, mtimes, nlpsol, mmax
 import biorbd
@@ -26,19 +33,30 @@ from bioptim import (
 )
 
 # --- force nul at last point ---
-def get_last_contact_force_null(ocp, nlp, t, x, u, p, contact_name):
+def get_last_contact_force_null(pn: PenaltyNodes, contact_name: str) -> MX:
     """
-    Adds the constraint that the force at the specific contact point should be nul
+    Adds the constraint that the force at the specific contact point should be null
     at the last phase point.
     All contact forces can be set at 0 at the last node by using 'all' at contact_name.
+    
+    Parameters
+    ----------
+    pn: PenaltyNodes
+        The penalty node elements
+    contact_name: str
+        Name of the contacts that sould be null at the last node
+        
+    Returns
+    -------
+    The value that should be constrained in the MX format
 
     """
 
-    force = nlp.contact_forces_func(x[-1], u[-1], p)
+    force = pn.nlp.contact_forces_func(pn.x[-1], pn.u[-1], pn.p)
     if contact_name == 'all':
         val = force
     else:
-        cn = nlp.model.contactNames()
+        cn = pn.nlp.model.contactNames()
         val = []
         for i, c in enumerate(cn):
             if isinstance(contact_name, tuple):
