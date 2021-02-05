@@ -116,16 +116,30 @@ def track_sum_contact_forces(pn: PenaltyNodes, grf: np.ndarray) -> MX:
 
 
 # --- track moments ---
-def track_sum_contact_moments(ocp, nlp, t, x, u, p, CoP, M_ref):
+def track_sum_contact_moments(pn: PenaltyNodes, CoP: np.ndarray, M_ref: np.ndarray) -> MX:
     """
     Adds the objective that the mismatch between the
     sum of the contact moments and the reference ground reaction moments should be minimized.
+    
+    Parameters
+    ----------
+    pn: PenaltyNodes
+        The penalty node elements
+    CoP: np.ndarray
+        Array of the measured center of pressure trajectory
+    M_ref: np.ndarray
+        Array of the measured ground reaction moments 
+        
+    Returns
+    -------
+    The cost that should be minimize in the MX format. 
+
     """
 
     # --- aliases ---
-    ns = nlp.ns  # number of shooting points for the phase
-    nq = nlp.model.nbQ()  # number of dof
-    cn = nlp.model.contactNames() # contact name for the model
+    ns = pn.nlp.ns  # number of shooting points for the phase
+    nq = pn.nlp.model.nbQ()  # number of dof
+    cn = pn.nlp.model.contactNames() # contact name for the model
     val = []  # init
 
     # --- init forces ---
@@ -139,17 +153,17 @@ def track_sum_contact_moments(ocp, nlp, t, x, u, p, CoP, M_ref):
 
     for n in range(ns):
         # --- compute contact point position ---
-        q = x[n][:nq]
-        markers = nlp.model.markers(q)  # compute markers positions
-        heel  = markers[-4].to_mx() - CoP[:, t[n]]
-        meta1 = markers[-3].to_mx() - CoP[:, t[n]]
-        meta5 = markers[-2].to_mx() - CoP[:, t[n]]
-        toe   = markers[-1].to_mx() - CoP[:, t[n]]
+        q = pn.x[n][:nq]
+        markers = pn.nlp.model.markers(q)  # compute markers positions
+        heel  = markers[-4].to_mx() - CoP[:, n]
+        meta1 = markers[-3].to_mx() - CoP[:, n]
+        meta5 = markers[-2].to_mx() - CoP[:, n]
+        toe   = markers[-1].to_mx() - CoP[:, n]
 
         # --- compute forces ---
         for f in forces:
             forces[f].append(0.0) # init: put 0 if the contact point is not activated
-        force = nlp.contact_forces_func(x[n], u[n], p) # compute force
+        force = pn.nlp.contact_forces_func(pn.x[n], pn.u[n], pn.p) # compute force
         for i, c in enumerate(cn):
             if c.to_string() in forces: # check if contact point is activated
                 forces[c.to_string()][n] = force[i]  # put corresponding forces in dictionnary
@@ -161,9 +175,9 @@ def track_sum_contact_moments(ocp, nlp, t, x, u, p, CoP, M_ref):
              + meta1[0]*forces["Meta_1_r_Y"][n] - meta1[1]*forces["Meta_1_r_X"][n]\
              + meta5[0]*forces["Meta_5_r_Y"][n] - meta5[1]*forces["Meta_5_r_X"][n]\
              + toe[0]*forces["Toe_r_Y"][n] - toe[1]*forces["Toe_r_X"][n]
-        val = vertcat(val, M_ref[0, t[n]] - Mx)
-        val = vertcat(val, M_ref[1, t[n]] - My)
-        val = vertcat(val, M_ref[2, t[n]] - Mz)
+        val = vertcat(val, M_ref[0, pn.t[n]] - Mx)
+        val = vertcat(val, M_ref[1, pn.t[n]] - My)
+        val = vertcat(val, M_ref[2, pn.t[n]] - Mz)
     return val
 
 
