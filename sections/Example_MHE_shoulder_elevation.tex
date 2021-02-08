@@ -3,7 +3,7 @@ The goal was to perform a real-time estimation of dynamically consistent joint k
 A shoulder elevation motion was performed with a 4-DoFs ($q$) arm actuated by 19 Hill-type muscle elements.
 The control inputs of the model were the muscle activations ($a$).
 The MHE implementation consists in splitting the OCP into a succession of smaller one for processing fixed-size subsets of the tracking data moving forward in time. 
-Each time one subproblem is solved, a new measurement is acquired, the oldest one is discarded and a new subproblem is defined. 
+Each time one subproblem is solved, a new measurement is added, the oldest one is discarded and a new subproblem is defined. 
 Due to their similarities, the solution of the previous OCP is a good initial guess to the new one. 
 The dynamical consistency of the final solution is enforced by continuity constraints on the initial state. 
 Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($q^*$), states and muscle activations regularizations (i.e., least-square criteria): 
@@ -20,7 +20,7 @@ $}
 \label{eq:ocp_exMHE}  
 \]  
 
-\noindent where $\omega_1 =1e5$, $\omega_2 = 100$, $\omega_3 = 1e4$ and $t_{mhe}$ is duration of each sub-problem. 
+\noindent where $\omega_1 =10^5$, $\omega_2 = 10^2$, $\omega_3 = 10^4$ and $t_{mhe}$ is duration of each sub-problem. 
 
 In this example, reference data of an $8~s$ series of four arm elevations were generated at 100~Hz, by computer simulation.
 Centered Gaussian noise (mean = 0, std = $0.005q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.

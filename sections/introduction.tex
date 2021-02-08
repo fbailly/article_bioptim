@@ -2,7 +2,7 @@ Biomechanics researchers rely on numerical simulations of motion to gain underst
 The musculoskeletal models used in these simulations generally have a large number of degrees of freedom and they are governed by several ordinary differential equations (ODEs) which mainly describe multibody and muscle activation dynamics.
 The complexity of these systems has led scientists to formulate their simulations as optimal control problems (OCP), relying on efficient non-linear optimization software to find trajectories that fulfil a desired task while enforcing the system dynamics and minimizing a cost (e.g. motion duration, energy expenditure, matching experimental data, etc.).
 Up to very recently, there was no off-the-shelf software available to the community to quickly formulate and solve such musculoskeletal OCPs. 
-Consequently, researchers had to develop their---often simplified---own solutions, with little or no dissemination to the community, limiting knowledge and expertise sharing.
+Consequently, researchers had to develop their\comment{---often simplified---}{ça sonne drole... je ne suis pas convaincu}own solutions, with little or no dissemination to the community, limiting knowledge and expertise sharing.
 
 
 As a result, many approaches coexist to formulate and solve OCPs in the biomechanical literature. 
@@ -17,7 +17,7 @@ Its major disadvantage is that adaptive integration error control implies regrid
 Direct multiple shooting is another direct method that was also applied with success in a lot of biomechanics [\addref] and robotics [\addref] studies.
 Its advantages are mostly the same as for direct collocation in addition to combine integration error control with fixed NLP dimensions, as it relies on possibly adaptive ODE solvers to integrate the system dynamics.
 Besides direct methods, other choices can be made, as in \cite{yeadon2000mechanics} [+ \addref\ Begon], where the optimization variables are instants at which a switch in the motor strategy occurs, using polynomials function (4th, 5th order) in-between, or in \cite{leboeuf2006energetic} [+ \addref\  Huchez, Mombaur, McPhee, Opensim]], where the optimization variables are the coefficients of fourth order polynomial approximations of the states, with linking conditions to enforce the continuity of the controls. 
-These last approaches are less generic than the direct methods as they either require a knowledge about the state and control trajectories that one often does not have when investigating complex biomechanics issues or [discuter les méthodes type leboeuf]. 
+These last approaches are less generic than the direct methods as they either require a prior knowledge about the state and control trajectories that one often does not have when investigating complex biomechanics issues or [discuter les méthodes type leboeuf]. 
 
 
 \begin{figure}[t!]
@@ -31,16 +31,16 @@ These last approaches are less generic than the direct methods as they either re
 Concerning the non-linear solver, a variety of software exist and have been used to solve transcribed musculoskeletal NLPs.
 They can use different heuristics: interior point methods (\textit{\comment{ipopt}{Il faudra s'assurer d'être consistent pour les majuscules et minuscules}}, [\addref]) or sequential quadratic programming (\textit{snopt}, \textit{acados} [\addref]), but they are all gradient based.
 Therefore, derivatives of the NLP cost function and constraints are required to perform optimization.
-These derivatives can be obtained by finite differences (inaccurate thus comprising convergence) or computed automatically using algorithmic differentiation [casadi].
+These derivatives can be obtained by \comment{finite differences}{Dire que c'est le cas habituellement/jusqu'à maintenant?} (inaccurate thus comprising convergence) or computed automatically using \comment{algorithmic differentiation}{Dire que ça nécessite que le code de base qui décrit la dynamique soit écrit en CasADi compatible?} [CasADi].
 
 
-In order to promote the use of musculoskeletal optimal control among biomechanics researcher, we identified a strong need for a dedicated tool, as shown by the recently launched \moco [\addref, Opensim]. 
+In order to promote the use of musculoskeletal optimal control among biomechanics researcher, we identified a strong need for a dedicated tool, as shown by the recently launched \comment{\moco}{Dans l'article, ils l'appelle OpenSim Moco, est-ce qu'on devrait se fier à ça?} [\addref, Opensim]. 
 The biomechanics community being mainly composed of software users [\addref], such a tool should request a flexible user interface written in a widely used high-level language (e.g. Python) with a low-level core (e.g. C++) for efficiency. 
 
-To develop such a software, four interrelated components are required: \textit{i)} a musculoskeletal modeling software, with a visualization module (multibody kinematics and dynamics, muscle dynamics, etc.), \textit{ii)} a method for automatic differentiation, \textit{iii)} a discretization approach, and \textit{iv)} a nonlinear programming (NLP) solver. 
+To develop such a software, four interrelated components are required: \comment{\textit{i)} a musculoskeletal modeling software, with a visualization module (multibody kinematics and dynamics, muscle dynamics, etc.), \textit{ii)} a method for automatic differentiation, \textit{iii)} a discretization approach, and \textit{iv)} a nonlinear programming (NLP) solver.}{Je suis d'accord avec ces points, mais je ne pense pas que ça soit évident pourquoi... Exemple, le ii, quelqu'un pourrait simplement dire : dérivez vous-même... ou le i pourquoi une vizualisation est nécessaire? Je ne suis pas sûr comment intégrer ces questions par contre...} 
 General-purpose optimal control software (e.g. \gpopsii [\addref], \muscodii [\addref], \acado [\addref]) address \textit{ii)} to \textit{iv)} but they need to be interfaced with a musculoskeletal modeling module and they do not provide any built-in biomechanics features (physiological cost functions, kinematic constraints, etc.). 
-In that sense, the aforementioned \moco, is a welcome initiative that draws its strength from its integration with the widely used \opensim.
-However, it faces the following limitations: it uses finite differences to avoid the complexity of adapting the \opensim codebase to support algorithmic differentiation, it uses direct collocation as transcription method, preventing the use of adaptive ODE solvers and it is not as flexible as required by the community, since it requires the user to develop in C++. 
+In that sense, the aforementioned \moco, is a welcomed initiative that draws its strength from its integration with the widely used \opensim.
+However, it faces the following limitations: it uses finite differences to avoid the complexity of adapting the \opensim codebase to support algorithmic differentiation, it uses direct collocation as transcription method, preventing the use of adaptive ODE solvers and it is not as flexible as required by the community, since it requires the user to develop new features such as new objective functions in C++. 
 
 The objective of the present paper is to introduce \bioptim, an open-source optimal control software dedicated to musculoskeletal biomechanics.
 \bioptim is based on C++ code for computational efficiency but the user interface is written in Python for flexibility and ease-of-use. 
