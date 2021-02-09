@@ -23,7 +23,7 @@ One of the reasons explaining the performances of \bioptim is the rewriting of t
 This feature is somewhat more computationally expensive than finite differences, but the gain in accuracy for the calculation of derivatives often leads to shorter convergence times (due to much less iterations) and to optimal solutions reached with lower tolerances.
 This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because, for instance when using \ipopt, an optimal solution obtained with a convergence criterion of $10^{-2}$ is very unlikely to be dynamically consistent; 
 it would diverge when forwardly integrating the controls in a single-shooting manner. 
-By \comment{experience}{Pas sûr...}, a lower tolerance ($10^{-6}$. $10^{-8}$) which is only reachable with exact derivatives could lead to better forward dynamics results.
+A lower tolerance ($10^{-6}$. $10^{-8}$), which is only reachable with exact derivatives, is expected to lead to better forward dynamics results.
 
 \subsection{Python based but fast!}
 

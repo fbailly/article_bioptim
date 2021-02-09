@@ -1,8 +1,8 @@
 %The main goal of the vertical jumper is (without much of a surprise) to jump as high as possible.
-This example was designed to introduce \emph{bioptim}'s ability to reduce the number of degrees-of-freedom (DoF) of a model via the \texttt{mappings}, to account for nonlinear boundaries on the controls, and to solve complex multiphase programs including impacts and \comment{free time}{flight ?} phases.
+This example was designed to introduce \emph{bioptim}'s ability to reduce the number of degrees-of-freedom (DoF) of a model via the \texttt{mappings}, to account for nonlinear boundaries on the controls, and to solve complex multiphase programs including impacts and free time phases.
 
-The model used was a full-body model consisting of 3~DoFs at the pelvis (forward and upward translations, tranverse rotation), 2~DoFs at each upper limb (shoulder flexion and abduction), and 3~DoFs at each lower limb (hip, knee and ankle flexion) for a total of 13 DoFs.
-For this optimization, the \texttt{BidirectionalMapping} was used to \comment{ignore}{pas clair} the shoulder abduction---by setting the mapping to \emph{None}---and to symmetrize the left-hand side with the right-hand side, effectively creating a 7-DoFs pseudo-2D model. 
+The model used was a full-body model consisting of 3~DoFs at the pelvis (forward and upward translations, tranverse rotation), 1~DoFs at each upper limb (shoulder flexion), and 3~DoFs at each lower limb (hip, knee and ankle flexion) for a total of 11 DoFs.
+For this optimization, the \texttt{BidirectionalMapping} was used to symmetrize the left-hand side with the right-hand side, effectively creating a 7-DoFs pseudo-2D model. 
 Since this is a full-body model, the root segment (i.e., the pelvis) was left uncontrolled, reducing the number of control variables to 4, namely the shoulder, hip, knee and ankle flexions. 
 
 A total of five phases were used to describe the dynamics of the jump, flight and landing. 
@@ -32,7 +32,7 @@ $\mathcal{J} = XXX$.
 
 Several constraints are necessary to describe a realistic jump.
 %The generalized coordinates---i.e., the maximum flexibility expected---are bounded to human-like limits.
-Joint angles were bounded to human-like limits
+Joint angles were bounded to human-like limits.
 \comment{And the very first node is enforced to be in the same position as the final node previously described.}{pas clair} 
 Joint velocities were arbitrarily bounded to $[-10 \pi; 10 \pi]~ rad/s$.
 Joint torques were bounded with nonlinear torque/position/velocity relashionships measured on a high level athlete using an isokinetic dynamometer (Fig.~\ref{fig:graph_force_vitesse_longueur}). 
@@ -47,11 +47,11 @@ Then, the center of mass velocity had to point upward when leaving the floor and
 
 To speed-up the solving of the problem with \emph{ipopt}, the problem was first approximately solved using the BFGS hessian approximation option for 200 iterations maximum.
 Then, starting from this first solution, the problem was re-optimized, with exact-hessian computations for up to 1000 iterations.
-The optimized solution was obtained in \SI{1962}{\second} ($\approx\SI{33}{\minute}$) resulting in a \SI{1.28}{\meter} jump height .
+The optimized solution was obtained in \SI{1962}{\second} ($\approx\SI{33}{\minute}$) resulting in a \SI{1.28}{\meter} jump height\comment{.}{add duration of phases}.
 The \comment{solution}{fig ?} reproduced a human proximo-distal strategy, i.e., activating large segments first (for instance the torso) and sequentially adding more distal segments, consequently ending up with the ankles.
 
 \begin{figure}[h!]
 \includegraphics[width=\columnwidth]{figures/graph_force_vitesse_longueur.png}\\
-\caption{Surface representing the nonlinear constraint for torque/position/velocity relationship}
+\caption{Surface representing the nonlinear constraint for torque/position/velocity \comment{relationship}{which joint ?}}
 \label{fig:graph_force_vitesse_longueur}
 \end{figure}
