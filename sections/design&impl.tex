@@ -1,5 +1,5 @@
 \subsection{Implementation and dependencies}
-\bioptim is the top layer of a succession of \comment{dependencies}{software? libraries? toolboxes?} (\biorbd: dynamics and MSK modeling; \casadi: automatic differentiation; \ipopt/\acados: optimization; \bioviz: visualization).
+\bioptim is the top layer of a succession of libraries (\biorbd: dynamics and MSK modeling; \casadi: automatic differentiation; \ipopt/\acados: optimization; \bioviz: visualization).
 Within this software suite, \bioptim 's main role is to shape the problem to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
 Therefore, it was written in Python for its flexibility and its widespread use among researchers.
 However, all intensive calculations behind the interface are performed in \comment{C/C++}{Bien que ça ne soit pas faut, je trouve ça légèrement misleading... les calculs sont en réalité fait dans un graph casadi (qui est effectivement en C), mais la partie C/C++ rapide, c'est donc surtout en Eigen qu'on la ressens}, keeping \bioptim both fast and easy to customize.
@@ -19,11 +19,11 @@ The model file contains the geometrical characteristics, the segment inertias, t
 It also allows the user to design or import meshes for visualization purposes.
 The OCP consists in a combination of nonlinear problems (NLPs) that allows for the formulation of multi-staged OCPs. 
 Each NLP has the following attributes: a dynamics type, an objective function set, a constraint set, a number of shooting points, a duration of the problem, initial guesses and variables bounds.
-Based on these inputs, \bioptim properly sets up the multiple shooting transcription of the OCP, with appropriate continuity constraints (between the shooting nodes and between the phases) and shapes it up to feed the chosen nonlinear solver (\ipopt or \acados). 
+Based on these inputs, \bioptim properly sets up the multiple shooting transcription of the OCP, with appropriate continuity constraints (between the shooting nodes and the phases) and shapes it up to feed the chosen nonlinear solver (\ipopt or \acados). 
 
 \subsubsection{Dynamics types}
 The dynamics type defines which variables are states ($\state$), controls ($\control$) and \comment{parameters}{À ignorer si c'est fait plus tard: serait-il pertinent de mentionner que la différence fondamentale entre controls et parameters c'est que un est temps indépendant?} ($\param$).
-Then, it implements the ordinary differential equation governing the states:
+Then, it implements the ordinary differential equation governing the state dynamics:
 
 \[
 \dstate = f(\state, \control, \param).
@@ -40,7 +40,7 @@ In line with the optimal control formalism, there are two main types of objectiv
 Lagrange types are running objectives, integrated over the NLP duration. Mayer types are time-specific objectives. 
 Classically, they correspond to a terminal objective, but to be more versatile, they can be defined at any instant in \bioptim\comment{.}{Spécifier que ce n'est pas le cas avec ACADOS?}
 
-The objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
+Objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
 A lot of objective function types are already implemented in \bioptim ($>\!20$), among which tracking\:/\:minimizing, on states\:/\:controls\:/\:markers\:/\:contact\:forces\:/\:problem\:duration, etc. 
 Should one go missing, a custom objective type is also possible to define.
 
