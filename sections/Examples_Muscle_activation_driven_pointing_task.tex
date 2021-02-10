@@ -1,15 +1,15 @@
-In this first example, the goal was to achieve a muscle activation driven pointing task using a 2-DoF, 6-muscle arm model. 
+In this first example, the goal was to achieve a muscle activation driven pointing task using a 2-DoF arm model with 6 muscle elements. 
 In addition to muscle-induced torques, pure joint torques were added to compensate for the model weaknesses.
-The first three Lagrange terms of the objective function (Eq.~\ref{eq:cost_pointing}) were added for control regularization (muscle activation $a$ and joint torques $\tau$) and for state ($x$) regularization.
-The last Mayer term corresponds to the pointing tasks at the final node, to superimpose two markers, the first one, $m_u$, fixed in the ulna system of coordinates and the second one, $m^*_s$, fixed in the scene.
+The first three Lagrange terms of the objective function (Eq.~\ref{eq:cost_pointing}) were added for control regularization (muscle activation $\bf{a}$ and joint torques $\boldsymbol{\tau}$) and for state ($\bf{x}$) regularization.
+The last Mayer term corresponds to the pointing tasks at the final node, to superimpose two markers, the first one, $\mathbf{m_u}$, fixed in the ulna system of coordinates and the second one, $\mathbf{m^*_s}$, fixed in the scene.
 :
 
 \[
 \begin{aligned}
-	\mathcal{C} = &\int_{t=0}^T\underbrace{\|a\|^2}_{\mathtt{MIN\_ACTIVATION}}~
-	+\underbrace{\|\tau\|^2}_{\mathtt{MIN\_TORQUE}}~
-	+\underbrace{\|x\|^2}_{\mathtt{MIN\_STATE}}~ dt,\\
-	&+ \omega_1~\underbrace{\|m_u-m^*_s\|^2}_{\mathtt{TRACK\_MARKERS}}~
+	\mathcal{C} = &\int_{t=0}^T\underbrace{\|\bf{a}\|^2}_{\mathtt{MIN\_ACTIVATION}}~
+	+\underbrace{\|\boldsymbol\tau\|^2}_{\mathtt{MIN\_TORQUE}}~
+	+\underbrace{\|\bf{x}\|^2}_{\mathtt{MIN\_STATE}}~ dt,\\
+	&+ \omega_1~\underbrace{\|\bf m_u-\bf m^*_s\|^2}_{\mathtt{TRACK\_MARKERS}}~
 \end{aligned}
 \addtag
 \label{eq:cost_pointing}
