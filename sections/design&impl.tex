@@ -1,13 +1,13 @@
 \subsection{Implementation and dependencies}
-\bioptim is the top layer of a succession of \comment{dependencies}{software? libraries? toolboxes?} (\biorbd: dynamics and MSK modeling; \casadi: automatic differentiation; \ipopt/\acados: optimization; \bioviz: visualization).
+\bioptim is the top layer of a succession of libraries (\biorbd: dynamics and MSK modeling; \casadi: automatic differentiation; \ipopt/\acados: optimization; \bioviz: visualization).
 Within this software suite, \bioptim 's main role is to shape the problem to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
 Therefore, it was written in Python for its flexibility and its widespread use among researchers.
-However, all intensive calculations behind the interface are performed in \comment{C/C++}{Bien que ça ne soit pas faut, je trouve ça légèrement misleading... les calculs sont en réalité fait dans un graph casadi (qui est effectivement en C), mais la partie C/C++ rapide, c'est donc surtout en Eigen qu'on la ressens}, keeping \bioptim both fast and easy to customize.
+However, all intensive calculations behind the interface are performed in C/C++, keeping \bioptim both fast and easy to customize.
 
 \begin{figure}[t!]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/design.eps}
-\caption{\bioptim design \comment{flowchart}{D'après moi, il manque PhaseTransition dans le bout de NLP, mais je ne suis pas sûr comment le mettre. Je ne pense pas que les flèches avec l'étoile soient vraiment visibles... Peut-être mettre directement l'étoile à coté du mot (Objective*)? Soothing defects refère à la contrainte de continuité, c'est bien ça? Si on met ça (et je pense que ça devrait être un peu plus clair), il faudrait peut-être mettre aussi les boundaries...)}.}
+\caption{\bioptim design flowchart. The red box contains objects that must be filled in by the user. The red-dashed boxes contain pre-implemented objects for the user to choose from. The * stands for easily customizable objects.}
 \label{fig:dependencies}
 \vspace*{-0.5cm}
 \end{figure}
@@ -15,15 +15,15 @@ However, all intensive calculations behind the interface are performed in \comme
 
 \subsection{Design}
 \bioptim shapes and solves optimal control problems whose two required entries are a model (.\textit{bioMod} file) and an OCP.
-The model file contains the geometrical characteristics, the segment inertias, the markers, the actuators of the model (muscles and joint torques possibly with \comment{angle/angular velocity/torque relationships}{Il faut qu'on harmonise cette expression}) as well as bounds on joint kinematics and torques. 
+The model file contains the geometrical characteristics, the segment inertias, the markers, the actuators of the model (muscles and joint torques possibly with torque/angle/velocity relationships) as well as bounds on joint kinematics and torques. 
 It also allows the user to design or import meshes for visualization purposes.
 The OCP consists in a combination of nonlinear problems (NLPs) that allows for the formulation of multi-staged OCPs. 
 Each NLP has the following attributes: a dynamics type, an objective function set, a constraint set, a number of shooting points, a duration of the problem, initial guesses and variables bounds.
-Based on these inputs, \bioptim properly sets up the multiple shooting transcription of the OCP, with appropriate continuity constraints (between the shooting nodes and between the phases) and shapes it up to feed the chosen nonlinear solver (\ipopt or \acados). 
+Based on these inputs, \bioptim properly sets up the multiple shooting transcription of the OCP, with appropriate continuity constraints (between the shooting nodes and the phases) and shapes it up to feed the chosen nonlinear solver (\ipopt or \acados). 
 
-\subsubsection{Dynamics types}
-The dynamics type defines which variables are states ($\state$), controls ($\control$) and \comment{parameters}{À ignorer si c'est fait plus tard: serait-il pertinent de mentionner que la différence fondamentale entre controls et parameters c'est que un est temps indépendant?} ($\param$).
-Then, it implements the ordinary differential equation governing the states:
+\subsubsection{Dynamics}
+The dynamics defines which variables are states ($\state$), controls ($\control$) and parameters ($\param$), the latter being time-independent.
+Then, it implements the ordinary differential equation governing the state dynamics:
 
 \[
 \dstate = f(\state, \control, \param).
@@ -38,9 +38,9 @@ Even if these dynamics types exhaustively span the current usages in biomechanic
 \subsubsection{Objective functions}
 In line with the optimal control formalism, there are two main types of objective functions, namely Lagrange and Mayer. 
 Lagrange types are running objectives, integrated over the NLP duration. Mayer types are time-specific objectives. 
-Classically, they correspond to a terminal objective, but to be more versatile, they can be defined at any instant in \bioptim\comment{.}{Spécifier que ce n'est pas le cas avec ACADOS?}
+Classically, they correspond to a terminal objective, but to be more versatile, they can be defined at any instant in \bioptim.
 
-The objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
+Objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
 A lot of objective function types are already implemented in \bioptim ($>\!20$), among which tracking\:/\:minimizing, on states\:/\:controls\:/\:markers\:/\:contact\:forces\:/\:problem\:duration, etc. 
 Should one go missing, a custom objective type is also possible to define.
 
@@ -49,11 +49,14 @@ If applicable (for tracking objective functions mainly), the user must also spec
 
 \subsubsection{Constraints}
 Classically, constraints are hard penalties of the optimization problem, i.e., a solution will not be considered optimal, unless every constraint (equality or inequality) is met.
-In \bioptim, there exist two classes of constraints: the \texttt{Bounds} and the \texttt{Constraint}.
-\comment{Essentially, the \texttt{Bounds} are constraints directly related to the states and the controls.}{Je pense que je mettrais une sous-section à bound... nous on sait que c'est des contraintes, mais l'API n'est pas clair là-dessus... ça semble être quelque chose de différent, je le présenterais donc comme tel}
-They are useful for defining model-related constraints such as kinematic, torque or muscle excitation\:/\:activation limits. 
 The \texttt{Constraint} class contains a variety of already implemented constraints.
-Among them, the user will find the constraint equivalents of every objective function in addition to  other ones, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.).
+Some of them are specific functions, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.), the others  
+have their equivalent in the \texttt{ObjectiveFunction} class.
 Should one go missing, a custom constraint type is also possible to define.
+
+\subsubsection{Bounds}
+Essentially, the \texttt{Bounds} are constraints directly related to the states, the controls and the parameters.
+They are useful for defining model-related constraints such as kinematic, torque or muscle excitation\:/\:activation limits. 
+
 
 \comment{}{Shooting points, phase time, initial guesses?}

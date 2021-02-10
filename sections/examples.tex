@@ -1,5 +1,6 @@
 In this section, six applications are presented to illustrate the versatility of \bioptim and give a practical overview on how to use its main features.
 The \comment{performances}{Ajouter la RMS avec le single shooting} and the Github links of each OCP are summarized in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}.
+In the following, bold symbols denote vectors and starred ones denote reference or tracked quantities.
 
 
 \subsection{Muscle activation driven pointing task}
@@ -21,25 +22,27 @@ The \comment{performances}{Ajouter la RMS avec le single shooting} and the Githu
 \input{sections/Example_Jumper}
 %
 \begin{table*}[t!]
-\caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. $^\star$ stands for free time OCP, otherwise it is fixed.}
+\caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. $^\star$ stands for free time OCP, otherwise it is fixed. The single shooting state trajectory is obtained by forwardly integrating the initial state with the optimized control inputs. The single shooting error is computed as the RMSE between the optimized state trajectory and the single shooting one at each node.}
 \label{tab:Perfs_and_detailed_implementations_of_each_example}
 \centering
 \begin{tabular}{c l rl rl rl}
 \cmidrule[\heavyrulewidth](lr){2-8}
-& & \multicolumn{2}{l}{\comment{Activation-driven}{Aligner la ligne au dessus de ACADOS avec le centre produit par Ipopt et ACADOS} pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
+& & \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
 \cmidrule[\heavyrulewidth](lr){3-4}
 \cmidrule[\heavyrulewidth](lr){5-6}
 \cmidrule[\heavyrulewidth](lr){7-8}
 
 \mymultirow{4}{Setup} & \# states $\xt$            & \multicolumn{2}{c}{4}  & --    & --     & --    & --\\
                       & \# control $\ut$           & \multicolumn{2}{c}{6}  & --    & --     & --    & --\\
-                      & \# shooting nodes          & \multicolumn{2}{c}{51} & --    & --     & --    & --\\
+                      & \# shooting nodes          & \multicolumn{2}{c}{50} & --    & --     & --    & --\\
                       & OCP duration (s)           & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
-                      &                            & IPOpt  & ACADOS        & IPOpt & ACADOS & IPOpt & ACADOS\\
-\mymultirow{3}{Solve} & \# NLP iterations          & 27     & 21            & --    & --     & --    & --\\
-                      & Optimized cost             & 6959.3 & 427.5         & --    & --     & --    & --\\
-                      & Time to convergence (s)    & 9.9    & 0.19          & --    & --     & --    & --\\
+                      &                            & \ipopt  & \acados        & \ipopt  & \acados  & \ipopt  & \acados \\
+\mymultirow{3}{Solve} & \# NLP iterations          & 47     & 19            & --    & --     & --    & --\\
+                      & Optimized cost             & 20.8 & 23.2        & --    & --     & --    & --\\
+                      & Time to convergence (s)    & 22.3    & 0.45          & --    & --     & --    & --\\
+                      & Single shooting error    & $1.3*10^{-8}$    & $2.9*10^{-14}$          & --    & --     & --    & --\\
 %Example & Link & IPOPT & ACADOS \\ 
+
 %\midrule
 %Muscle activation driven pointing task & \href{https://github.com/pyomeca/BiorbdOptim/blob/master/examples/muscle_driven_ocp/static_arm.py}{$\star$} & $10.10$ & $0.2018$  \\ 
 %\midrule
