@@ -20,6 +20,7 @@ from bioptim import (
     InitialGuessList,
     ShowResult,
     OdeSolver,
+    Simulate,
     Solver,
 )
 
@@ -110,7 +111,7 @@ def prepare_ocp(
         [tau_min] * biorbd_model.nbGeneralizedTorque() + [muscle_min] * biorbd_model.nbMuscleTotal(),
         [tau_max] * biorbd_model.nbGeneralizedTorque() + [muscle_max] * biorbd_model.nbMuscleTotal(),
     )
-    u_bounds[0][:, 0] = [0] * biorbd_model.nbGeneralizedTorque() + [0] * biorbd_model.nbMuscleTotal()
+    # u_bounds[0][:, 0] = [0] * biorbd_model.nbGeneralizedTorque() + [0] * biorbd_model.nbMuscleTotal()
     u_init = InitialGuessList()
     u_init.add([tau_init] * biorbd_model.nbGeneralizedTorque() + [muscle_init] * biorbd_model.nbMuscleTotal())
     # ------------- #
@@ -136,22 +137,29 @@ if __name__ == "__main__":
     Prepare and solve and animate a reaching task ocp
     """
     use_IPOPT = True
-    use_exc = True
-    if use_IPOPT:
-        weights = np.array([100, 1, 1, 100000])
-    else:
-        weights = np.array([1000, 1, 1, 1000000])
+    use_exc = False
+    weights = np.array([100, 1, 1, 100000])
     ocp = prepare_ocp(biorbd_model_path="arm26.bioMod", final_time=2, n_shooting=50,
                       use_exc=use_exc, use_sx=not use_IPOPT, weights=weights)
 
     # --- Solve the program --- #
     if use_IPOPT:
+        opts = {"linear_solver": "ma57", "hessian_approximation": "exact"}
         solver = Solver.IPOPT
     else:
+        opts = {"sim_method_num_steps": 5, "tol": 1e-8, "integrator_type": "ERK", "hessian_approx": "GAUSS_NEWTON"}
         solver = Solver.ACADOS
-    sol = ocp.solve(solver=solver, show_online_optim=False)
+    sol = ocp.solve(solver=solver, solver_options=opts, show_online_optim=False)
 
     # --- Show results --- #
     result = ShowResult(ocp, sol)
-    result.graphs()
-    result.animate(show_meshes=True)
+    result.objective_functions()
+    sol_opt = sol['x']
+    sol_ss = Simulate.from_solve(ocp, sol, True)['x']
+    ss_err = np.linalg.norm(sol_ss - sol_opt)
+    print("*********************************************")
+    print(f"Problem solved with {solver.value}")
+    print(f"Solving time : {sol['time_tot']}s")
+    print(f"Single shooting error : {ss_err}")
+    # result.graphs()
+    # result.animate(show_meshes=True)
