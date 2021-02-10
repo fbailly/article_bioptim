@@ -24,19 +24,20 @@ In the following, bold symbols denote vectors and starred ones denote reference 
 \centering
 \begin{tabular}{c l rl rl rl}
 \cmidrule[\heavyrulewidth](lr){2-8}
-& & \multicolumn{2}{l}{\comment{Activation-driven}{Aligner la ligne au dessus de ACADOS avec le centre produit par Ipopt et ACADOS} pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
+& & \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
 \cmidrule[\heavyrulewidth](lr){3-4}
 \cmidrule[\heavyrulewidth](lr){5-6}
 \cmidrule[\heavyrulewidth](lr){7-8}
 
 \mymultirow{4}{Setup} & \# states $\xt$            & \multicolumn{2}{c}{4}  & --    & --     & --    & --\\
                       & \# control $\ut$           & \multicolumn{2}{c}{6}  & --    & --     & --    & --\\
-                      & \# shooting nodes          & \multicolumn{2}{c}{51} & --    & --     & --    & --\\
+                      & \# shooting nodes          & \multicolumn{2}{c}{50} & --    & --     & --    & --\\
                       & OCP duration (s)           & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
-                      &                            & IPOpt  & ACADOS        & IPOpt & ACADOS & IPOpt & ACADOS\\
-\mymultirow{3}{Solve} & \# NLP iterations          & 27     & 21            & --    & --     & --    & --\\
-                      & Optimized cost             & 6959.3 & 427.5         & --    & --     & --    & --\\
-                      & Time to convergence (s)    & 9.9    & 0.19          & --    & --     & --    & --\\
+                      &                            & \ipopt  & \acados        & \ipopt  & \acados  & \ipopt  & \acados \\
+\mymultirow{3}{Solve} & \# NLP iterations          & 47     & 19            & --    & --     & --    & --\\
+                      & Optimized cost             & 20.8 & 23.2        & --    & --     & --    & --\\
+                      & Time to convergence (s)    & 22.3    & 0.45          & --    & --     & --    & --\\
+                      & Single shooting error    & $3.2*10^{-7}$    & $7.2*10^{-13}$          & --    & --     & --    & --\\
 %Example & Link & IPOPT & ACADOS \\ 
 %\midrule
 %Muscle activation driven pointing task & \href{https://github.com/pyomeca/BiorbdOptim/blob/master/examples/muscle_driven_ocp/static_arm.py}{$\star$} & $10.10$ & $0.2018$  \\ 
