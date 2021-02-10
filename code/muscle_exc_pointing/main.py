@@ -136,7 +136,7 @@ if __name__ == "__main__":
     """
     Prepare and solve and animate a reaching task ocp
     """
-    use_IPOPT = True
+    use_IPOPT = False
     use_exc = False
     weights = np.array([100, 1, 1, 100000])
     ocp = prepare_ocp(biorbd_model_path="arm26.bioMod", final_time=2, n_shooting=50,
@@ -156,7 +156,7 @@ if __name__ == "__main__":
     result.objective_functions()
     sol_opt = sol['x']
     sol_ss = Simulate.from_solve(ocp, sol, True)['x']
-    ss_err = np.linalg.norm(sol_ss - sol_opt)
+    ss_err = np.sqrt(np.mean((sol_ss - sol_opt)**2))
     print("*********************************************")
     print(f"Problem solved with {solver.value}")
     print(f"Solving time : {sol['time_tot']}s")
