@@ -85,13 +85,19 @@ def prepare_ocp(
 
     # Force initial position
     if use_sx:
-        x_bounds[0][:, 0] = [1.24, 1.55, 0, 0] + [0]*biorbd_model.nbMuscles()
+        if use_exc:
+            x_bounds[0][:, 0] = [1.24, 1.55, 0, 0] + [0]*biorbd_model.nbMuscles()
+        else:
+            x_bounds[0][:, 0] = [1.24, 1.55, 0, 0]
     else:
-        x_bounds[0][:, 0] = [1.0, 1.3, 0, 0] + [0] * biorbd_model.nbMuscles()
+        if use_exc:
+            x_bounds[0][:, 0] = [1.0, 1.3, 0, 0] + [0] * biorbd_model.nbMuscles()
+        else:
+            x_bounds[0][:, 0] = [1.0, 1.3, 0, 0]
     # Initial guess
     x_init = InitialGuessList()
     if use_exc:
-        init_state = [1.57] * biorbd_model.nbQ() + [0] * biorbd_model.nbQdot() + [0] * biorbd_model.nbMuscles()
+        init_state = [1.57] * biorbd_model.nbQ() + [0] * biorbd_model.nbQdot() + [0.5] * biorbd_model.nbMuscles()
     else:
         init_state = [1.57] * biorbd_model.nbQ() + [0] * biorbd_model.nbQdot()
     x_init.add(init_state)
@@ -104,7 +110,7 @@ def prepare_ocp(
         [tau_min] * biorbd_model.nbGeneralizedTorque() + [muscle_min] * biorbd_model.nbMuscleTotal(),
         [tau_max] * biorbd_model.nbGeneralizedTorque() + [muscle_max] * biorbd_model.nbMuscleTotal(),
     )
-
+    u_bounds[0][:, 0] = [0] * biorbd_model.nbGeneralizedTorque() + [0] * biorbd_model.nbMuscleTotal()
     u_init = InitialGuessList()
     u_init.add([tau_init] * biorbd_model.nbGeneralizedTorque() + [muscle_init] * biorbd_model.nbMuscleTotal())
     # ------------- #
