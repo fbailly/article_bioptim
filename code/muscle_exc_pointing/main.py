@@ -162,4 +162,6 @@ if __name__ == "__main__":
     print(f"Solving time : {sol['time_tot']}s")
     print(f"Single shooting error : {ss_err}")
     # result.graphs()
-    # result.animate(show_meshes=True)
+    result.animate(show_meshes=True, background_color=(1, 1, 1),
+                   show_local_ref_frame=False, show_global_center_of_mass=False,
+                   show_segments_center_of_mass=False,)

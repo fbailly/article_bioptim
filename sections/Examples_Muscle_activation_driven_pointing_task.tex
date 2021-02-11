@@ -1,7 +1,7 @@
 In this first example, the goal was to achieve a muscle activation driven pointing task using a 2-DoF arm model with 6 muscle elements. 
 In addition to muscle-induced torques, pure joint torques were added to compensate for the model weaknesses.
 The first three Lagrange terms of the objective function (Eq.~\ref{eq:cost_pointing}) were added for control regularization (muscle activation $\bf{a}$ and joint torques $\boldsymbol{\tau}$) and for state ($\bf{x}$) regularization.
-The last Mayer term corresponds to the pointing tasks at the final node, to superimpose two markers, the first one, $\mathbf{m_u}$, fixed in the ulna system of coordinates and the second one, $\mathbf{m^*_s}$, fixed in the scene.
+The last Mayer term corresponds to the pointing tasks at the final node, to superimpose two markers, the first one, $\mathbf{m_u}$, fixed in the Ulna system of coordinates and the second one, $\mathbf{m^*_s}$, fixed in the scene.
 :
 
 \[
@@ -17,21 +17,20 @@ The last Mayer term corresponds to the pointing tasks at the final node, to supe
 %
 
 \noindent where T is the duration of the motion, and $\omega_1=1e5$.
-The movement lasted for 2~seconds and was discretized using 50~shooting nodes.
-The problem was solved using \ipopt and \acados resulting in two significantly different solutions.
-\acados provided a 16 times smaller optimized objective (Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}), which illustrate the pitfalls of local minima as well as the benefits of having straightforward access to different solvers.  
-Indeed, the \acados-based solution (Fig.~\ref{fig:snapshots_activation_driven_pointing}, top) makes good use of gravity to minimize the control inputs, while the \ipopt-based solution (Fig.~\ref{fig:snapshots_activation_driven_pointing}, bottom) moved the arm in the opposite direction and was stuck in a local minimum (still achieving the task though). 
-It is worth mentioning that for the purpose of this illustration, no constraint was given about the shoulder range of motion to ensure physiological muscle trajectories. 
+The movement lasted for 2~seconds and was discretized using 50~shooting nodes with a 5-steps RK4 integration in-between.
+The problem was solved using \ipopt (with exact Hessian computations) and \acados (with a Gauss-Newton approximation of the Hessian) resulting in two very close solutions.
+\acados was about 50 times faster than \ipopt and was better at enforcing the continuity constraints (as shown by the single shooting error in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}).
+\ipopt however ended up with a smaller optimized objective (20.8 \textit{vs} 23.2), leading to a more optimal solution than \acados. 
+Superimposed snapshots of the optimal motion found with \acados are displayed in Fig.\ref{fig:snapshots_activation_driven_pointing}.
+It is worth mentioning that for the purpose of this illustration, no constraint was given on the shoulder range of motion to ensure physiological muscle trajectories. 
 
 %
-\begin{figure*}[t!]
+\begin{figure}[t!]
 \centering
-\includegraphics[width=\textwidth]{figures/activation_pointing_snapshots_acados.png}\\
-\vspace*{0.5em}
-\includegraphics[width=\textwidth]{figures/activation_pointing_snapshots_ipopt.png}
-\caption{Snapshots of an optimized muscle activation driven pointing task. Top: using ACADOS. Bottom: using IPOPT.}
+\includegraphics[width=\columnwidth]{figures/activation_pointing.jpeg}\\
+\caption{Snapshots of an optimized activation-driven pointing task with \acados. The arm starts facing upwards in left hand part of the picture and ends facing downwards in the right hand part. The marker fized on the Ulna is depicted in blue and the scene-fixed target marker is depicted in red. Red lines show the lines of actions of the muscles.}
 \label{fig:snapshots_activation_driven_pointing}
-\end{figure*}
+\end{figure}
 %
 
 
