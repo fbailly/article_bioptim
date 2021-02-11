@@ -16,14 +16,14 @@ The objective function with the most important weight was a Mayer objective comp
 The remaining objective functions were added either to help the solver to converge ( regularization) or to converge toward a more human-like solution. 
 
 \[ 
-\resizebox{0.9\columnwidth}{!}{$ 
+\resizebox{0.90\columnwidth}{!}{$ 
 \begin{aligned}
 \mathcal{J} = 
-  &\int_{t=0}^{T_1}\underbrace{\omega_{t} (T_1)}_{\mathtt{MINIMIZE\_TIME}}~dt\\
-  &+~\int_{t=T_1}^{T_2}\underbrace{\omega_{t} (T_2 - T_1)}_{\mathtt{MINIMIZE\_TIME}}~dt &+ \underbrace{\omega_h h}_{\mathtt{MINIMIZE\_PREDICTED\_COM\_HEIGHT}}\\
-  &+~\int_{t=T_2}^{T_3}\underbrace{\omega_{t} (T_3 - T_2)}_{\mathtt{MINIMIZE\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MINIMIZE\_STATE\_DERIVATIVE}}~dt\\
-  &+~\int_{t=T_3}^{T_4}\underbrace{\omega_{t} (T_4 - T_3)}_{\mathtt{MINIMIZE\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MINIMIZE\_STATE\_DERIVATIVE}}~dt\\
-  &+~\int_{t=T_4}^{T_5}\underbrace{\omega_{t} (T_5 - T_4)}_{\mathtt{MINIMIZE\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MINIMIZE\_STATE\_DERIVATIVE}}~dt &+~\underbrace{\omega_{x} \| \mathbf{x}_+(T_5) - \mathbf{x}_+^*(T_5)\| )^2}_{\mathtt{TRACK\_STATE}}\\
+  &\int_{t=0}^{T_1}\underbrace{\omega_{t} (T_1)}_{\mathtt{MIN\_TIME}}~dt\\
+  +~&\int_{t=T_1}^{T_2}\underbrace{\omega_{t} (T_2 - T_1)}_{\mathtt{MIN\_TIME}}~dt + \underbrace{\omega_h h}_{\mathtt{MIN\_PREDICTED\_COM\_HEIGHT}}\\
+  +~&\int_{t=T_2}^{T_3}\underbrace{\omega_{t} (T_3 - T_2)}_{\mathtt{MIN\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MIN\_STATE\_DERIVATIVE}}~dt\\
+  +~&\int_{t=T_3}^{T_4}\underbrace{\omega_{t} (T_4 - T_3)}_{\mathtt{MIN\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MIN\_STATE\_DERIVATIVE}}~dt\\
+  +~&\int_{t=T_4}^{T_5}\underbrace{\omega_{t} (T_5 - T_4)}_{\mathtt{MIN\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MIN\_STATE\_DERIVATIVE}}~dt +~\underbrace{\omega_{x} \| \mathbf{x}_+(T_5) - \mathbf{x}_+^*(T_5)\| )^2}_{\mathtt{TRACK\_STATE}}\\
 \end{aligned} 
 $}  
 \addtag  
