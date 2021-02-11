@@ -12,34 +12,40 @@ The third phase was purely aerial, described by a free-fall dynamics, i.e., with
 The last two were landing phases, a first one with one contact (toe) and a second one with two contacts (heel and toe).
 The transitions between phases with addition of contact points were approximated with the build-in inelastic impact \texttt{PhaseTransition.IMPACT}, which computes the velocity of the kinematic chain after an impact.
 
-The main objective function was a Mayer objective computed at the end of the \comment{pushoff}{bizarre, tu utilises les équations paraboliques du free fall ?} phase consisting in maximizing the jumps height ($h$) such that:
-\[
-h = \frac{\dot{c_z^2}}{-2 g} + c_z,
-\]
-where $c_z$ and $\dot{c_z}$ are the center of mass position and velocity, respectively, and $g$ is the gravitional acceleration constant ($\SI{-9.81}{\meter/\second^2}$).
-Since \bioptim minimizes objectives instead of maximizing them, a negative weight was applied to that objective. 
-Two low-weight regularization objectives were added to facilitate the convergence of the solver.
-The first one consisted in minimizing the derivative of the velocities, penalizing large and rapid movements during the aerial and reception phases. 
-The second one consisted in minimizing the time of each phase.
-%Both of these objectives have a small weight---that is four order of magnitude smaller than jump height---so they are not prioritized.
-Finally, a Mayer objective function was added to penalize the state kinematics of the model at the last node of the last phase, so it was close to standing upright, with its knee flexed and its arm horizontally raised. 
+The objective function with the most important weight was a Mayer objective computed at the end of the pushoff phase consisting in the maximizing the highest point ($h$)---representing the position of the center of mass---from the projectile equation.
+The remaining objective functions were added either to help the solver to converge (the so-called regularization cost functions) or to converge toward a more human-like solution. 
 
-\comment{
-$\mathcal{J} = XXX$.
-% \addtag
-% \label{eq:cost_jumper}
-}{Add the equations? Oui !}
+\[ 
+\resizebox{0.9\columnwidth}{!}{$ 
+\begin{aligned}
+\mathcal{J} = 
+  &\int_{t=0}^{T_1}\left[\underbrace{\omega_{t} (T_1)}_{\mathtt{MINIMIZE\_TIME}}\right]dt\\
+  &\int_{t=T_1}^{T_2}\left[\underbrace{\omega_{t} (T_2 - T_1)}_{\mathtt{MINIMIZE\_TIME}}\right]dt + \underbrace{\omega_h h}_{\mathtt{MINIMIZE\_PREDICTED\_COM\_HEIGHT}}\\
+  &\int_{t=T_2}^{T_3}\left[\underbrace{\omega_{t} (T_3 - T_2)}_{\mathtt{MINIMIZE\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MINIMIZE\_STATE\_DERIVATIVE}}\right]dt\\
+  &\int_{t=T_3}^{T_4}\left[\underbrace{\omega_{t} (T_4 - T_3)}_{\mathtt{MINIMIZE\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MINIMIZE\_STATE\_DERIVATIVE}}\right]dt\\
+  &\int_{t=T_4}^{T_5}\left[\underbrace{\omega_{t} (T_5 - T_4)}_{\mathtt{MINIMIZE\_TIME}} + \underbrace{\omega_{sd} (\dot{q}_{t+1} - \dot{q}_t)^2}_{\mathtt{MINIMIZE\_STATE\_DERIVATIVE}}\right]dt + \underbrace{\omega_{x} (x^+_{T_5} - x^+_{ref})^2}_{\mathtt{TRACK\_STATE}}\\
+\end{aligned} 
+$}  
+\addtag  
+\label{eq:cost_jumper}
+\]
+where $T_i$ with $i \in [1, 2, 3, 4, 5]$ is the final time of the phase $1$ to $5$, respectively; 
+$\omega_h$ is the weight of the $\mathtt{MINIMIZE\_PREDICTED\_COM\_HEIGHT}$ and is defined negative ($-100$) to effectively maximize the objective function; 
+$\omega_t$, $\omega_{sd}$ and $\omega_x$ are the weight of the $\mathtt{MINIMIZE\_TIME}$,  $\mathtt{MINIMIZE\_STATE\_DERIVATIVE}$ and $\mathtt{TRACK\_STATE}$ objective functions, and are equal to $0.1$, $0.1$, and $1$, respectively; 
+and $x^+$ and $x^+_{ref}$ are the states at a specific node and the state targets, but excluding the frontward and upward translations of the root segment. 
+The $x_{ref}$ corresponds to a static standing position of the avatar with its knee slightly flexed and its arms horizontally raised.
+
+
 
 Several constraints are necessary to describe a realistic jump.
 %The generalized coordinates---i.e., the maximum flexibility expected---are bounded to human-like limits.
 Joint angles were bounded to human-like limits.
-\comment{And the very first node is enforced to be in the same position as the final node previously described.}{pas clair} 
-Joint velocities were arbitrarily bounded to $[-10 \pi; 10 \pi]~ rad/s$.
-Joint torques were bounded with nonlinear torque/position/velocity relashionships measured on a high level athlete using an isokinetic dynamometer (Fig.~\ref{fig:graph_force_vitesse_longueur}). 
+The first node of the first phase was enforced to be equal to $x_{ref}$. 
+Joint velocities were arbitrarily bounded to $[-10 \pi; 10 \pi]~rad/s$.
+Joint torques were bounded with nonlinear torque/angle/velocity relashionships measured on a high level athlete using an isokinetic dynamometer (Fig.~\ref{fig:graph_force_vitesse_longueur}). 
 %For the contact forces from the contact points, a directional constraint is applied such that the force is alway pointing upward, meaning that the model is not allowed to pull on the floor. 
 %The lateral force norm is constrained to be below the half of the upward force, i.e., the model must remain in a cone of friction more or less corresponding to a show contacting a normal surface. 
 Non slipping (\texttt{NON\_SLIPPING}) and unilateral (\texttt{CONTACT\_FORCE}) contact force constraints were added to prevent the contact points from slipping and pulling on the ground.
-\comment{The time of the phases were constraints as such XXX}{C'est pertinent? Oui}
 %Finally, some constraints were added to prevent the gradient descending solver from exploring non interesting regions. 
 Finally, some constraints were added to help convergence.
 First, during the push-off and landing phases, the heels had to remain over the floor.
@@ -47,12 +53,13 @@ Then, the center of mass velocity had to point upward when leaving the floor and
 
 To speed-up the solving of the problem with \emph{ipopt}, the problem was first approximately solved using the BFGS hessian approximation option for 200 iterations maximum.
 Then, starting from this first solution, the problem was re-optimized, with exact-hessian computations for up to 1000 iterations.
-The optimized solution was obtained in \SI{1962}{\second} ($\approx\SI{33}{\minute}$) resulting in a \SI{1.28}{\meter} jump height\comment{.}{add duration of phases}.
+The optimized solution was obtained in \SI{1962}{\second} ($\approx\SI{33}{\minute}$) resulting in a \SI{1.28}{\meter} jump height.
+The optimized time for the phases $1$ to $5$ were $0.70, 0.05, 0.99, 0.36, 0.21$ seconds, respectively.
 The \comment{solution}{fig ?} reproduced a human proximo-distal strategy, i.e., activating large segments first (for instance the torso) and sequentially adding more distal segments, consequently ending up with the ankles.
 
 \begin{figure}[h!]
-\includegraphics[width=\columnwidth]{figures/graph_force_vitesse_longueur.png}\\
-\caption{Surface representing the nonlinear constraint for torque/position/velocity \comment{relationship}{which joint ?}}
+\includegraphics[width=\columnwidth]{figures/torque_angle_velocity_hip_flexion}
+\caption{Surface representing the nonlinear constraint from the torque/position/velocity relashionship of the hip flexion} 
 \label{fig:graph_force_vitesse_longueur}
 \end{figure}
 
