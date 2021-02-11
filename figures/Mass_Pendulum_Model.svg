@@ -29,8 +29,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497475"
-     inkscape:cx="272.99341"
-     inkscape:cy="315.40359"
+     inkscape:cx="212.38426"
+     inkscape:cy="432.14034"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -61,8 +61,8 @@
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path902"
-       d="m 126.52411,84.969994 -43.608317,0.06101"
-       style="fill:none;stroke:#0a933c;stroke-width:0.75646859;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.26940589, 2.26940589;stroke-dashoffset:0;stroke-opacity:0.50196078" />
+       d="m 127.05375,84.970022 -45.877112,0.06095"
+       style="fill:none;stroke:#0a933c;stroke-width:1.02521086;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:3.0756326, 3.0756326;stroke-dashoffset:0;stroke-opacity:0.50196078" />
     <g
        id="g933"
        transform="matrix(0.9943205,0,0,1.1301528,0.60168533,-1.4329444)">
@@ -240,7 +240,7 @@
        inkscape:connector-curvature="0"
        id="path886"
        d="M 88.574846,9.6852577 V 83.466089"
-       style="opacity:0.5;fill:none;stroke:#0a943c;stroke-width:0.68082565;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:0.5;fill:none;stroke:#0a943c;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        style="fill:none;stroke:#7c7c7c;stroke-width:0.75206351;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:2.25619066, 2.25619066;stroke-dashoffset:0;stroke-opacity:1"
        d="m 106.2573,118.31074 v 62.66028"
@@ -274,25 +274,25 @@
        y="99.091675" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="97.804642"
-       y="111.18153"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="96.06739"
+       y="111.58244"
        id="text819"><tspan
          sodipodi:role="line"
          id="tspan817"
-         x="97.804642"
-         y="111.18153"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.26458332">1kg</tspan></text>
+         x="96.06739"
+         y="111.58244"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.26458332">1kg</tspan></text>
     <text
        id="text871"
-       y="205.37859"
-       x="39.836723"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       y="206.44766"
+       x="37.297661"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan873"
-         x="39.836723"
-         y="205.37859">10kg</tspan></text>
+         x="37.297661"
+         y="206.44766">10kg</tspan></text>
     <flowRoot
        xml:space="preserve"
        id="flowRoot875"
@@ -307,7 +307,7 @@
        id="text885"
        y="151.24364"
        x="-96.378777"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888889px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
        xml:space="preserve"
        transform="rotate(-56.795806)"><tspan
          sodipodi:role="line"
@@ -315,27 +315,27 @@
          x="-96.378777"
          y="151.24364">0.2m</tspan></text>
     <path
-       style="fill:none;stroke:#0a943c;stroke-width:0.78;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 77.991512,9.6852577 V 106.59108"
+       style="fill:none;stroke:#0a943c;stroke-width:1.01548195;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 75.874844,9.6852577 V 109.61489"
        id="path889"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:none;stroke:#0a943c;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 74.650657,102.28577 3.407672,4.95526 3.140392,-4.88844"
+       style="fill:none;stroke:#0a943c;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 72.533989,105.46079 3.407672,4.95526 3.140392,-4.88844"
        id="path891"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />
     <text
        transform="rotate(-90.810206)"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="-93.090286"
-       y="75.427971"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-103.10602"
+       y="72.640228"
        id="text895"><tspan
          sodipodi:role="line"
          id="tspan945"
-         x="-93.090286"
-         y="75.427971">actuated DoF (q  )</tspan></text>
+         x="-103.10602"
+         y="72.640228">actuated DoF (q  )</tspan></text>
     <rect
        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.92232275;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect821"
@@ -348,38 +348,38 @@
        inkscape:connector-curvature="0"
        id="path899"
        d="m 100.56859,182.11871 5.25255,-2.92869 -4.57286,-3.58435"
-       style="fill:none;stroke:#db9308;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;stroke:#db9308;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
-       style="fill:none;stroke:#db9308;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;stroke:#db9308;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 71.947766,169.65984 c 10.710525,6.25822 23.056184,9.34886 33.828864,9.44941"
        id="path901"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <text
        id="text907"
-       y="189.71231"
-       x="91.346581"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#db9308;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-opacity:1"
+       y="190.7816"
+       x="94.553741"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#db9308;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-opacity:1"
        xml:space="preserve"
        transform="rotate(-0.00392463)"><tspan
          sodipodi:role="line"
          id="tspan935"
-         x="92.520668"
-         y="189.71231">unactuated </tspan><tspan
+         x="96.119194"
+         y="190.7816">unactuated </tspan><tspan
          sodipodi:role="line"
          id="tspan937"
-         x="91.346581"
-         y="200.29564">DoF (q  )</tspan></text>
+         x="94.553741"
+         y="204.89272">DoF (q  )</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 142.54987,24.426325 V 38.177389"
+       style="fill:none;stroke:#000000;stroke-width:0.85234594;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 142.54987,20.417282 V 38.177389"
        id="path934"
        inkscape:connector-curvature="0" />
     <path
        inkscape:connector-curvature="0"
        id="path936"
-       d="M 140.96239,24.426325 V 38.177389"
-       style="fill:none;stroke:#000000;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       d="M 140.96239,20.417282 V 38.177389"
+       style="fill:none;stroke:#000000;stroke-width:0.85234594;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        d="m 137.80359,34.353735 3.92151,4.91369 3.87426,-4.866443"
@@ -388,17 +388,17 @@
        sodipodi:nodetypes="ccc" />
     <text
        id="text942"
-       y="31.066158"
-       x="146.85422"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       y="29.596176"
+       x="145.2506"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"><tspan
          sodipodi:role="line"
          id="tspan944"
-         x="146.85422"
-         y="31.066158">g</tspan></text>
+         x="145.2506"
+         y="29.596176">g</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 146.92701,26.005179 h 4.016 l -1.46466,-1.228424"
+       style="fill:none;stroke:#000000;stroke-width:0.42285183px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 145.21168,23.255583 h 5.81388 l -2.12035,-2.167342"
        id="path946"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="ccc" />
@@ -407,12 +407,12 @@
        inkscape:connector-curvature="0"
        id="path888"
        d="m 85.233991,79.002418 3.407672,4.955234 3.140392,-4.888417"
-       style="opacity:0.5;fill:none;stroke:#0a943c;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:0.5;fill:none;stroke:#0a943c;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <text
        id="text892"
        y="85.637123"
        x="-66.168846"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:0.5;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.28888893px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:0.5;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        transform="rotate(-90.810206)"><tspan
          sodipodi:role="line"
@@ -422,59 +422,61 @@
     <text
        transform="rotate(-90.810206)"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:0.5;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="-61.980316"
-       y="87.147346"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:0.5;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="-60.922089"
+       y="87.162315"
        id="text898"><tspan
          sodipodi:role="line"
          id="tspan900"
-         x="-61.980316"
-         y="87.147346">m</tspan></text>
+         x="-60.922089"
+         y="87.162315">m</tspan></text>
     <text
        id="text910"
-       y="77.075798"
-       x="-32.400047"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444444px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;opacity:1;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332;"
+       y="74.694534"
+       x="-22.743708"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
        xml:space="preserve"
        transform="rotate(-90.810206)"><tspan
          sodipodi:role="line"
-         id="tspan947">m</tspan></text>
+         id="tspan947"
+         x="-22.743708"
+         y="74.694534">m</tspan></text>
     <text
        transform="rotate(0.08237636)"
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444447px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#db9308;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="101.68007"
-       y="202.23022"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Iowan Old Style';-inkscape-font-specification:'Iowan Old Style, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:1;fill:#db9308;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="108.23527"
+       y="207.1653"
        id="text941"><tspan
          sodipodi:role="line"
          id="tspan943"
-         x="101.68007"
-         y="202.23022">p</tspan></text>
+         x="108.23527"
+         y="207.1653">p</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path949"
        d="m 106.28437,117.4314 v 26.98028"
-       style="fill:none;stroke:#0a943c;stroke-width:0.77999997;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;stroke:#0a943c;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        sodipodi:nodetypes="ccc"
        inkscape:connector-curvature="0"
        id="path951"
        d="m 102.93205,139.4726 3.40767,4.95526 3.1404,-4.88844"
-       style="fill:none;stroke:#0a943c;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;stroke:#0a943c;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <g
        id="g972"
-       transform="translate(0,0.52916667)">
+       transform="translate(0,0.7964362)">
       <text
          transform="rotate(-0.25915107)"
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:8.46666622px;line-height:1.25;font-family:'Apple Chancery';-inkscape-font-specification:'Apple Chancery, Thin';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-         x="106.84822"
-         y="133.29977"
+         style="font-style:normal;font-variant:normal;font-weight:100;font-stretch:normal;font-size:11.99444485px;line-height:1.25;font-family:'Apple Chancery';-inkscape-font-specification:'Apple Chancery, Thin';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0a943c;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         x="106.71278"
+         y="133.70007"
          id="text955"><tspan
            id="tspan963"
            sodipodi:role="line"
-           x="106.84822"
-           y="133.29977">F</tspan></text>
+           x="106.71278"
+           y="133.70007">F</tspan></text>
       <rect
          transform="rotate(3.3760937)"
          y="125.64001"
