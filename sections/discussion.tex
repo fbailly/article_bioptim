@@ -4,7 +4,7 @@ The main features illustrated by the six provided examples are (Tab.~X):
 \item the possibility to use torque-, activation- or excitation-driven models (and their combinations)
 \item a variety of ready-to-use cost functions, constraints and dynamics (with and without contacts)...
 \item ... easily customizable in Python when required by the user;
-\item the possibility to solve advanced OCPs (possibly multi-phased) in a few seconds or minutes, that were previously taking hours;
+\item the possibility to solve advanced OCPs (possibly multiphase) in a few seconds or minutes, that were previously taking hours;
 \item the interface with two different NLP solvers
 \end{itemize}
 In the following, several aspects of \textit{bioptim} are discussed.
@@ -21,9 +21,9 @@ In contrast to what is claimed in [\addref], DMS is not a limitation to the perf
 
 One of the reasons explaining the performances of \bioptim is the rewriting of the core software, \textit{RBDL} and \textit{biorbd} implementing the dynamics, into \textit{casadi} symbolics to automatically provide the exact Jacobians and Hessians of the resulting NLP.  
 This feature is somewhat more computationally expensive than finite differences, but the gain in accuracy for the calculation of derivatives often leads to shorter convergence times (due to much less iterations) and to optimal solutions reached with lower tolerances.
-This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because talking about \ipopt for instance, an optimal solution obtained with a convergence criterion of $1e-2$ is very unlikely to be dynamically consistent; 
-it would diverge when forward integrating the controls in a single-shooting manner. 
-By experience, a lower tolerance ($1e-6$. $1e-8$) only reachable with exact derivatives could lead to better forward dynamics results.
+This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because, for instance when using \ipopt, an optimal solution obtained with a convergence criterion of $10^{-2}$ is very unlikely to be dynamically consistent; 
+it would diverge when forwardly integrating the controls in a single-shooting manner. 
+A lower tolerance ($10^{-6}$. $10^{-8}$), which is only reachable with exact derivatives, is expected to lead to better forward dynamics results.
 
 \subsection{Python based but fast!}
 
