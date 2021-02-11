@@ -1,4 +1,4 @@
-In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of a 8-DoF model in a backward somersault and to illustrate \textit{bioptim}'s ability to handle quaternionic representations of rotations.
+In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of an 8-DoF model in a backward somersault and to illustrate \textit{bioptim}'s ability to handle quaternionic representations of rotations.
 The model was composed of a 6-DoF root segment and two 1-DoF torque actuated shoulder joints.
 Two different numerical descriptions of the root segment rotations were used (Euler angles and quaternions).
 The objective function was as follows:
@@ -6,7 +6,7 @@ The objective function was as follows:
 \begin{eqnarray}\label{eq:ocp_Trampo}
 \mathcal{J} =  \int_0^T\underbrace{\omega_1 \dot{\phi}}_{\mathtt{MIN\_TWIST}}  + \underbrace{~\omega_2  \|\boldsymbol{\tau}\|^2}_{\mathtt{MIN\_ TORQUE}}~dt,
 \end{eqnarray}
-with $\omega_1 = -1$ (resulting in the maximization of the first term) and $\omega_2 = 1e-6$, T is the duration of the movement and $\boldsymbol{\tau}$ is the torque control vector.
+with $\omega_1 = -1$ (resulting in the maximization of the first term) and $\omega_2 = 10^{-6}$, T is the duration of the movement and $\boldsymbol{\tau}$ is the torque control vector.
 The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds to maximizing the change in twist rotation and the second term is for control regularization.
 
 
