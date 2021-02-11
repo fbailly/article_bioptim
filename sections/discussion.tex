@@ -4,7 +4,7 @@ The main features illustrated by the six provided examples are (Tab.~X):
 \item the possibility to use torque-, activation- or excitation-driven models (and their combinations)
 \item a variety of ready-to-use cost functions, constraints and dynamics (with and without contacts)...
 \item ... easily customizable in Python when required by the user;
-\item the possibility to solve advanced OCPs (possibly multi-phased) in a few seconds or minutes, that were previously taking hours;
+\item the possibility to solve advanced OCPs (possibly multiphase) in a few seconds or minutes, that were previously taking hours;
 \item the interface with two different NLP solvers
 \end{itemize}
 In the following, several aspects of \textit{bioptim} are discussed.
@@ -21,9 +21,9 @@ In contrast to what is claimed in [\addref], DMS is not a limitation to the perf
 
 One of the reasons explaining the performances of \bioptim is the rewriting of the core software, \textit{RBDL} and \textit{biorbd} implementing the dynamics, into \textit{casadi} symbolics to automatically provide the exact Jacobians and Hessians of the resulting NLP.  
 This feature is somewhat more computationally expensive than finite differences, but the gain in accuracy for the calculation of derivatives often leads to shorter convergence times (due to much less iterations) and to optimal solutions reached with lower tolerances.
-This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because talking about \ipopt for instance, an optimal solution obtained with a convergence criterion of $1e-2$ is very unlikely to be dynamically consistent; 
-it would diverge when forward integrating the controls in a single-shooting manner. 
-By experience, a lower tolerance ($1e-6$. $1e-8$) only reachable with exact derivatives could lead to better forward dynamics results.
+This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because, for instance when using \ipopt, an optimal solution obtained with a convergence criterion of $10^{-2}$ is very unlikely to be dynamically consistent; 
+it would diverge when forwardly integrating the controls in a single-shooting manner. 
+A lower tolerance ($10^{-6}$. $10^{-8}$), which is only reachable with exact derivatives, is expected to lead to better forward dynamics results.
 
 \subsection{Python based but fast!}
 
@@ -36,6 +36,9 @@ While both may be used with \ipopt, \acados is only compatible with \texttt{casa
 Based on the \bioviz Python library, \bioptim proposes a series of online-generated figures, inspired by the  real-time graphics from \muscodii \hl{[ref]}, to analyze the iterations of the solvers.
 This is made with minimal computational cost thanks to a \hl{XXX} protocole. 
 Our implementation leverages the \textit{Python pickle} library for easily saving and loading OCPs for, e.g., post-processing analysis.
+
+For a more in-depth analysis of the real-time estimation capabilities of \bioptim, see \cite{bailly2020real}.
+
 
 \subsection{Fast vs robust NLP solvers}
 
@@ -51,11 +54,12 @@ This is currently one of the drawbacks of \moco, which does not provide this fea
 \bioptim, however, is able to handle multi-phase OCPs, although they can currently only be solved with ipopt (see Ex. \hl{XXX} and \hl{XXX}).
 
 
-\subsection{Cost vs constraints … relâcher le problème simplement}
+\subsection{From constraints to objectives: easy problem relaxation}
 
-\hl{???}
-
-For a more in-depth analysis of the real-time estimation capabilities of \bioptim, see \cite{bailly2020real}.
+As stated in Sec. II.B, there exist a correspondence between most of the pre-implemented \constraints and \objectives.
+This is intended to allow for easy relaxation when the problem is reluctant to converge. 
+For instance, when a biomechanical task requires the final configuration of the model to be enforced (reaching, cyclic motions, sports, etc.), one should first use a \constraint (e.g., \texttt{TRACK\_STATE}).
+If the convergence is challenging, just turning this constraint into its namesake Mayer \objective, with an heavy weight, should help the solver.
 
 \subsection{Limitations}
 
@@ -66,20 +70,17 @@ Nevertheless,  \biorbd is actively maintained, fast and \casadi-compatible for a
 The variety of proposed examples highlighted simple to advanced models.
 Even if defining a new model was made straightforward thanks to the \texttt{.bioMod} file format, \textit{biorbd} does not include a GUI for building models. 
 Some Opensim models can be translated into \texttt{.bioMod} \hl{[LINK]} but our library does not yet support multiple wrapping objects, non-orthogonal DoFs between bodies, compliant contact force models (e.g. [SmoothSphereHalfSpaceForce [52]]) or muscle-tendon equilibrium. 
-As seen in \textit{Moco}, wrapping objects are rare due to computational cost and required optimization when a line of action is in contact with more than one object, which compromises automatic differentiation. 
+As seen in \moco, wrapping objects are rare due to computational cost and required optimization when a line of action is in contact with more than one object, which compromises automatic differentiation. 
 Via points [\addref] and pre-processed moment arms (to be expressed as polynomial functions of crossed DoFs) are often preferred. 
 \hl{In example X, the model differences (Opensim vs Biorbd), especially at the knee may explain the XXXX.} 
 
 %Algorithms available in RBDL (core of biorbd for XXX) for ellipsoid foot model XXXXX (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6693511/).    
 
 \subsection{Future directions}
-Realtime estimation using MHE
 
-MOOCP .. using front pareto
-
-Prediction of adaptations due to muscular fatigue using NMPC
-
-Muscle-tendon equilibrium and model builder are already planned and the former will either required an additional optimisation procedure to achieve the equilibrium as in CEINMS [\addref] or adding the length of muscle part with explicit constraints of XXXX in the OCP like in [\addref]. 
-
-In line with the current studies of our research group, the future developments will first include \comment{nonlinear}{uniformiser l'écriture de ce mot} model predictive control and MHE (see example X) to predict optimal performances in repetitive tasks that generate muscular fatigue and real time estimation of joint torques and muscle forces, respectively. 
-As shown in our previous studies [\addref] the analysis of a series near-optimal solutions is relevant in sport (but also in rehabilitation and ergonomics) and further efforts about multiobjective OCP of human performances are anticipated. 
+\bioptim v1.0 was recently released, with all the features presented in this communication and some improvements expected in a near future.
+First, a graphical model builder is planned in \biorbd, to easily generate \textit{.bioMod} files.
+Also, models of muscular fatigue are to be included in \bioptim, in order to be able to predict adapted motor strategies for long or demanding motions.
+The formulation of moving horizon schemes (MHE, NMPC) will be pre-implemented, with efficient warm-starting heuristics, to facilitate their use.
+The implementation of muscle-tendon equilibrium is planned. It will require an additional optimization step to achieve the equilibrium as done in CEINMS [\addref] or the addition of the  muscle length with explicit constraints of \hl{XXXX} like in [\addref].  
+Finally, an effort will be made to extend the compatibility of \acados with all the features of \bioptim (multiphase, nonlinear constraints, etc.). 
