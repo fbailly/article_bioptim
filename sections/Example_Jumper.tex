@@ -32,6 +32,7 @@ $}
 where $T_i$ with $i \in [1, 2, 3, 4, 5]$ are the final times of the i$^{th}$ phase respectively; 
 $\omega_h$ is the weight of the maximization of the CoM height and is defined negative ($-100$) to effectively maximize this term objective function; 
 $\omega_t$, $\omega_{sd}$ and $\omega_x$ are weights equal to $0.1$, $0.1$, and $1$, respectively; 
+$\dot{q}$ is the generalized velocities part of the state vector $\mathbf{x}$; 
 and $\mathbf{x}_+$ is the state vector excluding the frontward and upward translations of the root segment. 
 The $\mathbf{x}_+^*$ corresponds to a reference standing position of the avatar with its knee slightly flexed and its arms horizontally raised.
 
@@ -40,7 +41,7 @@ The $\mathbf{x}_+^*$ corresponds to a reference standing position of the avatar 
 Several constraints are necessary to describe a realistic jump.
 %The generalized coordinates---i.e., the maximum flexibility expected---are bounded to human-like limits.
 Joint angles were bounded to human-like limits.
-The first node of the first phase was enforced to be equal \comment{to $x_+^*$}{Je n'avais pas mis le + ici, car au début la translation est effectivement contrainte}. 
+The first node of the first phase was enforced to be equal to $x^*$ (i.e., including the translations of the root segment to be at the origin). 
 Joint velocities were arbitrarily bounded to $[-10 \pi; 10 \pi]~rad/s$.
 Joint torques were bounded with nonlinear torque/angle/velocity relashionships measured on a high level athlete using an isokinetic dynamometer (Fig.~\ref{fig:graph_force_vitesse_longueur}). 
 %For the contact forces from the contact points, a directional constraint is applied such that the force is alway pointing upward, meaning that the model is not allowed to pull on the floor. 
