@@ -167,3 +167,6 @@ cython_debug/
 
 # PyCharm
 .idea
+
+# Videos from example
+code/muscle_exc_pointing/videos/
