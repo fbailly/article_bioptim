@@ -74,8 +74,11 @@ ax2.set_ylabel('Spring external force [N]', color='#2ca02c')
 ax2.tick_params(axis='y', labelcolor='#2ca02c')
 ax2.legend(loc="upper right", borderpad=0.5)
 
-plt.show()
+# plt.show()
 plt.savefig('Mass_Pendulum_Fext.eps', format='eps')
+plt.show()
+
+print('RMS q_m / q*_m : ', np.std(q[0, 51:]-0.5))
 
 b = bioviz.Viz(model_path)
 b.load_movement(q)
