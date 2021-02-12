@@ -13,21 +13,21 @@ The last two were landing phases, a first one with one contact (toe) and a secon
 The transitions between phases with addition of contact points were approximated with the build-in inelastic impact \texttt{PhaseTransition.IMPACT}, which computes the velocity of the kinematic chain after an impact.
 
 The objective function with the most important weight was a Mayer objective computed at the end of the push-off phase consisting in maximizing the jump height ($h$)---represented by the position of the CoM---from the projectile equations.
-The remaining objective functions were added either to help the solver to converge ( regularization) or to converge toward a more human-like solution. 
+The remaining objective functions were added either to help the solver to converge (regularization) or to converge toward a more human-like solution. 
 
 \[ 
 \resizebox{0.90\columnwidth}{!}{$ 
 \begin{aligned}
-\mathcal{J} = &~\underbrace{\omega_h h}_{\mathtt{MIN\_PREDICTED\_COM\_HEIGHT}}~+~\omega_{t}\sum^5_{i=1}
-  ~\underbrace{(T_i - T_{i-1})}_{\mathtt{MIN\_TIME}}~+~\underbrace{\omega_{x} \| \mathbf{x}_+(T_5) - \mathbf{x}_+^*\|^2}_{\mathtt{TRACK\_STATE}}\\
-  +~&\omega_{sd}\sum_{i=2}^4\int_{t=T_i}^{T_{i+1}}\underbrace{\left|\left|\frac{d\mathbf{\dot{q}}}{dt}\right|\right|^2}_{\mathtt{MIN\_STATE\_DERIVATIVE}}~dt
+\mathcal{J} = &~\underbrace{\omega_h h}_{\mathtt{MIN\_PREDICTED\_COM\_HEIGHT}}~+~\underbrace{\omega_{x} \| \mathbf{x}_+(T_5) - \mathbf{x}_+^*\|^2}_{\mathtt{TRACK\_STATE}}\\
++~&\sum^5_{i=1}~\underbrace{\omega_{t}(T_i - T_{i-1})}_{\mathtt{MIN\_TIME}}~
+  +~\sum_{i=2}^4\int_{t=T_i}^{T_{i+1}}\underbrace{\omega_{sd}\left|\left|\frac{d\mathbf{\dot{q}}}{dt}\right|\right|^2}_{\mathtt{MIN\_STATE\_DERIVATIVE}}~dt
 \end{aligned}  
 $} 
 \addtag  
 \label{eq:cost_jumper}
 \]
 
-where $T_i$ with $i \in [1, 2, 3, 4, 5]$ are the final times of the i$^{th}$ phase respectively; 
+where $T_0=0$, $T_i$ with $i \in [1, 2, 3, 4, 5]$ are the final times of the i$^{th}$ phase respectively; 
 $\omega_h$ is the weight of the maximization of the CoM height and is defined negative ($-100$) to effectively maximize this term objective function; 
 $\omega_t$, $\omega_{sd}$ and $\omega_x$ are weights equal to $0.1$, $0.1$, and $1$, respectively; 
 $\mathbf{\dot{q}}$ is the generalized velocities part of the state vector $\mathbf{x}$; 
