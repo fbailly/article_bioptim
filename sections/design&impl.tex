@@ -51,9 +51,8 @@ If applicable (for tracking objective functions mainly), the user must also spec
 \subsubsection{Constraint set}
 Classically, constraints are hard penalties of the optimization problem, i.e., a solution will not be considered optimal, unless all constraints (equality or inequality) are met.
 The \texttt{Constraint} class contains a variety of already implemented constraints.
-Some of them are specific functions, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.), the others  
-have their equivalent in the \texttt{ObjectiveFunction} class.
-As for the objective functions, the user can easily define custom constraints in Python.
+Some of them are specific functions, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.), the others have their equivalent in the \texttt{ObjectiveFunction} class.
+Should one go missing, a custom constraint type is also possible to define.
 
 \subsubsection{Bounds}
 Essentially, the \texttt{Bounds} are constraints directly related to the states, the controls and the parameters.
