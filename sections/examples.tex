@@ -4,31 +4,31 @@ When possible, problems were solved with both \ipopt and \acados.
 In the following, bold symbols denote vectors and starred ones denote reference or tracked quantities.
 
 
-\subsection{Muscle activation driven pointing task}
+\subsection{Muscle activation driven pointing task}\label{ex:poiting}
 \input{sections/Examples_Muscle_activation_driven_pointing_task}
 
-\subsection{Quaternion base twisting somersault}
+\subsection{Quaternion base twisting somersault}\label{ex:somersault}
 \input{sections/Examples_Quaternion_base_twisting_somersault}
 
-\subsection{Pendulum on a spring}
+\subsection{Pendulum on a spring}\label{ex:spring}
 \input{sections/Examples_Pendulum_external_forces}
 
-\subsection{Multiphase torque driven walking cycle}
+\subsection{Multiphase torque driven walking cycle}\label{ex:walking}
 \input{sections/Examples_Multiphase_walking_cycle}
 
-\subsection{Moving Horizon Estimation of Shoulder Elevation}
+\subsection{Moving Horizon Estimation of Shoulder Elevation}\label{ex:mhe}
 \input{sections/Example_MHE_shoulder_elevation}
 
-\subsection{Multiphase vertical jumper}
+\subsection{Multiphase vertical jumper}\label{ex:jump}
 \input{sections/Example_Jumper}
 %
 \begin{table*}[t!]
-\caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. $^\star$ stands for free time OCP, otherwise it is fixed. The single shooting state trajectory is obtained by forwardly integrating the initial state with the optimized control inputs. The single shooting error is computed as the RMSE between the optimized state trajectory and the single shooting one at each node.}
+\caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. The single shooting state trajectory is obtained by forwardly integrating the initial state with the optimized control inputs during 1~second. The single shooting error is computed as the mean RMSE between the optimized state vector and the single shooting one at 1~second.}
 \label{tab:Perfs_and_detailed_implementations_of_each_example}
 \centering
 \begin{tabular}{c l rl rl rl}
 \cmidrule[\heavyrulewidth](lr){2-8}
-& & \multicolumn{2}{l}{Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
+& & \multicolumn{2}{l}{\ref{ex:poiting} Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
 \cmidrule[\heavyrulewidth](lr){3-4}
 \cmidrule[\heavyrulewidth](lr){5-6}
 \cmidrule[\heavyrulewidth](lr){7-8}
@@ -41,7 +41,7 @@ In the following, bold symbols denote vectors and starred ones denote reference 
 \mymultirow{3}{Solve} & \# NLP iterations          & 47     & 19            & --    & --     & --    & --\\
                       & Optimized cost             & 20.8 & 23.2        & --    & --     & --    & --\\
                       & Time to convergence (s)    & 22.3    & 0.45          & --    & --     & --    & --\\
-                      & Single shooting error    & $1.3*10^{-8}$    & $2.9*10^{-14}$          & --    & --     & --    & --\\
+                      & Single shooting error    & $<10^{-7}$    & $<10^{-13}$          & --    & --     & --    & --\\
 %Example & Link & IPOPT & ACADOS \\ 
 
 %\midrule

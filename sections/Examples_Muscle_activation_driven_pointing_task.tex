@@ -5,10 +5,10 @@ The three Lagrange terms  were added for control regularization (muscle activati
 
 \[
 \begin{aligned}
-	\mathcal{C} = &\int_{t=0}^T\underbrace{\|\bf{a}\|^2}_{\mathtt{MIN\_ACTIVATION}}~
+	\mathcal{C} = 	&~\omega_1~\underbrace{\|\mathbf{m_u}(T)-\mathbf{m^*_s}\|^2}_{\mathtt{TRACK\_MARKERS}}~\\
+	&\int_{t=0}^T\underbrace{\|\bf{a}\|^2}_{\mathtt{MIN\_ACTIVATION}}~
 	+\underbrace{\|\boldsymbol\tau\|^2}_{\mathtt{MIN\_TORQUE}}~
-	+\underbrace{\|\bf{x}\|^2}_{\mathtt{MIN\_STATE}}~ dt,\\
-	&+ \omega_1~\underbrace{\|\bf m_u-\bf m^*_s\|^2}_{\mathtt{TRACK\_MARKERS}}~
+	+\underbrace{\|\bf{x}\|^2}_{\mathtt{MIN\_STATE}}~ dt,
 \end{aligned}
 \addtag
 \label{eq:cost_pointing}
@@ -20,7 +20,7 @@ The movement lasted for 2~seconds and was discretized using 50~shooting nodes wi
 The problem was solved using \ipopt (with exact Hessian computations) and \acados (with a Gauss-Newton approximation of the Hessian) resulting in two very close solutions.
 \acados was about 50 times faster than \ipopt and was better at enforcing the continuity constraints (as shown by the single shooting error in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}).
 \ipopt however ended up with a smaller optimized objective (20.8 \textit{vs} 23.2), leading to a more optimal solution than \acados. 
-Superimposed snapshots of the optimal motion found with \acados are displayed in Fig.\ref{fig:snapshots_activation_driven_pointing}.
+Superimposed snapshots of the optimal motion found with \acados are displayed in Fig.~\ref{fig:snapshots_activation_driven_pointing}.
 It is worth mentioning that for the purpose of this illustration, no constraint was given on the shoulder range of motion to ensure physiological muscle trajectories. 
 
 %
