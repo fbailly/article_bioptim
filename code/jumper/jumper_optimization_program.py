@@ -15,12 +15,68 @@ from bioptim import (
     PhaseTransitionList,
     PhaseTransitionFcn,
     BidirectionalMapping,
-    Data,
     InitialGuess,
     InterpolationType,
     OptimalControlProgram,
     InitialGuessList,
 )
+
+
+def maximal_tau(nodes: PenaltyNodes, minimal_tau):
+    nlp = nodes.nlp
+    nq = nlp.mapping["q"].to_first.len
+    q = [nlp.mapping["q"].to_second.map(mx[:nq]) for mx in nodes.x]
+    qdot = [nlp.mapping["qdot"].to_second.map(mx[nq:]) for mx in nodes.x]
+
+    min_bound = []
+    max_bound = []
+    func = biorbd.to_casadi_func("torqueMax", nlp.model.torqueMax, nlp.q, nlp.qdot)
+    for n in range(len(nodes.u)):
+        bound = func(q[n], qdot[n])
+        min_bound.append(
+            nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 1], minimal_tau), minimal_tau, bound[:, 1])))
+        max_bound.append(
+            nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 0], minimal_tau), minimal_tau, bound[:, 0])))
+
+    obj = vertcat(*nodes.u)
+    min_bound = vertcat(*min_bound)
+    max_bound = vertcat(*max_bound)
+
+    return (
+        vertcat(np.zeros(min_bound.shape), np.ones(max_bound.shape) * -np.inf),
+        vertcat(obj + min_bound, obj - max_bound),
+        vertcat(np.ones(min_bound.shape) * np.inf, np.zeros(max_bound.shape)),
+    )
+
+
+def com_dot_z(nodes: PenaltyNodes):
+    nlp = nodes.nlp
+    x = nodes.x
+    q = nlp.mapping["q"].to_second.map(x[0][: nlp.shape["q"]])
+    qdot = nlp.mapping["q"].to_second.map(x[0][nlp.shape["q"]:])
+    com_dot_func = biorbd.to_casadi_func("Compute_CoM_dot", nlp.model.CoMdot, nlp.q, nlp.qdot)
+    com_dot = com_dot_func(q, qdot)
+    return com_dot[2]
+
+
+def toe_on_floor(nodes: PenaltyNodes):
+    nlp = nodes.nlp
+    nb_q = nlp.shape["q"]
+    q_reduced = nodes.x[0][:nb_q]
+    q = nlp.mapping["q"].to_second.map(q_reduced)
+    marker_func = biorbd.to_casadi_func("toe_on_floor", nlp.model.marker, nlp.q, 2)
+    toe_marker_z = marker_func(q)[2]
+    return toe_marker_z + 0.779  # floor = -0.77865438
+
+
+def heel_on_floor(nodes: PenaltyNodes):
+    nlp = nodes.nlp
+    nb_q = nlp.shape["q"]
+    q_reduced = nodes.x[0][:nb_q]
+    q = nlp.mapping["q"].to_second.map(q_reduced)
+    marker_func = biorbd.to_casadi_func("heel_on_floor", nlp.model.marker, nlp.q, 3)
+    tal_marker_z = marker_func(q)[2]
+    return tal_marker_z + 0.779  # floor = -0.77865829
 
 
 class Jumper5Phases:
@@ -111,39 +167,6 @@ class Jumper5Phases:
         self.dynamics.add(DynamicsFcn.TORQUE_DRIVEN_WITH_CONTACT)  # Flat foot
 
     def _set_constraints(self):
-        def com_dot_z(nodes: PenaltyNodes):
-            nlp = nodes.nlp
-            x = nodes.x
-            q = nlp.mapping["q"].to_second.map(x[0][: nlp.shape["q"]])
-            qdot = nlp.mapping["q"].to_second.map(x[0][nlp.shape["q"]:])
-            com_dot_func = biorbd.to_casadi_func("Compute_CoM_dot", nlp.model.CoMdot, nlp.q, nlp.qdot)
-            com_dot = com_dot_func(q, qdot)
-            return com_dot[2]
-
-        def maximal_tau(nodes: PenaltyNodes, minimal_tau):
-            nlp = nodes.nlp
-            nq = nlp.mapping["q"].to_first.len
-            q = [nlp.mapping["q"].to_second.map(mx[:nq]) for mx in nodes.x]
-            qdot = [nlp.mapping["qdot"].to_second.map(mx[nq:]) for mx in nodes.x]
-
-            min_bound = []
-            max_bound = []
-            func = biorbd.to_casadi_func("torqueMax", nlp.model.torqueMax, nlp.q, nlp.qdot)
-            for n in range(len(nodes.u)):
-                bound = func(q[n], qdot[n])
-                min_bound.append(nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 1], minimal_tau), minimal_tau, bound[:, 1])))
-                max_bound.append(nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 0], minimal_tau), minimal_tau, bound[:, 0])))
-
-            obj = vertcat(*nodes.u)
-            min_bound = vertcat(*min_bound)
-            max_bound = vertcat(*max_bound)
-
-            return (
-                vertcat(np.zeros(min_bound.shape), np.ones(max_bound.shape) * -np.inf),
-                vertcat(obj + min_bound, obj - max_bound),
-                vertcat(np.ones(min_bound.shape) * np.inf, np.zeros(max_bound.shape)),
-            )
-
         # Torque constrained to torqueMax
         for i in range(self.n_phases):
             self.constraints.add(maximal_tau, phase=i, node=Node.ALL, minimal_tau=self.tau_min)
@@ -219,24 +242,6 @@ class Jumper5Phases:
             self.u_init.add([0] * self.n_tau)
 
     def _set_phase_transitions(self):
-        def toe_on_floor(nodes: PenaltyNodes):
-            nlp = nodes.nlp
-            nb_q = nlp.shape["q"]
-            q_reduced = nodes.x[0][:nb_q]
-            q = nlp.mapping["q"].to_second.map(q_reduced)
-            marker_func = biorbd.to_casadi_func("toe_on_floor", nlp.model.marker, nlp.q, 2)
-            toe_marker_z = marker_func(q)[2]
-            return toe_marker_z + 0.779  # floor = -0.77865438
-
-        def heel_on_floor(nodes: PenaltyNodes):
-            nlp = nodes.nlp
-            nb_q = nlp.shape["q"]
-            q_reduced = nodes.x[0][:nb_q]
-            q = nlp.mapping["q"].to_second.map(q_reduced)
-            marker_func = biorbd.to_casadi_func("heel_on_floor", nlp.model.marker, nlp.q, 3)
-            tal_marker_z = marker_func(q)[2]
-            return tal_marker_z + 0.779  # floor = -0.77865829
-
         # Phase transition
         self.phase_transitions.add(PhaseTransitionFcn.CONTINUOUS, phase_pre_idx=0)
         self.phase_transitions.add(PhaseTransitionFcn.CONTINUOUS, phase_pre_idx=1)
@@ -253,9 +258,9 @@ class Jumper5Phases:
         self.x_bounds[4].min[self.n_q:, 0] = 2 * self.x_bounds[4].min[self.n_q:, 0]
         self.x_bounds[4].max[self.n_q:, 0] = 2 * self.x_bounds[4].max[self.n_q:, 0]
 
-    def solve(self, limit_memory_max_iter, exact_max_iter):
+    def solve(self, limit_memory_max_iter, exact_max_iter, load_path=None):
         def warm_start_nmpc(ocp, sol):
-            state, ctrl, param = Data.get_data(ocp, sol, concatenate=False, get_parameters=True)
+            state, ctrl, param = sol.states, sol.controls, sol.parameters
             u_init_guess = InitialGuessList()
             x_init_guess = InitialGuessList()
             for i in range(ocp.n_phases):
@@ -268,16 +273,25 @@ class Jumper5Phases:
             ocp.solver.set_lagrange_multiplier(sol)
 
         # Run optimizations
-        sol = self.ocp.solve(
-            show_online_optim=False,
-            solver_options={"hessian_approximation": "limited-memory", "max_iter": limit_memory_max_iter}
-        )
-        warm_start_nmpc(self.ocp, sol)
-        return self.ocp.solve(
-            show_online_optim=True,
-            solver_options={"hessian_approximation": "exact",
-                            "max_iter": exact_max_iter,
-                            "warm_start_init_point": "yes",
-                            }
-        )
+        if load_path:
+            _, sol = OptimalControlProgram.load(load_path)
+            return sol
+        else:
+            sol = None
+            if limit_memory_max_iter > 0:
+                sol = self.ocp.solve(
+                    show_online_optim=exact_max_iter == 0,
+                    solver_options={"hessian_approximation": "limited-memory", "max_iter": limit_memory_max_iter}
+                )
+            if limit_memory_max_iter > 0 and exact_max_iter > 0:
+                warm_start_nmpc(self.ocp, sol)
+            if exact_max_iter > 0:
+                sol = self.ocp.solve(
+                    show_online_optim=True,
+                    solver_options={"hessian_approximation": "exact",
+                                    "max_iter": exact_max_iter,
+                                    "warm_start_init_point": "yes",
+                                    }
+                )
 
+            return sol
