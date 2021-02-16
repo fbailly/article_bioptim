@@ -51,13 +51,20 @@ If applicable (for tracking objective functions mainly), the user must also spec
 \subsubsection{Constraint set}
 Classically, constraints are hard penalties of the optimization problem, i.e., a solution will not be considered optimal, unless all constraints (equality or inequality) are met.
 The \texttt{Constraint} class contains a variety of already implemented constraints.
-Some of them are specific functions, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.), the others  
-have their equivalent in the \texttt{ObjectiveFunction} class.
-As for the objective functions, the user can easily define custom constraints in Python.
+Some of them are specific functions, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.), the others have their equivalent in the \texttt{ObjectiveFunction} class.
+Should one go missing, a custom constraint type is also possible to define.
 
 \subsubsection{Bounds}
 Essentially, the \texttt{Bounds} are constraints directly related to the states, the controls and the parameters.
 They are useful for defining model-related constraints such as kinematic, torque or muscle excitation\:/\:activation limits. 
 
+\subsubsection{Shooting points and problem duration}
+In a direct multiple shooting formulation, the total duration of the problem is divided into smaller intervals whose initial values are called shooting points. 
+In \bioptim, the user is asked to define a number of shooting points and a problem duration, per phase.
+Possibly, the problem duration can be part of the optimization variables, allowing for, e.g., minimal time formulations.
 
-\hl{Add Shooting points, phase time, initial guesses}
+\subsubsection{Initial guesses}
+Once the problem is set up, the user can provide an \texttt{InitialGuess} for all the optimization variables, at each shooting point.
+This feature aims at providing prior information to the solver.
+Several \texttt{InterpolationTypes} are implemented in \bioptim (constant, linear, spline, each shooting point, etc.), to quickly let the user define the initial guesses.
+A custom \texttt{InterpolationType} is also possible to implement.
