@@ -1,7 +1,7 @@
 The purpose of \textit{bioptim} is to solve a variety of biomechanical OCPs with minimal user effort and high performances in terms of computational time. 
 The main features illustrated by the six provided examples are (Tab.~X): 
 \begin{itemize}
-\item the possibility to use torque-, \comment{activation- or excitation}{juste muscle?}-driven models (and their combinations);
+\item the possibility to use torque- or muscle-driven models (and their combinations);
 \item a variety of ready-to-use cost functions, constraints and dynamics (with and without contacts)...;
 \item ... easily customizable in Python when required by the user;
 \item the possibility to solve advanced OCPs (possibly multiphase) in a few seconds or minutes, that were previously taking hours;
@@ -22,7 +22,7 @@ In contrast to what is claimed in [\addref], DMS is not a limitation to the perf
 One of the reasons explaining the performances of \bioptim is the rewriting of the core software, \textit{RBDL} and \biorbd implementing the dynamics, into \casadi symbolics to automatically provide the exact Jacobians and Hessians of the resulting NLP.  
 \comment{This feature is somewhat more computationally expensive than finite differences}{Je ne comprends pas ce que tu veux dire}, but the gain in accuracy for the calculation of derivatives often leads to shorter convergence times (due to much less iterations) and to optimal solutions reached with lower tolerances.
 This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because, for instance when using \ipopt, an optimal solution obtained with a convergence criterion of $10^{-2}$ is very unlikely to be dynamically sound; 
-that is it would diverge when forwardly integrating the controls in a single-shooting manner. 
+i.e., it would diverge when forwardly integrating the controls in a single-shooting manner. 
 A lower tolerance ($10^{-6}$. $10^{-8}$), which is only reachable with exact derivatives---for most of OCPs in biomechanics---, is expected to lead to better forward dynamics results.
 
 \subsection{Python based, but fast!}
@@ -34,7 +34,7 @@ Since flexibility and ease-of-use should not compromise the performances, all th
 These graphs can either be built in \texttt{casadi.MX()} or \texttt{casadi.SX()}.
 The latter requires more RAM for building the problem but is faster to solve.
 While both may be used with \ipopt, \acados is only compatible with \texttt{casadi.SX()}.
-For instance, in example \ref{ex:mhe}, \comment{we showed the possibility of estimating muscle forces in realtime using Acados and a standard laptop.}{Non sequitur?}
+For instance, in example \ref{ex:mhe}, \comment{we showed the possibility of estimating muscle forces in real time using \acados on a standard laptop.}{Non sequitur?}
 For a more in-depth analysis of the real-time estimation capabilities of \bioptim, see \cite{bailly2020real}.\\
 Alongside with the 3d visualiser \bioviz that animates the solution, \bioptim proposes a series of online-generated figures, inspired by the  real-time graphics from \muscodii \addref, to visualize the optimized variables at each iterations of the solver.
 This is made with minimal computational cost thanks to the multiprocessing Python toolbox. 
@@ -81,7 +81,7 @@ Via points [\addref] and pre-processed moment arms (to be expressed as polynomia
 \subsection{Future directions}
 
 \bioptim v1.0 was released in January 2021, with all the features presented in this communication.
-Some improvements expected in a near future.
+Some improvements are expected in a near future.
 First, a graphical model builder is planned in \biorbd, to easily generate \textit{.bioMod} files.
 Also, models of muscular fatigue are to be included in \bioptim, to predict adapted motor strategies for long or demanding motions.
 The formulation of moving horizon schemes (MHE, Nonlinear Model Predictive Control) will be pre-implemented, with efficient warm-starting heuristics, to facilitate their use.
