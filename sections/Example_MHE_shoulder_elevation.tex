@@ -7,7 +7,19 @@ Each time one subproblem is solved, a new measurement is added, the oldest one i
 Due to their similarities, the solution of the previous OCP is a good initial guess to the new one. 
 The dynamical consistency of the final solution is enforced by continuity constraints on the initial state. 
 Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($q^*$), states and muscle activations regularizations (i.e., least-square criteria): 
-
+\begin{figure*}[t!] 
+\centering 
+\includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
+\caption{Time series of real-time estimated joint angles (blue) and noisy reference joint angles (orange) of a cyclic motion (Ex.~\ref{ex:mhe}).} 
+\label{fig:joint_angles_MHE}
+\end{figure*} 
+\begin{figure*}[t!] 
+\centering 
+\includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
+\caption{Time series of real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (Ex.~\ref{ex:mhe}). Only four muscles with significative action on the two selected DoFs of Fig.~\ref{fig:joint_angles_MHE}) are shown.
+Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.}
+\label{fig:muscle_forces_MHE} 
+\end{figure*} 
 \[ 
 \resizebox{0.9\columnwidth}{!}{$ 
 \begin{aligned}
@@ -27,25 +39,3 @@ In this example, reference data of an $8~s$ series of four arm elevations were g
 Centered Gaussian noise (mean = 0, std = $0.005q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
 Using a windows size of 7 nodes, the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
 The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented). 
-
-\begin{figure}[t!]
-\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
-\caption{Snapshots of the push-off phase of a vertical jump (Ex.~\ref{ex:jump}). The avatar reproduces a human-like jump movement. The first four positions represent the first phase of the optimization (i.e., heel and toe in contact with the floor) and the fifth position depicts the end of the second phase (i.e., only the heel in contact with the floor)} 
-\label{fig:graph_force_vitesse_longueur}
-\end{figure}
-
-\begin{figure*}[t!] 
-\centering 
-\includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
-\caption{Time series of estimated joint angles (blue) and noisy reference joint angles (orange).} 
-\label{fig:joint_angles_MHE} 
-\end{figure*} 
-
-\begin{figure*}[t!] 
-\centering 
-\includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
-\caption{Time series of estimated muscle forces (blue) and ground truth muscle forces (orange). Only four muscles with significative action on the two selected DoFs (Fig.~\ref{fig:joint_angles_MHE}) are shown.
-Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.}
-\label{fig:muscle_forces_MHE} 
-\end{figure*} 
-
