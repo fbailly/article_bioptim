@@ -9,17 +9,12 @@ The dynamical consistency of the final solution is enforced by continuity constr
 Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($\bf{q^*}$), states and muscle activations regularizations (i.e., least-square criteria): 
 \begin{figure*}[t!] 
 \centering 
-\includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
-\caption{Time series of real-time estimated joint angles (blue) and noisy reference joint angles (orange) of a cyclic motion (Ex.~\ref{ex:mhe}).} 
-\label{fig:joint_angles_MHE}
+\includegraphics[width=\textwidth]{figures/MHE_results.pdf}\\ 
+\caption{Time series of (1) real-time estimated joint angles (blue) and noisy reference joint angles (orange) of a cyclic motion (up).(2) real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (bottom) (Ex.~\ref{ex:mhe}). Only four muscles with significative action (peaks force $>$ 15~N), on the two selected DoFs, are shown.
+Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head. (Ex.~\ref{ex:mhe}).} 
+\label{fig:MHE_results}
 \end{figure*} 
-\begin{figure*}[t!] 
-\centering 
-\includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
-\caption{\hl{MERGER LES DEUX FIGURES} Time series of real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (Ex.~\ref{ex:mhe}). Only four muscles with significative action (peaks force $>$ 15~N) on the two selected DoFs of Fig.~\ref{fig:joint_angles_MHE}) are shown.
-Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.}
-\label{fig:muscle_forces_MHE} 
-\end{figure*} 
+\\ 
 \[ 
 \resizebox{0.9\columnwidth}{!}{$ 
 \begin{aligned}
@@ -36,5 +31,5 @@ $}
 
 In this example, reference data of an $8~s$ series of four arm elevations were generated at 100~Hz, by computer simulation.
 A centered Gaussian noise (mean = 0, std = $0.005\:q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
-Using a windows size of 7 nodes (i.e., \hl{XXX} ms), the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
-The MHE was able to forecast the movement kinematics with a root mean square error of $1.3\pm0.5\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}). 
+Using a windows size of 7 nodes (i.e., 210 ms), the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.3\pm0.5\text{~}^{\circ}$ while provided a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:MHE_results}). 

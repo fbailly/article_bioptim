@@ -1,7 +1,7 @@
 """
 This is a basic example on how to use moving horizon estimation for muscle force estimation using a 4 degree of freedom
-(Dof) Arm model actuated by 19 hill-type muscle. controls are muscle activations.
-Model joint angle are tracked to match with reference ones, muscle activations ar minimized.
+(Dof) Arm model actuated by 19 hill-type muscles. controls are muscle activations.
+Model joint angles are tracked to match with reference ones, muscle activations are minimized.
 """
 
 import biorbd
@@ -12,6 +12,7 @@ import scipy.io as sio
 import bioviz
 from math import ceil
 from casadi import MX, Function
+from single_shooting_funct import *
 from bioptim import (
     OptimalControlProgram,
     ObjectiveList,
@@ -24,8 +25,6 @@ from bioptim import (
     Solver,
     Data,
     InterpolationType,
-    Simulate,
-    ShowResult
 )
 
 
@@ -150,22 +149,24 @@ def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd
     The objective function
     """
     objectives = ObjectiveList()
-    w_state = 100000
-    w_control = 10000
-    objectives.add(ObjectiveFcn.Lagrange.MINIMIZE_MUSCLES_CONTROL, weight=w_control)
+    if use_noise is not True:
+        weight = {"track_state": 100000, "min_act": 1000, "min_dq": 1000, "min_q": 100}
+    else:
+        weight = {"track_state": 10000, "min_act": 1000, "min_dq": 1000, "min_q": 100}
+    objectives.add(ObjectiveFcn.Lagrange.MINIMIZE_MUSCLES_CONTROL, weight=weight["min_act"])
     objectives.add(
         ObjectiveFcn.Lagrange.MINIMIZE_STATE,
-        weight=1000,
+        weight=weight["min_dq"],
         index=np.array(range(biorbd_model.nbQ(), biorbd_model.nbQ() * 2)),
     )
     objectives.add(
         ObjectiveFcn.Lagrange.MINIMIZE_STATE,
-        weight=100,
+        weight=weight["min_q"],
         index=np.array(range(biorbd_model.nbQ())),
     )
     objectives.add(
         ObjectiveFcn.Lagrange.TRACK_STATE,
-        weight=w_state,
+        weight=weight["track_state"],
         target=q_ref[:, iter * rt_ratio : (Ns_mhe + 1 + iter) * rt_ratio : rt_ratio],
         index=range(biorbd_model.nbQ()),
     )
@@ -226,24 +227,21 @@ if __name__ == "__main__":
     Prepare and solve the MHE example
     """
     use_noise = True  # True to track noisy joint angle if not False
-    model = 'arm_wt_rot_scap.bioMod'
-    start_delay = 25
+    model = "arm_wt_rot_scap.bioMod"
     T = 8
     Ns = 800
-    Ns = Ns - start_delay
-    T = T * 800 / Ns
-    with open(f"sim_ac_8000ms_800sn_REACH2_co_level_0_step5_ERK.bob", "rb") as file:
+    with open(f"Data/sim_ac_8000ms_800sn_REACH2_co_level_0_step5_ERK.bob", "rb") as file:
         data = pickle.load(file)
     states = data["data"][0]
     controls = data["data"][1]
-    q_ref = states["q"][:, start_delay:]
-    dq_ref = states["qdot"][:, start_delay:]
-    a_ref = states["muscles"][:, start_delay:]
-    u_ref = controls["muscles"][:, start_delay:]
+    q_ref = states["q"]
+    dq_ref = states["qdot"]
+    a_ref = states["muscles"]
+    u_ref = controls["muscles"]
 
     biorbd_model = biorbd.Model(model)
     Ns_mhe = 7
-    rt_ratio = 4
+    rt_ratio = 3
     T_mhe = T / (Ns / rt_ratio) * Ns_mhe
     x_wt_noise = np.concatenate((q_ref, dq_ref))
 
@@ -275,7 +273,7 @@ if __name__ == "__main__":
     ocp.update_bounds(x_bounds)
 
     # Update initial guess
-    x_init = InitialGuess(x_ref[:, :Ns_mhe+1], interpolation=InterpolationType.EACH_FRAME)
+    x_init = InitialGuess(x_ref[:, : Ns_mhe + 1], interpolation=InterpolationType.EACH_FRAME)
     u_init = InitialGuess([0.2] * biorbd_model.nbMuscles(), interpolation=InterpolationType.CONSTANT)
     ocp.update_initial_guess(x_init, u_init)
 
@@ -303,7 +301,7 @@ if __name__ == "__main__":
     x0, u0, X_est[:, 0], U_est[:, 0] = warm_start_mhe(ocp, sol)
 
     tic = time()  # Save initial time
-    for iter in range(1, int((Ns + 1) / rt_ratio - Ns_mhe)):
+    for iter in range(1, ceil((Ns + 1) / rt_ratio - Ns_mhe)):
         # set initial state
         ocp.nlp[0].x_bounds.min[:, 0] = x0[:, 0]
         ocp.nlp[0].x_bounds.max[:, 0] = x0[:, 0]
@@ -330,43 +328,60 @@ if __name__ == "__main__":
         # Set solutions and set initial guess for next optimisation
         x0, u0, x_out, u_out = warm_start_mhe(ocp, sol)
         X_est[:, iter] = x_out
-        if iter < int(Ns / rt_ratio) - Ns_mhe:
+        if iter < ceil(Ns / rt_ratio) - Ns_mhe:
             U_est[:, iter] = u_out
 
     a_est = U_est
-    q_ref = q_ref[:, 0: Ns + 1: rt_ratio]
+    q_ref = q_ref[:, 0 : Ns + 1 : rt_ratio]
     force_est = np.ndarray((biorbd_model.nbMuscles(), int(ceil(Ns / rt_ratio) - Ns_mhe)))
     for i in range(biorbd_model.nbMuscles()):
         for k in range(int(ceil(Ns / rt_ratio) - Ns_mhe)):
             force_est[i, k] = get_force(
-                X_est[:biorbd_model.nbQ(), k], X_est[biorbd_model.nbQ():biorbd_model.nbQ()*2, k], a_est[:, k],
-                U_est[:, k]
-                )[i, :]
+                X_est[: biorbd_model.nbQ(), k],
+                X_est[biorbd_model.nbQ() : biorbd_model.nbQ() * 2, k],
+                a_est[:, k],
+                U_est[:, k],
+            )[i, :]
 
     toc = time() - tic
-    print(time()-tic)
-    print(toc/ceil((Ns + 1) / rt_ratio - Ns_mhe))
+    print(time() - tic)
+    print(toc / ceil((Ns + 1) / rt_ratio - Ns_mhe))
     final_offset = 5  # Number of last nodes to ignore when calculate RMSE
-    init_offset = 5
+    init_offset = 5  # Number of initial nodes to ignore when calculate RMSE
     offset = Ns_mhe
 
     # --- RMSE --- #
-    RMSE_Q = np.sqrt(
-        np.square(X_est[: biorbd_model.nbQ(), init_offset:-final_offset]- q_ref[:, init_offset:-final_offset-Ns_mhe]).mean(axis=1)
-    ).mean()*180/np.pi
-    STD_Q = np.sqrt(
-        np.square(
-            X_est[: biorbd_model.nbQ(), init_offset:-final_offset]- q_ref[:, init_offset:-final_offset-Ns_mhe]).mean(axis=1)
-    ).std() * 180 / np.pi
+    RMSE_Q = (
+        np.sqrt(
+            np.square(
+                X_est[: biorbd_model.nbQ(), init_offset:-final_offset] - q_ref[:, init_offset : -final_offset - Ns_mhe]
+            ).mean(axis=1)
+        ).mean()
+        * 180
+        / np.pi
+    )
+    STD_Q = (
+        np.sqrt(
+            np.square(
+                X_est[: biorbd_model.nbQ(), init_offset:-final_offset] - q_ref[:, init_offset : -final_offset - Ns_mhe]
+            ).mean(axis=1)
+        ).std()
+        * 180
+        / np.pi
+    )
     RMSE_F = np.sqrt(
-        np.square(force_est[:, init_offset:-final_offset] - force_ref[:, init_offset:-final_offset - Ns_mhe]).mean(axis=1)
+        np.square(force_est[:, init_offset:-final_offset] - force_ref[:, init_offset : -final_offset - Ns_mhe]).mean(
+            axis=1
+        )
     ).mean()
     STD_F = np.sqrt(
-        np.square(
-            force_est[:, init_offset:-final_offset] - force_ref[:, init_offset:-final_offset - Ns_mhe]).mean(axis=1)
+        np.square(force_est[:, init_offset:-final_offset] - force_ref[:, init_offset : -final_offset - Ns_mhe]).mean(
+            axis=1
+        )
     ).std()
     print(f"Q RMSE: {RMSE_Q} +/- {STD_Q}; F RMSE: {RMSE_F} +/- {STD_F}")
     x_ref = np.concatenate((x_ref, a_ref))
+
     dic = {
         "X_est": X_est,
         "U_est": U_est,
@@ -382,9 +397,17 @@ if __name__ == "__main__":
         "f_est": force_est,
         "f_ref": force_ref,
     }
-    sio.savemat(f"MHE_results_step5_ERK.mat", dic)
+    sio.savemat(f"Data/MHE_results.mat", dic)
+    duration = 1
+    ss_err = compute_error_single_shooting(biorbd_model, X_est, U_est, 5, rt_ratio, T, duration)
+
+    print("*********************************************")
+    print(f"Problem solved with Acados")
+    print(f"Solving time : {dic['time_tot']}s")
+    print(f"Solving frequency : {1/dic['time_per_mhe']}s")
+    print(f"Single shooting error at {duration}s= {ss_err}")
 
     # ------ Animate ------ #
-    # b = bioviz.Viz(model)
-    # b.load_movement(X_est[:biorbd_model.nbQ(), :])
-    # b.exec()
+    b = bioviz.Viz(model)
+    b.load_movement(X_est[: biorbd_model.nbQ(), :])
+    b.exec()
