@@ -12,7 +12,11 @@ from bioptim import (
     OptimalControlProgram,
     ObjectiveList,
     ObjectiveFcn,
+    ConstraintList,
+    ConstraintFcn,
+    Node,
     DynamicsList,
+    Data,
     DynamicsFcn,
     Bounds,
     BoundsList,
@@ -24,6 +28,17 @@ from bioptim import (
     Solver,
 )
 
+def compute_error_single_shooting(ocp, sol, duration):
+    if ocp.nlp[0].tf < duration:
+        raise ValueError(f'Single shooting integration duration must be smaller than ocp duration :{ocp.nlp[0].tf} s')
+    data = Data.get_data(ocp, sol)
+    data_ss = Data.get_data(ocp, Simulate.from_solve(ocp, sol, True)['x'])
+    sn_1s = int(ocp.nlp[0].ns/ocp.nlp[0].tf*duration) # shooting node at {duration} second
+    err = []
+    for key in data[0].keys():
+        key_shape = data[0][key].shape
+        err += [np.sqrt(np.mean((data[0][key][:, sn_1s]-data_ss[0][key][:, sn_1s])**2))]
+    return np.mean(err)
 
 def prepare_ocp(
     biorbd_model_path: str,
@@ -136,7 +151,7 @@ if __name__ == "__main__":
     """
     Prepare and solve and animate a reaching task ocp
     """
-    use_IPOPT = False
+    use_IPOPT = True
     use_exc = False
     weights = np.array([100, 1, 1, 100000])
     ocp = prepare_ocp(biorbd_model_path="arm26.bioMod", final_time=2, n_shooting=50,
@@ -154,13 +169,13 @@ if __name__ == "__main__":
     # --- Show results --- #
     result = ShowResult(ocp, sol)
     result.objective_functions()
-    sol_opt = sol['x']
-    sol_ss = Simulate.from_solve(ocp, sol, True)['x']
-    ss_err = np.sqrt(np.mean((sol_ss - sol_opt)**2))
+    data_opt = Data.get_data(ocp,sol['x'])
+    single_shooting_duration = 1
+    ss_err = compute_error_single_shooting(ocp, sol, 1)
     print("*********************************************")
     print(f"Problem solved with {solver.value}")
     print(f"Solving time : {sol['time_tot']}s")
-    print(f"Single shooting error : {ss_err}")
+    print(f"Single shooting error at {single_shooting_duration}s= {ss_err}")
     # result.graphs()
     result.animate(show_meshes=True, background_color=(1, 1, 1),
                    show_local_ref_frame=False, show_global_center_of_mass=False,

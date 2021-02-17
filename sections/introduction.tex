@@ -1,4 +1,4 @@
-Biomechanics researchers rely on numerical simulations of motion to gain understanding on a variety of scientific topics such as the physiological causes of movement disorders and their consequences on health [\addref], the estimation of non-measurable physiological quantities [\addref] and the optimality of human movement [\addref].
+Biomechanics researchers rely on numerical simulations of motion to gain understanding on a variety of scientific topics such as the physiological causes of movement disorders and their consequences on health [\addref], the estimation of non-measurable physiological quantities (e.g., muscle forces)[\addref] and the optimality of human movement [\addref].
 The musculoskeletal models used in these simulations generally have a large number of degrees of freedom and they are governed by several ordinary differential equations (ODEs) which mainly describe multibody and muscle activation dynamics.
 The complexity of these systems has led scientists to formulate their simulations as optimal control problems (OCP), relying on efficient non-linear optimization software to find trajectories that fulfill a desired task while enforcing the system dynamics and minimizing a cost (e.g. motion duration, energy expenditure, matching experimental data, etc.).
 Up to very recently, there was no off-the-shelf software available to the community to quickly formulate and solve such musculoskeletal OCPs. 
@@ -46,7 +46,7 @@ However, it faces the following limitations: it uses finite differences to avoid
 The objective of the present paper is to introduce \bioptim, an open-source optimal control software dedicated to musculoskeletal biomechanics.
 \bioptim is based on C++ code for computational efficiency but the user interface is written in Python for flexibility and ease-of-use. 
 The OCP transcription uses direct multiple shooting to preserve the possibility of using arbitrarily accurate ODE solvers for the integration, which is fully parallelized for more efficiency.
-\textit{Bioptim's} core is fully written in \casadi symbolics to benefit from algorithmic differentiation and to exploit \casadi 's interface with several non-linear solvers (\textit{ipopt, snopt}).
+\bioptim's core is fully written in \casadi symbolics to benefit from algorithmic differentiation and to exploit \casadi 's interface with several non-linear solvers (\ipopt, \snopt).
 Moreover, \bioptim is interfaced with the cutting-edge solver \textit{acados}, a recent NLP solver dedicated to direct multiple shooting, intended for real-time applications.
 The purpose of \bioptim is to allow fast and flexible musculoskeletal OCP formulation and solving by providing a framework with a lot of typical biomechanics problem already implemented and customizable.
 
