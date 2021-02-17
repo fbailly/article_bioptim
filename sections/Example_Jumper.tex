@@ -11,6 +11,11 @@ The third phase was purely aerial, described by a free-fall dynamics.
 The last two were landing phases, a first one with one contact (toe) and a second one with two contacts (heel and toe).
 The transitions between phases with addition of contact points were approximated with the build-in inelastic impact \texttt{PhaseTransition.IMPACT}, which computes the velocity of the kinematic chain after an impact.
 
+\begin{figure}[t!]
+\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
+\caption{Snapshots of the push-off phase of a vertical jump (Ex.~\ref{ex:jump}). The avatar reproduces a human-like jump movement. The first four positions represent the first phase of the optimization (i.e., heel and toe in contact with the floor) and the fifth position depicts the end of the second phase (i.e., only the heel in contact with the floor)} 
+\label{fig:graph_force_vitesse_longueur}
+\end{figure}
 The objective function with the most important weight was a Mayer objective computed at the end of the push-off phase consisting in maximizing the jump height ($h$)---represented by the position of the CoM---from the projectile equations.
 The remaining objective functions were added either to help the solver to converge (regularization) or to converge toward a more human-like solution. 
 

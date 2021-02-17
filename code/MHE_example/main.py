@@ -1,8 +1,15 @@
+"""
+This is a basic example on how to use moving horizon estimation for muscle force estimation using a 4 degree of freedom
+(Dof) Arm model actuated by 19 hill-type muscle. controls are muscle activations.
+Model joint angle are tracked to match with reference ones, muscle activations ar minimized.
+"""
+
 import biorbd
 from time import time
 import numpy as np
 import pickle
 import scipy.io as sio
+import bioviz
 from math import ceil
 from casadi import MX, Function
 from bioptim import (
@@ -16,26 +23,52 @@ from bioptim import (
     InitialGuess,
     Solver,
     Data,
-    InterpolationType
+    InterpolationType,
+    Simulate,
+    ShowResult
 )
 
 
-# Return muscle force
-def muscles_forces(q, qdot, a, controls, model, use_activation=False):
-    muscles_states = biorbd.VecBiorbdMuscleState(model.nbMuscles())
+def muscle_forces(q: MX, qdot: MX, a: MX, controls: MX, model: biorbd.Model, use_activation=True):
+    """
+    Compute muscle force
+    Parameters
+    ----------
+    q: MX
+        Symbolic value of joint angle
+    qdot: MX
+        Symbolic value of joint velocity
+    controls: int
+        Symbolic value of activations
+    model: biorbd.Model
+        biorbd model build with the bioMod
+    use_activation: bool
+        True if activation drive False if excitation driven
+    Returns
+    -------
+    List of muscle forces
+    """
+    muscle_states = biorbd.VecBiorbdMuscleState(model.nbMuscles())
     for k in range(model.nbMuscles()):
         if use_activation:
-            muscles_states[k].setActivation(controls[k])
+            muscle_states[k].setActivation(controls[k])
         else:
-            muscles_states[k].setActivation(a[k])
-            muscles_states[k].setExcitation(controls[k])
-    muscles_force = model.muscleForces(muscles_states, q, qdot).to_mx()
-    muscles_tau = model.muscularJointTorque(muscles_states, q, qdot).to_mx()
-    return muscles_force, muscles_tau
+            muscle_states[k].setActivation(a[k])
+            muscle_states[k].setExcitation(controls[k])
+    muscle_forces = model.muscleForces(muscle_states, q, qdot).to_mx()
+    return muscle_forces
 
 
-# Return biorbd muscles force function
-def force_func(biorbd_model, use_activation=False):
+def force_func(biorbd_model: biorbd.Model, use_activation=True):
+    """
+    Define Casadi function to use muscle_forces
+    Parameters
+    ----------
+    model: biorbd.Model
+        biorbd model build with the bioMod
+    use_activation: bool
+        True if activation drive False if excitation driven
+    """
     qMX = MX.sym("qMX", biorbd_model.nbQ(), 1)
     dqMX = MX.sym("dqMX", biorbd_model.nbQ(), 1)
     aMX = MX.sym("aMX", biorbd_model.nbMuscles(), 1)
@@ -43,15 +76,27 @@ def force_func(biorbd_model, use_activation=False):
     return Function(
         "MuscleForce",
         [qMX, dqMX, aMX, uMX],
-        [muscles_forces(qMX, dqMX, aMX, uMX, biorbd_model, use_activation=use_activation)[0],
-         muscles_forces(qMX, dqMX, aMX, uMX, biorbd_model, use_activation=use_activation)[1]],
+        [muscle_forces(qMX, dqMX, aMX, uMX, biorbd_model, use_activation=use_activation)],
         ["qMX", "dqMX", "aMX", "uMX"],
-        ["Force", "Torque"],
+        ["Force"],
     ).expand()
 
 
-def generate_noise(biorbd_model, q, q_noise_lvl):
-    # Noise on marker position with gaussian normal distribution
+def generate_noise(biorbd_model, q: np.array, q_noise_lvl: float):
+    """
+    Generate random Centered Gaussian noise apply on joint angles
+    Parameters
+    ----------
+    model: biorbd.Model
+        biorbd model build with the bioMod
+    q: np.array
+        Array of reference joint angles
+    q_noise_lvl: float
+        Standard deviation value in percent
+    Returns
+    ---------
+    Array of noisy joint angles
+    """
     n_q = biorbd_model.nbQ()
     q_noise = np.ndarray((n_q, q.shape[1]))
     for i in range(n_q):
@@ -61,14 +106,25 @@ def generate_noise(biorbd_model, q, q_noise_lvl):
 
 
 def warm_start_mhe(ocp, sol):
-    # Define problem variable
+    """
+    Ensures the problems continuity
+    Parameters
+    ----------
+    ocp: ocp
+        the optimal control program
+    sol: sol
+        the solutions of the previous problem
+    Returns
+    ---------
+    Initial states and controls for next problem (x0, u0)
+    States and controls to save as solution (x_out, u_out)
+    """
     data = Data.get_data(ocp, sol)
     q = data[0]["q"]
     dq = data[0]["qdot"]
     u = data[1]["muscles"]
     x = np.vstack([q, dq])
 
-    # Prepare data to return
     x0 = np.hstack((x[:, 1:], np.tile(x[:, [-1]], 1)))  # discard oldest estimate of the window, duplicates youngest
     u0 = u[:, :-1]
     x_out = x[:, 0]
@@ -76,7 +132,23 @@ def warm_start_mhe(ocp, sol):
     return x0, u0, x_out, u_out
 
 
-def define_objective(iter, rt_ratio, Ns_mhe, biorbd_model):
+def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd.Model):
+    """
+    Define the objective function for the ocp
+    Parameters
+    ----------
+    iter: int
+        Current iteration
+    rt_ratio: int
+        Value of the reference data ratio to send to the estimator
+    Ns_mhe: int
+        Size of the windows
+    biorbd_model: biorbd.Model
+        biorbd model build with the bioMod
+    Returns
+    ---------
+    The objective function
+    """
     objectives = ObjectiveList()
     w_state = 100000
     w_control = 10000
@@ -100,8 +172,21 @@ def define_objective(iter, rt_ratio, Ns_mhe, biorbd_model):
     return objectives
 
 
-def prepare_ocp(biorbd_model, final_time, number_shooting_points, use_SX=True):
-
+def prepare_ocp(biorbd_model: biorbd.Model, final_time: float, number_shooting_points: int):
+    """
+    Prepare to build a blank ocp witch will be update several times
+    Parameters
+    ----------
+    biorbd_model: biorbd.Model
+        biorbd model build with the bioMod
+    final_time: float
+        The time at the final node
+    n_shooting: int
+        The number of shooting points
+    Returns
+    -------
+    The blank OptimalControlProgram
+    """
     # Add objective functions
     objective_functions = ObjectiveList()
 
@@ -132,24 +217,27 @@ def prepare_ocp(biorbd_model, final_time, number_shooting_points, use_SX=True):
         x_bounds,
         u_bounds,
         objective_functions,
-        use_sx=use_SX,
+        use_sx=True,
     )
 
 
 if __name__ == "__main__":
-    use_noise = True
+    """
+    Prepare and solve the MHE example
+    """
+    use_noise = True  # True to track noisy joint angle if not False
     model = 'arm_wt_rot_scap.bioMod'
     start_delay = 25
     T = 8
     Ns = 800
     Ns = Ns - start_delay
     T = T * 800 / Ns
-    with open(f"sim_ac_8000ms_800sn_REACH2_co_level_0.bob", "rb") as file:
+    with open(f"sim_ac_8000ms_800sn_REACH2_co_level_0_step5_ERK.bob", "rb") as file:
         data = pickle.load(file)
     states = data["data"][0]
     controls = data["data"][1]
-    q_ref = states["q"][:, :][:, start_delay:]
-    dq_ref = states["q_dot"][:, start_delay:]
+    q_ref = states["q"][:, start_delay:]
+    dq_ref = states["qdot"][:, start_delay:]
     a_ref = states["muscles"][:, start_delay:]
     u_ref = controls["muscles"][:, start_delay:]
 
@@ -158,7 +246,15 @@ if __name__ == "__main__":
     rt_ratio = 4
     T_mhe = T / (Ns / rt_ratio) * Ns_mhe
     x_wt_noise = np.concatenate((q_ref, dq_ref))
-    Q_noise = 5  # Percentage of Q for gaussian standard deviation
+
+    force_ref_tmp = np.ndarray((biorbd_model.nbMuscles(), Ns))
+    get_force = force_func(biorbd_model, use_activation=False)
+    for i in range(biorbd_model.nbMuscles()):
+        for k in range(Ns):
+            force_ref_tmp[i, k] = get_force(q_ref[:, k], dq_ref[:, k], a_ref[:, k], u_ref[:, k])[i, :]
+    force_ref = force_ref_tmp[:, 0:Ns:rt_ratio]
+
+    Q_noise = 5
     if use_noise:
         q_ref = generate_noise(biorbd_model, q_ref, Q_noise)
     x_ref = np.concatenate((q_ref, dq_ref))
@@ -166,17 +262,10 @@ if __name__ == "__main__":
     X_est = np.zeros((biorbd_model.nbQ() * 2, ceil((Ns + 1) / rt_ratio) - Ns_mhe))
     U_est = np.zeros((biorbd_model.nbMuscles(), ceil(Ns / rt_ratio) - Ns_mhe))
 
-    force_ref_tmp = np.ndarray((biorbd_model.nbMuscles(), Ns))
-    get_force = force_func(biorbd_model, use_activation=False)
-    for i in range(biorbd_model.nbMuscles()):
-        for k in range(Ns):
-            force_ref_tmp[i, k] = get_force(q_ref[:, k], dq_ref[:, k], a_ref[:, k], u_ref[:, k])[0][i, :]
-    force_ref = force_ref_tmp[:, 0:Ns:rt_ratio]
-
     # Initial and final state
     get_force = force_func(biorbd_model)
     # --- Solve the program using ACADOS --- #
-    ocp = prepare_ocp(biorbd_model=biorbd_model, final_time=T_mhe, number_shooting_points=Ns_mhe, use_SX=True)
+    ocp = prepare_ocp(biorbd_model=biorbd_model, final_time=T_mhe, number_shooting_points=Ns_mhe)
 
     # Update bounds
     x_bounds = BoundsList()
@@ -199,9 +288,9 @@ if __name__ == "__main__":
         solver=Solver.ACADOS,
         show_online_optim=False,
         solver_options={
-            "nlp_solver_tol_comp": 1e-4,
-            "nlp_solver_tol_eq": 1e-4,
-            "nlp_solver_tol_stat": 1e-4,
+            "nlp_solver_tol_comp": 1e-5,
+            "nlp_solver_tol_eq": 1e-5,
+            "nlp_solver_tol_stat": 1e-5,
             "integrator_type": "IRK",
             "nlp_solver_type": "SQP",
             "sim_method_num_steps": 1,
@@ -227,6 +316,7 @@ if __name__ == "__main__":
         # Update objectives functions
         objectives = define_objective(iter, rt_ratio, Ns_mhe, biorbd_model)
         ocp.update_objectives(objectives)
+
         # Solve problem
         sol = ocp.solve(
             solver=Solver.ACADOS,
@@ -244,37 +334,45 @@ if __name__ == "__main__":
             U_est[:, iter] = u_out
 
     a_est = U_est
-    u_ref = u_ref[:, 0:Ns:rt_ratio]
     q_ref = q_ref[:, 0: Ns + 1: rt_ratio]
-    dq_ref = dq_ref[:, 0: Ns + 1: rt_ratio]
     force_est = np.ndarray((biorbd_model.nbMuscles(), int(ceil(Ns / rt_ratio) - Ns_mhe)))
     for i in range(biorbd_model.nbMuscles()):
         for k in range(int(ceil(Ns / rt_ratio) - Ns_mhe)):
             force_est[i, k] = get_force(
                 X_est[:biorbd_model.nbQ(), k], X_est[biorbd_model.nbQ():biorbd_model.nbQ()*2, k], a_est[:, k],
                 U_est[:, k]
-                )[0][i, :]
+                )[i, :]
 
     toc = time() - tic
     print(time()-tic)
     print(toc/ceil((Ns + 1) / rt_ratio - Ns_mhe))
-    final_offset = 30  # Number of last nodes to ignore when calculate RMSE
+    final_offset = 5  # Number of last nodes to ignore when calculate RMSE
     init_offset = 5
     offset = Ns_mhe
+
+    # --- RMSE --- #
     RMSE_Q = np.sqrt(
-        np.square(X_est[: biorbd_model.nbQ(), init_offset:-10]- q_ref[:, init_offset:-10-Ns_mhe]).mean(axis=1)
+        np.square(X_est[: biorbd_model.nbQ(), init_offset:-final_offset]- q_ref[:, init_offset:-final_offset-Ns_mhe]).mean(axis=1)
     ).mean()*180/np.pi
     STD_Q = np.sqrt(
         np.square(
-            X_est[: biorbd_model.nbQ(), init_offset:-10]- q_ref[:, init_offset:-10-Ns_mhe]).mean(axis=1)
+            X_est[: biorbd_model.nbQ(), init_offset:-final_offset]- q_ref[:, init_offset:-final_offset-Ns_mhe]).mean(axis=1)
     ).std() * 180 / np.pi
-
+    RMSE_F = np.sqrt(
+        np.square(force_est[:, init_offset:-final_offset] - force_ref[:, init_offset:-final_offset - Ns_mhe]).mean(axis=1)
+    ).mean()
+    STD_F = np.sqrt(
+        np.square(
+            force_est[:, init_offset:-final_offset] - force_ref[:, init_offset:-final_offset - Ns_mhe]).mean(axis=1)
+    ).std()
+    print(f"Q RMSE: {RMSE_Q} +/- {STD_Q}; F RMSE: {RMSE_F} +/- {STD_F}")
+    x_ref = np.concatenate((x_ref, a_ref))
     dic = {
         "X_est": X_est,
         "U_est": U_est,
         "x_ref": x_ref,
         "x_init": x_wt_noise,
-        "u_sol": u_ref,
+        "u_ref": u_ref,
         "time_per_mhe": toc / ceil(Ns / rt_ratio - Ns_mhe),
         "time_tot": toc,
         "Q_noise": Q_noise,
@@ -284,4 +382,9 @@ if __name__ == "__main__":
         "f_est": force_est,
         "f_ref": force_ref,
     }
-    sio.savemat(f"MHE_results.mat", dic)
+    sio.savemat(f"MHE_results_step5_ERK.mat", dic)
+
+    # ------ Animate ------ #
+    # b = bioviz.Viz(model)
+    # b.load_movement(X_est[:biorbd_model.nbQ(), :])
+    # b.exec()
