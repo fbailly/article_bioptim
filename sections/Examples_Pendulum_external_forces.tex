@@ -1,29 +1,23 @@
-\emph{\begin{figure}[t!]
-\centering
-\includegraphics[width=0.35\columnwidth]{figures/Mass_Pendulum_Model_2.png}
-\caption{Definition of the spring-mass-pendulum model.}
-\label{fig:Mass_Pendulum_Model}
-\end{figure}}
-This spring-mass-pendulum-based example is presented to introduce \textit{bioptim}'s ability to use of external forces.
-The goal was to maintain the position of a $\SI{1}{\kilo\gram}$ mass hanging on a linear spring attached to the ground.
+This spring-mass-pendulum-based example is presented to introduce \bioptim 's ability to use external forces.
+The goal was to hold the position of a $\SI{1}{\kilo\gram}$ mass hanging on a linear spring attached to the ground.
 A $\SI{0.2}{\meter}$-long pendulum weighting $\SI{10}{\kilo\gram}$ was attached to the mass and free to rotate in one dimension (Fig.~\ref{fig:Mass_Pendulum_Model}).
 In addition to the spring force, the mass was actuated by a vertical external force (e.g., something pulling on it) while the pendulum rotation was passive.
-The system therefore comprised two DoFs, the mass position ($q_m$) and the pendulum angle ($q_p$) and one control input, the vertical external force pulling on the mass ($\mathcal{F}$). 
+The system therefore comprised two DoFs, the mass position ($q_m$) and the pendulum angle ($q_p$) and one control input, the vertical external force pulling on the mass ($\tau$). 
 The spring force $\mathcal{F}_s$ was:
 \[
 \begin{aligned}
-\mathcal{F}_s = -k*q_m,
+\tau_s = -k*q_m,
 \end{aligned}
 \addtag
 \label{eq:f_ext}
 \]
 with $k$ the spring stiffness constant.\\
 The OCP was composed of two phases each lasting for $\SI{5}{\second}$, with 50 shooting nodes.
-In the first phase, no objective function was minimized and $\mathcal{F}$ was constrained to be $0$, letting the mass oscillating freely. 
+In the first phase, no objective function was minimized and $\tau$ was constrained to be $0$, letting the mass oscillating freely. 
 Then, in the second phase, a cost function (Eq.~\ref{eq:ocp_Pendulum}) was minimized, to enforce a reference position $q_m^*$ of the mass.
 This objective function, exclusively composed of Lagrange terms, was formulated as follows:
 \[
-\mathcal{J} = \int_{T/2}^T \underbrace{ (q_m - q_m^*)^2}_{\mathtt{TRACK\_STATE}}  +~\omega_1 \underbrace{\mathcal{F}^2~dt}_{\mathtt{MIN\_ TORQUE}}~dt,
+\mathcal{J} = \int_{T/2}^T \underbrace{ (q_m - q_m^*)^2}_{\mathtt{TRACK\_STATE}}  +~\omega_1 \underbrace{\tau^2~dt}_{\mathtt{MIN\_ TORQUE}}~dt,
 \addtag
 \label{eq:ocp_Pendulum}
 \]
@@ -35,25 +29,5 @@ The second was added for control regularization.
 
 During the first phase, the mass is passively oscillating around its stationary position due to the spring force (Fig.~\ref{fig:Mass_Pendulum_Fext_graphs}).
 At the beginning of the second phase, when an additional external force acts on the mass, it stabilizes around the targeted position.
+The standard deviation between the position and the targeted position is $\SI{0.04}{\m}$.
 This example highlights the possibility of using optimal control to find activation patterns compensating for external passive forces (e.g., ortheses flexibility, contact surface deformation, interaction between two models, etc.).
-
-\begin{figure*}[t!]
-\centering
-\includegraphics[width=\textwidth]{figures/Mass_Pendulum_Fext_2.eps}
-\caption{Two-phases kinematics of the mass-pendulum-spring system. Gray dashed lines show the phase transition, blue lines are related to the mass (position velocity and external force acting on it), red lines are related to the pendulum (position and velocity) and the green line depicts the spring force.}
-\label{fig:Mass_Pendulum_Fext_graphs}
-\end{figure*}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
