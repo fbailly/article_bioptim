@@ -1,12 +1,12 @@
-This example is presented to introduce \textit{bioptim}'s ability to provide real-time estimation of biomechanical variables.
+This example is presented to introduce \bioptim's ability to provide real-time estimation of biomechanical variables.
 The goal was to perform a real-time estimation of dynamically consistent joint kinematics and muscle forces, using a moving horizon estimation (MHE) approach (i.e. an optimization approach that uses a series of measurements observed over time). 
-A shoulder elevation motion was performed with a 4-DoFs ($q$) arm actuated by 19 Hill-type muscle elements.
-The control inputs of the model were the muscle activations ($a$).
+A shoulder elevation motion was performed with a 4-DoFs ($\bf{q}$) arm actuated by 19 Hill-type muscle elements.
+The control inputs of the model were the muscle activations ($\bf{a}$).
 The MHE implementation consists in splitting the OCP into a succession of smaller one for processing fixed-size subsets of the tracking data moving forward in time. 
 Each time one subproblem is solved, a new measurement is added, the oldest one is discarded and a new subproblem is defined. 
 Due to their similarities, the solution of the previous OCP is a good initial guess to the new one. 
 The dynamical consistency of the final solution is enforced by continuity constraints on the initial state. 
-Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($q^*$), states and muscle activations regularizations (i.e., least-square criteria): 
+Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($\bf{q^*}$), states and muscle activations regularizations (i.e., least-square criteria): 
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
@@ -16,7 +16,7 @@ Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/Muscle_Forces_MHE.pdf}\\ 
-\caption{Time series of real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (Ex.~\ref{ex:mhe}). Only four muscles with significative action on the two selected DoFs of Fig.~\ref{fig:joint_angles_MHE}) are shown.
+\caption{\hl{MERGER LES DEUX FIGURES} Time series of real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (Ex.~\ref{ex:mhe}). Only four muscles with significative action (peaks force $>$ 15~N) on the two selected DoFs of Fig.~\ref{fig:joint_angles_MHE}) are shown.
 Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.}
 \label{fig:muscle_forces_MHE} 
 \end{figure*} 
@@ -35,7 +35,6 @@ $}
 \noindent where $\omega_1 =10^5$, $\omega_2 = 10^2$, $\omega_3 = 10^4$ and $t_{mhe}$ is duration of each sub-problem. 
 
 In this example, reference data of an $8~s$ series of four arm elevations were generated at 100~Hz, by computer simulation.
-
-Centered Gaussian noise (mean = 0, std = $0.005q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
-Using a windows size of 7 nodes, the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
-The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented). 
+A centered Gaussian noise (mean = 0, std = $0.005\:q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
+Using a windows size of 7 nodes (i.e., \hl{XXX} ms), the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.3\pm0.5\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}). 

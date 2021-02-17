@@ -24,7 +24,7 @@ Most of the time, when investigating complex biomechanics issues, we do not have
 \begin{figure}[t!]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
-\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:dependencies}.}
+\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:flowchart}.}
 \label{fig:dependencies}
 \vspace*{-0.5cm}
 \end{figure}
@@ -43,7 +43,8 @@ General-purpose optimal control software (e.g. \gpopsii [\addref], \muscodii [\a
 In that sense, the aforementioned \moco, is a welcome initiative that draws its strength from its integration with the widely used \opensim.
 However, it faces the following limitations: it uses finite differences to avoid the complexity of adapting the \opensim codebase to support automatic differentiation, it uses direct collocation as transcription method, preventing the use of adaptive ODE solvers and it is not as flexible as required by the community, since it requires the user to develop new features, such as new objective functions, in C++. 
 
-The objective of the present paper is to introduce \bioptim, an open-source optimal control software dedicated to musculoskeletal biomechanics.
+The objective of the present paper is to introduce \bioptim\footnote{
+\href{https://github.com/pyomeca/bioptim}{https://github.com/pyomeca/bioptim}}, an open-source optimal control software dedicated to musculoskeletal biomechanics.
 \bioptim is based on C++ code for computational efficiency but the user interface is written in Python for flexibility and ease-of-use. 
 The OCP transcription uses direct multiple shooting to preserve the possibility of using arbitrarily accurate ODE solvers for the integration, which is fully parallelized for more efficiency.
 \bioptim's core is fully written in \casadi symbolics to benefit from algorithmic differentiation and to exploit \casadi 's interface with several non-linear solvers (\ipopt, \snopt).

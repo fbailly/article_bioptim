@@ -1,4 +1,5 @@
-In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of an 8-DoF model in a backward somersault and to illustrate \bioptim 's ability to handle quaternionic representations of rotations.
+In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of an 8-DoF model in a backward somersault. 
+It illustrates \bioptim 's ability to handle quaternionic representations of rotations.
 The model was composed of a 6-DoF root segment and two 1-DoF torque actuated shoulder joints.
 Two different numerical descriptions of the root segment rotations were used: Euler angles and quaternions.
 The objective function was as follows:
@@ -14,9 +15,10 @@ The optimal kinematics were different for the two types of models (Fig.~\ref{fig
 However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer together the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
 Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the Gimbal lock (leading to numerical instabilities).
 The use of a quaternion-based representation tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
-Quaternion's integration must be handled with care~\cite{bailly2020optimal}, indeed, when representing orientations, quaternions must be unitary and thus belong to a constrained manifold (namely, the unit 3-sphere $S^3$). 
+Quaternion's integration must be handled with care~\cite{bailly2020optimal}.
+Indeed, when representing orientations, quaternions must be unitary and thus belong to a constrained manifold (namely, the unit 3-sphere $S^3$). 
 However, classical numerical integration schemes such as Runge–Kutta methods treat unit quaternions as if they were arbitrarily defined in $\mathbb{R}^4$.
-To overcome this challenge, \bioptim performs a normalization after each Runge–Kutta iteration to project non-unitary quaternions onto $S^3$
+To overcome this challenge, \bioptim performs a normalization after each Runge–Kutta iteration to project non-unitary quaternions onto $S^3$.
 
 \begin{figure}[t!]
 \centering

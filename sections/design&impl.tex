@@ -7,7 +7,7 @@ However, all intensive calculations behind the interface are performed in C/C++,
 \begin{figure}[t!]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/design.eps}
-\caption{\bioptim design flowchart. The red box correspond to objects that must be filled in by the user. The red-dashed boxes correspond to pre-implemented objects already available to the users. The * stands for easily customizable objects.}
+\caption{\bioptim design flowchart. The red box correspond to objects that must be filled in by the user. The red-dashed boxes correspond to pre-implemented objects already available to the users. $\otimes$ stands for easily customizable objects.}
 \label{fig:flowchart}
 \vspace*{-0.5cm}
 \end{figure}
@@ -32,7 +32,7 @@ Then, it implements the ordinary differential equation governing the state dynam
 \label{eq:state_transition}
 \]
 
-\noindent More than 10 dynamics are already implemented in \bioptim \footnote{\href{https://github.com/pyomeca/bioptim/blob/master/bioptim/dynamics/dynamics_functions.py}{github link}}, among which the controls can be muscle excitations, muscle activations and/or joint torques, the states can be muscle activations and/or joint kinematics.
+\noindent More than 10 dynamics are already implemented in \bioptim, among which the controls can be muscle excitations, muscle activations and/or joint torques, the states can be muscle activations and/or joint kinematics.
 They can include contact points, external forces, etc.
 Even if these dynamics types exhaustively span the current usages in biomechanics, a custom dynamics type is also pre-implemented to easily customize problems.
 
@@ -41,7 +41,7 @@ In line with the optimal control formalism, there are two main types of objectiv
 Lagrange types are running objectives, integrated over the NLP duration. Mayer types are time-specific objectives. 
 Classically, they correspond to a terminal objective, but to be more versatile, they can be defined at any instant in \bioptim.
 
-Objective functions can depend on any of the optimization variable, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
+\objectives can depend on any of the optimization variables, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
 A lot of objective function types are already implemented in \bioptim ($>\!20$), among which tracking\:/\:minimizing, on states\:/\:controls\:/\:markers\:/\:contact\:forces\:/\:problem\:duration, etc. 
 Should one go missing, a custom objective type is also possible to define.
 
@@ -50,13 +50,13 @@ If applicable (for tracking objective functions mainly), the user must also spec
 
 \subsubsection{Constraint set}
 Classically, constraints are hard penalties of the optimization problem, i.e., a solution will not be considered optimal, unless all constraints (equality or inequality) are met.
-The \texttt{Constraint} class contains a variety of already implemented constraints.
+The \texttt{Constraint} class contains a variety of implemented constraints.
 Some of them are specific functions, commonly useful in biomechanical problems (e.g. non-slipping contact point, non-linear bounds on torque depending on the state, etc.), the others have their equivalent in the \texttt{ObjectiveFunction} class.
 Should one go missing, a custom constraint type is also possible to define.
 
 \subsubsection{Bounds}
 Essentially, the \texttt{Bounds} are constraints directly related to the states, the controls and the parameters.
-They are useful for defining model-related constraints such as kinematic, torque or muscle excitation\:/\:activation limits. 
+They are useful to define model-related constraints such as kinematic, torque or muscle excitation\:/\:activation limits. 
 
 \subsubsection{Shooting points and problem duration}
 In a direct multiple shooting formulation, the total duration of the problem is divided into smaller intervals whose initial values are called shooting points. 
