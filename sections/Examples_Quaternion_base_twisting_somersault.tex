@@ -1,4 +1,10 @@
-In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of an 8-DoF model in a backward somersault and to illustrate \bioptim 's ability to handle quaternionic representations of rotations.
+\documentclass[10pt]{article}
+\usepackage[usenames]{color} %pour la couleur
+\usepackage{amssymb} %maths
+\usepackage{amsmath} %maths
+\usepackage[utf8]{inputenc} %utile pour taper directement les caractères accentués
+\begin{document}
+\[In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of an 8-DoF model in a backward somersault and to illustrate \bioptim 's ability to handle quaternionic representations of rotations.
 The model was composed of a 6-DoF root segment and two 1-DoF torque actuated shoulder joints.
 Two different numerical descriptions of the root segment rotations were used: Euler angles and quaternions.
 The objective function was as follows:
@@ -9,7 +15,6 @@ The objective function was as follows:
 with $\omega_1 = -1$ (resulting in the maximization of the first term) and $\omega_2 = 10^{-6}$, T is the duration of the movement and $\boldsymbol{\tau}$ is the torque control vector.
 The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds to maximizing the change in twist rotation and the second term is for control regularization.
 
-
 The movement lasted for approximately 1 second and was discretized with 80 shooting nodes.
 The optimal kinematics were different for the two types of models (Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}) because of the presence of local minima.
 However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer together the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
@@ -19,40 +24,21 @@ Quaternion's integration must be handled with care~\cite{bailly2020optimal}, ind
 However, classical numerical integration schemes such as Runge–Kutta methods treat unit quaternions as if they were arbitrarily defined in $\mathbb{R}^4$.
 To overcome this challenge, \bioptim performs a normalization after each Runge–Kutta iteration to project non-unitary quaternions onto $S^3$
 
-
-
-\begin{figure*}[t!]
+\begin{figure}[t!]
 \centering
-\includegraphics[width=\textwidth]{figures/Euler_Bioptim_MaxVrille_dos_7frames.png}
-\caption{Snapshots of maximally twisting somersaults driven by shoulder torque actuators and a free base whose rotation is either expressed by Euler angles (top) or by quaternions (bottom).}
-\label{fig:snapshots_quaternion_base_twisting_somersault}
-\end{figure*}
+
+\includegraphics[width=0.35\columnwidth]{figures/Mass_Pendulum_Model_2.png}
+\caption{Spring-mass-pendulum model of Ex.~\ref{ex:spring}.}
+\label{fig:Mass_Pendulum_Model}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\columnwidth]{figures/Mass_Pendulum_Fext.eps}
+\caption{Two-phases kinematics of the mass-pendulum-spring system. Gray dashed lines show the phase transition, blue lines are related to the mass (position velocity and external force acting on it), red lines are related to the pendulum (position and velocity) and the green line depicts the spring force.}
+\label{fig:Mass_Pendulum_Fext_graphs}
+\end{figure}
 
 
-% \begin{table}[h!]
-% \caption{\small Objective terms of quaternion base maximally twisting somersault}
-% \label{tab:Quaternion_base_twisting_somersault}
-% \centering
-% \begin{tabular}{c c c c}
-% \toprule 
-% & Type & Function & Weight \\ 
-% \midrule
-% $\#1$ & Lagrange & MINIMIZE\_TWIST & $-1e1$ \\ 
-% \midrule
-% $\#2$ & Lagrange & MINIMIZE\_ TORQUE & $1e-6$ \\ 
-% \bottomrule
-% \end{tabular}
-% \end{table}
-
-
-
-
-
-
-
-
-
-
-
-
-
+\]
+\end{document}

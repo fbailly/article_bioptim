@@ -1,9 +1,3 @@
-\emph{\begin{figure}[t!]
-\centering
-\includegraphics[width=0.35\columnwidth]{figures/Mass_Pendulum_Model_2.png}
-\caption{Definition of the spring-mass-pendulum model.}
-\label{fig:Mass_Pendulum_Model}
-\end{figure}}
 This spring-mass-pendulum-based example is presented to introduce \bioptim 's ability to use external forces.
 The goal was to hold the position of a $\SI{1}{\kilo\gram}$ mass hanging on a linear spring attached to the ground.
 A $\SI{0.2}{\meter}$-long pendulum weighting $\SI{10}{\kilo\gram}$ was attached to the mass and free to rotate in one dimension (Fig.~\ref{fig:Mass_Pendulum_Model}).
@@ -37,24 +31,3 @@ During the first phase, the mass is passively oscillating around its stationary 
 At the beginning of the second phase, when an additional external force acts on the mass, it stabilizes around the targeted position.
 The standard deviation between the position and the targeted position is $\SI{0.04}{\m}$.
 This example highlights the possibility of using optimal control to find activation patterns compensating for external passive forces (e.g., ortheses flexibility, contact surface deformation, interaction between two models, etc.).
-
-\begin{figure*}[t!]
-\centering
-\includegraphics[width=\textwidth]{figures/Mass_Pendulum_Fext.eps}
-\caption{Two-phases kinematics of the mass-pendulum-spring system. Gray dashed lines show the phase transition, blue lines are related to the mass (position velocity and external force acting on it), red lines are related to the pendulum (position and velocity) and the green line depicts the spring force.}
-\label{fig:Mass_Pendulum_Fext_graphs}
-\end{figure*}
-
-
-
-
-
-
-
-
-
-
-
-
-
-

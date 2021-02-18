@@ -25,8 +25,14 @@ $}
 In this example, reference data of an $8~s$ series of four arm elevations were generated at 100~Hz, by computer simulation.
 Centered Gaussian noise (mean = 0, std = $0.005q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
 Using a windows size of 7 nodes, the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013biofeedback}).
-The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented).  
- 
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.33\pm0.52\text{~}^{\circ}$ (Fig.~\ref{fig:joint_angles_MHE}) and to provide a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6\text{~}N$ (Fig.~\ref{fig:muscle_forces_MHE}, only the muscles with significative action (peaks force $>$ 15~N) are represented). 
+
+\begin{figure}[t!]
+\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
+\caption{Snapshots of the push-off phase of a vertical jump (Ex.~\ref{ex:jump}). The avatar reproduces a human-like jump movement. The first four positions represent the first phase of the optimization (i.e., heel and toe in contact with the floor) and the fifth position depicts the end of the second phase (i.e., only the heel in contact with the floor)} 
+\label{fig:graph_force_vitesse_longueur}
+\end{figure}
+
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/joint_angles_MHE.pdf}\\ 
