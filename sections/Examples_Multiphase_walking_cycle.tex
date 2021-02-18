@@ -20,33 +20,25 @@ A regularization term on muscle activations ($\bf{a}$) was also added (least-act
 %\mathcal{J} = &\int_{t=0}^{T}\underbrace{\omega_1(\|m_p - m_m\|^{2})}_{\mathtt{TRACK\_MARKERS}}~ 
 %+ ~ \underbrace{\omega_2(\|f_p - f_c\|^{2})}_{\mathtt{TRACK\_FORCES}}\\
 %&+ ~ \underbrace{\omega_3(\|tau^f_p - tau^f_m\|^{2})}_{\mathtt{TRACK\_MOMENTS}}~
-\mathcal{J} = &~\sum_{i=1}^4\int_{t=0}^{T_i}\underbrace{\omega_1(\|\bm{m} - \bm{m}^*\|^{2})}_{\mathtt{TRACK\_MARKERS}}~ 
-+ ~ \underbrace{\alpha\omega_2(\|\bm{\mathcal{F}} - \bm{\mathcal{F}}^*\|^{2})}_{\mathtt{TRACK\_FORCES}}\\
+\mathcal{J} = &~\sum_{i=1}^4\left(\int_{T_{i-1}}^{T_i}\underbrace{\omega_1(\|\bm{m} - \bm{m}^*\|^{2})}_{\mathtt{TRACK\_MARKERS}}~ 
++ ~ \underbrace{\alpha\omega_2(\|\bm{\mathcal{F}} - \bm{\mathcal{F}}^*\|^{2})}_{\mathtt{TRACK\_FORCES}}\right.\\
 &+ ~ \underbrace{\alpha\omega_3(\|\bm{\mathcal{M}} - \bm{\mathcal{M}}^*\|^{2})}_{\mathtt{TRACK\_MOMENTS}}~
 + ~ \underbrace{\omega_4\|\bf{a}\|^2}_{\mathtt{MIN\_ACTIVATION}}
-+ ~ \underbrace{\|\boldsymbol{\tau}\|^2}_{\mathtt{MIN\_TORQUE}}~dt, 
++ ~ \underbrace{\|\boldsymbol{\tau}\|^2}_{\mathtt{MIN\_TORQUE}}~dt\left.\vphantom{\int_{T_{i-1}}^{T_i}}\right), 
 \end{aligned}  
 $}  
 \addtag  
 \label{eq:ocp_walk}  
 \]
 
-<<<<<<< HEAD
-\noindent where $\omega_1$=1e5, $\omega_2$=0.1, $\omega_3$=0.1, $\omega_4$=10 are weighting factors and $T_i$ is the the duration of the  i$^{th}$ phase. 
-Ground reaction forces and moments were only tracked during the stance phase, hence $\alpha$ = $0$ during the swing phase and $1$ otherwise. 
-=======
-\noindent where $\omega_1$=1e5, $\omega_2$=0.1, $\omega_3$=0.1, $\omega_4$=10 are  weighting factors and $T$ is the the duration of the current phase.
->>>>>>> d660dacd82958d4731f9eb55c0465fa8cc8d88f1
+\noindent where $\omega_1=10^5$, $\omega_2=\omega_3=10^{-1}$, $\omega_4=10$ are weighting factors, $T_0=0$ and $T_i$, $i \in [1, 2, 3, 4]$, are the final time of the i$^{th}$ phase. 
+Ground reaction forces and moments were only tracked during the stance phase, hence $\alpha = 0$ during the swing phase and $\alpha = 1$ otherwise. 
 Non-slipping ($\mathtt{NON\_SLIPPING}$) and unilateral contact force ($\mathtt{CONTACT\_FORCE}$) constraints were added to prevent the foot from slipping and pulling from the ground. 
-In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to represent the gain or loss of contact(s) in the dynamics (e.g., swing phase to heel strike ~\cite{felis_synthesis_2016}) \\
-
+In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to represent the gain or loss of contact(s) in the dynamics (e.g., swing phase to heel strike ~\cite{felis_synthesis_2016}).\\
 Tracking experimental data allowed to reproduce leg motion during the walking cycle (Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
 The root mean square tracking error on markers trajectories was $27$ mm (mean errors on pelvic and foot markers were $7.5$ mm and $14.7$ mm, respectively). 
 Concerning ground reaction forces tracking, the root mean square error was $4.85$ N.
 During the stance phase, Gluteal muscles and Vastus Medialis were mainly activated during the loading response (10 \%) and hamstrings during initial contact (1 \%) (Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
 These results were similar to the characteristic average activity patterns of the lower limb muscles during locomotion described in~\cite{winter_biomechanics_1991}. 
-<<<<<<< HEAD
 The transition from stance to swing (60 \% - 70 \%) was highly actuated by the Rectus Femoris and leg muscles (Gastocnemius Medialis and Tibialis Anterior).
-=======
-The transition from stance to swing (60 \% - 70 \%) was highly actuated by the Rectus Femoris and leg muscles (Gastocnemius Medialis and Tibialis Anterior). 
->>>>>>> d660dacd82958d4731f9eb55c0465fa8cc8d88f1
+
