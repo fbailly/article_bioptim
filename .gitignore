@@ -170,3 +170,7 @@ cython_debug/
 
 # Videos from example
 code/muscle_exc_pointing/videos/
+.DS_Store
+code/.DS_Store
+figures/.DS_Store
+sections/.DS_Store

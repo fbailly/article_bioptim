@@ -1,4 +1,3 @@
-%The main goal of the vertical jumper is (without much of a surprise) to jump as high as possible.
 This example was designed to introduce \bioptim's ability to reduce the number of degrees-of-freedom (DoF) of a model via the \texttt{mappings}, to account for nonlinear boundaries on the controls, and to solve complex multiphase programs including impacts and free time phases.
 
 We used a full-body model consisting of 3~DoFs at the pelvis (forward and upward translations, tranverse rotation), 1~DoF at each upper limb (shoulder flexion), and 3~DoFs at each lower limb (hip, knee and ankle flexion) for a total of 11 DoFs.
@@ -12,6 +11,11 @@ The third phase was purely aerial, described by a free-fall dynamics.
 The last two were landing phases, a first one with one contact (toe) and a second one with two contacts (heel and toe).
 The transitions between phases with addition of contact points were approximated with the build-in inelastic impact \texttt{PhaseTransition.IMPACT}, which computes the velocity of the kinematic chain after an impact.
 
+\begin{figure}[t!]
+\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
+\caption{Snapshots of the push-off phase of a vertical jump (Ex.~\ref{ex:jump}). The avatar reproduces a human-like jump movement. The first four positions represent the first phase of the optimization (i.e., heel and toe in contact with the floor) and the fifth position depicts the end of the second phase (i.e., only the heel in contact with the floor)} 
+\label{fig:graph_force_vitesse_longueur}
+\end{figure}
 The objective function with the most important weight was a Mayer objective computed at the end of the push-off phase consisting in maximizing the jump height ($h$)---represented by the position of the CoM---from the projectile equations.
 The remaining objective functions were added either to help the solver to converge (regularization) or to converge toward a more human-like solution. 
 
@@ -62,8 +66,4 @@ The optimized solution was obtained in 148 iterations of the exact-hessian optim
 The optimized time for the phases $1$ to $5$ were $0.70, 0.05, 0.99, 0.36, 0.21$ seconds, respectively.
 The solution reproduced a human proximo-distal strategy (Fig~\ref{fig:graph_force_vitesse_longueur}), i.e., activating large segments first (for instance the torso) and sequentially adding more distal segments, consequently ending up with the ankles.
 
-\begin{figure}[h!]
-\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
-\caption{Kinogram of the pushoff phase of a vertical jump. The avatar reproduces a human-like movement of a jump. The first four positions represent the first phase (i.e., heel and toe contacting the floor) of the optimization and the fifth position is the end of the second phase (i.e., only heel contacting the floor)} 
-\label{fig:graph_force_vitesse_longueur}
-\end{figure}
+
