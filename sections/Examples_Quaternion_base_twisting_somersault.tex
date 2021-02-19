@@ -20,9 +20,10 @@ The optimal kinematics were different for the two types of models (Fig.~\ref{fig
 However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer together the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
 Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the Gimbal lock (leading to numerical instabilities).
 The use of a quaternion-based representation tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
-Quaternion's integration must be handled with care~\cite{bailly2020optimal}, indeed, when representing orientations, quaternions must be unitary and thus belong to a constrained manifold (namely, the unit 3-sphere $S^3$). 
+Quaternion's integration must be handled with care~\cite{bailly2020optimal}.
+Indeed, when representing orientations, quaternions must be unitary and thus belong to a constrained manifold (namely, the unit 3-sphere $S^3$). 
 However, classical numerical integration schemes such as Runge–Kutta methods treat unit quaternions as if they were arbitrarily defined in $\mathbb{R}^4$.
-To overcome this challenge, \bioptim performs a normalization after each Runge–Kutta iteration to project non-unitary quaternions onto $S^3$
+To overcome this challenge, \bioptim performs a normalization after each Runge–Kutta iteration to project non-unitary quaternions onto $S^3$.
 
 \begin{figure}[t!]
 \centering

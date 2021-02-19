@@ -2,7 +2,7 @@
 \begin{figure}[t!]
 \centering
 \includegraphics[width=\columnwidth]{figures/activation_pointing.jpeg}\\
-\caption{Snapshots of an optimized activation-driven pointing task with \acados. The arm starts facing upwards in left hand part of the picture and ends facing downwards in the right hand part. The marker fized on the Ulna is depicted in blue and the scene-fixed target marker is depicted in red. Red lines show the lines of actions of the muscles.}
+\caption{Snapshots of an optimized activation-driven pointing task with \acados. The arm starts facing upwards in left hand part of the picture and ends facing downwards in the right hand part. The marker fixed on the ulna head is depicted in blue and the scene-fixed target marker is depicted in red. Red lines show the lines of actions of the muscles.}
 \label{fig:snapshots_activation_driven_pointing}
 \end{figure}
 \begin{figure*}[t!]
@@ -12,10 +12,10 @@
 \label{fig:snapshots_quaternion_base_twisting_somersault}
 \end{figure*}
 %
-In this first example, the goal was to achieve a muscle activation driven pointing task using a 2-DoF arm model with 6 muscle elements. 
+In this first example, the goal was to achieve a muscle activation driven pointing task using a 2-DoF arm model with six muscle elements. 
 In addition to muscle-induced torques, pure joint torques were added to compensate for the model weaknesses.
-The main term (highest weight) of the objective function (Eq.~\ref{eq:cost_pointing}) is a Mayer objective, corresponding to the pointing tasks at the final node, to superimpose two markers, the first one, $\mathbf{m_u}$, fixed in the Ulna system of coordinates and the second one, $\mathbf{m^*_s}$, fixed in the scene.
-The three Lagrange terms  were added for control regularization (muscle activation $\bf{a}$ and joint torques $\boldsymbol{\tau}$) and for state ($\bf{x}$) regularization:
+The main term (highest weight) of the objective function (Eq.~\ref{eq:cost_pointing}) is a Mayer objective, corresponding to the pointing tasks at the final node, to superimpose two markers, the first one ($\mathbf{m_u}$) fixed in the ulna system of coordinates and the second one ($\mathbf{m^*_s}$) fixed in the scene.
+The three Lagrange terms  were added for control (muscle activation $\bf{a}$ and joint torques $\boldsymbol{\tau}$) and state ($\bf{x}$) regularization:
 \[
 \begin{aligned}
 	\mathcal{C} = 	&~\omega_1~\underbrace{\|\mathbf{m_u}(T)-\mathbf{m^*_s}\|^2}_{\mathtt{TRACK\_MARKERS}}~\\
@@ -27,8 +27,8 @@ The three Lagrange terms  were added for control regularization (muscle activati
 \label{eq:cost_pointing}
 \]
 
-\noindent where T is the duration of the motion, and $\omega_1=1e5$.
-The movement lasted for 2~seconds and was discretized using 50~shooting nodes with a 5-steps RK4 integration in-between.
+\noindent where $T\!=\!2\;s$ is the duration of the motion, and $\omega_1=1e5$.
+The problem was discretized using 50~shooting nodes with a 5-steps RK4 integration in-between.
 The problem was solved using \ipopt (with exact Hessian computations) and \acados (with a Gauss-Newton approximation of the Hessian) resulting in two very close solutions.
 \acados was about 50 times faster than \ipopt and was better at enforcing the continuity constraints (as shown by the single shooting error in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}).
 \ipopt however ended up with a smaller optimized objective (20.8 \textit{vs} 23.2), leading to a more optimal solution than \acados. 
