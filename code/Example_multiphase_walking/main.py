@@ -488,10 +488,16 @@ if __name__ == "__main__":
         },
         show_online_optim=False,
     )
+    
+    sol_ss = sol.integrate(shooting_type=Shooting.SINGLE, merge_phases=False)
+    ss_err = []
+    for p in range(nb_phases):
+        ss_err+=[np.sqrt(np.mean((sol_ss.states[p]["q"][:, 0::ocp.nlp[p].n_integration_steps] - sol.states[p]["q"]) ** 2))]
 
     print("*********************************************")
     print(f"Problem solved with {solver.value}")
     print(f"Solving time : {sol.time_to_optimize}s")
+    print(f"Single shooting error : {np.mean(ss_err)}")
 
     # --- Show results --- #
     sol.animate(show_meshes=True,
