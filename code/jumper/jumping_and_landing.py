@@ -1,7 +1,5 @@
 from time import time
 
-from bioptim import Simulate
-
 from jumper_plots import add_jumper_plots
 from jumper_optimization_program import Jumper5Phases
 
@@ -27,10 +25,5 @@ if __name__ == "__main__":
     tic = time()
     sol = jumper.solve(limit_memory_max_iter=200, exact_max_iter=1000)
     print(f"Time to solve : {time() - tic}sec")
-    # sol2 = Simulate.from_solve(jumper.ocp, sol)
 
-    sol.integrate(concatenate=False, single_shoot=True, apply_to_self=True)
-
-    # sol.print()
-    sol.graphs()
-    sol.animate(n_frames=-1)
+    sol.animate()
