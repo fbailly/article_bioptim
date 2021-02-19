@@ -19,7 +19,6 @@ from bioptim import (
     BoundsList,
     QAndQDotBounds,
     InitialGuessList,
-    ShowResult,
     ObjectiveList,
     ObjectiveFcn,
     InterpolationType,
@@ -30,6 +29,7 @@ from bioptim import (
     PhaseTransitionList,
     PhaseTransitionFcn,
     Solver,
+    Shooting, 
 )
 
 # --- force nul at last point ---
@@ -410,7 +410,7 @@ def prepare_ocp(biorbd_model: tuple,
         objective_functions,
         constraints,
         phase_transitions=phase_transitions,
-        nb_threads=nb_threads,
+        n_threads=nb_threads,
     )
 
 
@@ -475,10 +475,10 @@ if __name__ == "__main__":
         CoP=cop_ref,
         nb_threads=4,
     )
-
+    solver = Solver.IPOPT
     # --- Solve the program --- #
     sol = ocp.solve(
-        solver=Solver.IPOPT,
+        solver=solver,
         solver_options={
             "ipopt.tol": 1e-3,
             "ipopt.max_iter": 5000,
@@ -489,15 +489,15 @@ if __name__ == "__main__":
         show_online_optim=False,
     )
 
-    # --- Get Results --- #
-    states_sol, controls_sol = Data.get_data(ocp, sol["x"])
-    q = states_sol["q"]
-    q_dot = states_sol["q_dot"]
-    tau = controls_sol["tau"]
-    activation = controls_sol["muscles"]
+    print("*********************************************")
+    print(f"Problem solved with {solver.value}")
+    print(f"Solving time : {sol.time_to_optimize}s")
 
     # --- Show results --- #
-    ShowResult(ocp, sol).animate()
+    sol.animate(show_meshes=True,
+                background_color=(1, 1, 1),
+                show_local_ref_frame=False,)
+    # sol.graphs()
 
     # --- Save results --- #
     ocp.save(sol, 'gait.bo')
