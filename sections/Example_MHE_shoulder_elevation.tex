@@ -15,7 +15,7 @@ Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three
 \begin{figure*}[t!] 
 \centering 
 \includegraphics[width=\textwidth]{figures/MHE_results.pdf}\\ 
-\caption{Time series of (1) real-time estimated joint angles (blue) and noisy reference joint angles (orange) of a cyclic motion (up).(2) real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (bottom) (Ex.~\ref{ex:mhe}). Only four muscles with significative action (peaks force $>$ 15~N), on the two selected DoFs, are shown.
+\caption{Time series of (1) real-time estimated joint angles (blue), reference joint angle (orange) and noisy reference joint angles (green) of a cyclic motion (up).(2) real-time estimated muscle forces (blue) and ground truth muscle forces (orange) of a cyclic motion (bottom) (Ex.~\ref{ex:mhe}). Only four muscles with significative action (peaks force $>$ 15~N), on the two selected DoFs, are shown.
 Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head. (Ex.~\ref{ex:mhe}).} 
 \label{fig:MHE_results}
 \end{figure*} 
@@ -32,10 +32,10 @@ $}
 \label{eq:ocp_exMHE}  
 \]  
 
-\noindent where $\omega_1 =10^5$, $\omega_2 = 10^2$, $\omega_3 = 10^4$ and $t_{mhe}$ is duration of each sub-problem. 
+\noindent where $\omega_1 =10^3$, $\omega_2 = 10$, $\omega_3 = 10^2$ and $t_{mhe}$ is duration of each sub-problem. 
 
 In this example, reference data of an $8~s$ series of four arm elevations were generated at 100~Hz, by computer simulation.
 A centered Gaussian noise (mean = 0, std = $0.005\:q^*(t)$) was added to $q^*$, to simulate experimental-like joints angle measurements.
 Using a windows size of 7 nodes (i.e., 210~ms), the estimator ran at about 33~Hz (one in three reference data frame was sent to the estimator to simulate experimental-like conditions), i.e., two and half times faster than standard biofeedback (13~Hz, \cite{kannape2013self}).
-The MHE was able to forecast the movement kinematics with a root mean square error of $1.3\pm0.5^{\circ}$ while providing a realistic estimation of muscle forces close to the ground truth with a root mean square error of $10.6\pm13.6N$ (Fig.~\ref{fig:MHE_results}).
+The MHE was able to forecast the movement kinematics with a root mean square error of $1.3\pm0.7^{\circ}$ while providing a realistic estimation of muscle forces close to the ground truth with a root mean square error of $11.1\pm14.9N$ (Fig.~\ref{fig:MHE_results}).
 
