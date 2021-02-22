@@ -7,6 +7,7 @@ the oscillation of a pendulum.
 import biorbd
 import numpy as np
 from time import time
+import casadi as cas
 import utils
 
 from bioptim import (
@@ -17,11 +18,44 @@ from bioptim import (
     Bounds,
     BoundsList,
     InitialGuessList,
-    Data,
     InterpolationType,
-    ShowResult,
-    Simulate,
+    Shooting,
 )
+
+
+def compute_error_single_shooting(ocp, sol, duration):
+
+    if type(ocp.nlp[0].tf) == cas.casadi.MX:
+        t_opt = sol.parameters['time'][0]
+    else:
+        t_opt = ocp.nlp[0].tf
+
+    if t_opt < duration:
+        raise ValueError(f'Single shooting integration duration must be smaller than ocp duration :{t_opt} s')
+
+    trans_idx = []
+    rot_idx = []
+    for i in range(ocp.nlp[0].model.nbQ()):
+        if ocp.nlp[0].model.nameDof()[i].to_string()[-4:-1] == 'Rot':
+            rot_idx += [i]
+        else:
+            trans_idx += [i]
+    rot_idx = np.array(rot_idx)
+    trans_idx = np.array(trans_idx)
+
+    sol_int = sol.integrate(shooting_type=Shooting.SINGLE, continuous=True)
+    sn_1s = int(ocp.nlp[0].ns / t_opt * duration)  # shooting node at {duration} second
+    if len(rot_idx) > 0:
+        err_rot = np.sqrt(np.mean((sol_int.states[0]['all'][rot_idx, 5 * sn_1s] - sol.states[0]['all'][rot_idx, sn_1s]) ** 2))
+    else:
+        err_rot = 0
+    if len(trans_idx) > 0:
+        err_trans = np.sqrt(np.mean((sol_int.states[0]['all'][trans_idx, 5 * sn_1s] - sol.states[0]['all'][trans_idx, sn_1s]) ** 2))
+    else:
+        err_trans = 0
+
+    return err_rot*180/np.pi, err_trans/1000
+
 
 def prepare_ocp(biorbd_model_path: str) -> OptimalControlProgram:
     """
@@ -92,6 +126,7 @@ def prepare_ocp(biorbd_model_path: str) -> OptimalControlProgram:
 
 if __name__ == "__main__":
     model_path = "MassPoint_pendulum.bioMod"
+    np.random.seed(0)
 
     ocp = prepare_ocp(biorbd_model_path=model_path)
 
@@ -100,19 +135,15 @@ if __name__ == "__main__":
     sol = ocp.solve(show_online_optim=False)
     toc = time() - tic
 
-    result = ShowResult(ocp, sol)
-    result.objective_functions()
-    sol_opt = sol['x']
-    sol_ss = Simulate.from_solve(ocp, sol, True)['x']
-    ss_err = np.sqrt(np.mean((sol_ss - sol_opt) ** 2))
+    ss_err_rot, ss_err_trans = compute_error_single_shooting(ocp, sol, 1)
     print("*********************************************")
-    print(f"Single shooting error : {ss_err}")
+    print(f"Single shooting error rotation: {ss_err_rot} degrees")
+    print(f"Single shooting error translation: {ss_err_trans} mm")
     print(f"Time to solve : {toc}sec")
 
-    Solution_data = Data.get_data(ocp, sol, get_states=True, get_controls=True, get_parameters=True)
-    q = Solution_data[0]['q']
-    qdot = Solution_data[0]['qdot']
-    u = Solution_data[1]['tau']
+    q = np.hstack((sol.states[0]['q'], sol.states[1]['q']))
+    qdot = np.hstack((sol.states[0]['qdot'], sol.states[1]['qdot']))
+    u = np.hstack((sol.controls[0]['tau'], sol.controls[1]['tau']))
 
     np.save('q_optim', q)
     np.save('qdot_optim', qdot)
