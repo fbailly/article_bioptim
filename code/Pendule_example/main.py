@@ -17,10 +17,8 @@ from bioptim import (
     Bounds,
     BoundsList,
     InitialGuessList,
-    Data,
     InterpolationType,
-    ShowResult,
-    Simulate,
+    Shooting,
 )
 
 def prepare_ocp(biorbd_model_path: str) -> OptimalControlProgram:
@@ -92,6 +90,7 @@ def prepare_ocp(biorbd_model_path: str) -> OptimalControlProgram:
 
 if __name__ == "__main__":
     model_path = "MassPoint_pendulum.bioMod"
+    np.random.seed(0)
 
     ocp = prepare_ocp(biorbd_model_path=model_path)
 
@@ -100,19 +99,26 @@ if __name__ == "__main__":
     sol = ocp.solve(show_online_optim=False)
     toc = time() - tic
 
-    result = ShowResult(ocp, sol)
-    result.objective_functions()
-    sol_opt = sol['x']
-    sol_ss = Simulate.from_solve(ocp, sol, True)['x']
-    ss_err = np.sqrt(np.mean((sol_ss - sol_opt) ** 2))
+    def compute_error_single_shooting(ocp, sol, duration):
+        if ocp.nlp[0].tf < duration:
+            raise ValueError(
+                f'Single shooting integration duration must be smaller than ocp duration :{ocp.nlp[0].tf} s')
+        sol_int = sol.integrate(shooting_type=Shooting.SINGLE, continuous=True)
+        sn_1s = int(ocp.nlp[0].ns / ocp.nlp[0].tf * duration)  # shooting node at {duration} second
+        err_0 = np.sqrt(np.mean((sol_int.states[0]['all'][:, 5 * sn_1s] - sol.states[0]['all'][:, sn_1s]) ** 2))
+        err_1 = np.sqrt(np.mean((sol_int.states[0]['all'][:, 5 * sn_1s] - sol.states[0]['all'][:, sn_1s]) ** 2)) # J'imagine que tu vas tout uniformiser de toutes facons...
+        return err_0
+
+    # result = ShowResult(ocp, sol)
+    # result.objective_functions()
+    ss_err = compute_error_single_shooting(ocp, sol, 1)
     print("*********************************************")
     print(f"Single shooting error : {ss_err}")
     print(f"Time to solve : {toc}sec")
 
-    Solution_data = Data.get_data(ocp, sol, get_states=True, get_controls=True, get_parameters=True)
-    q = Solution_data[0]['q']
-    qdot = Solution_data[0]['qdot']
-    u = Solution_data[1]['tau']
+    q = np.hstack((sol.states[0]['q'], sol.states[1]['q']))
+    qdot = np.hstack((sol.states[0]['qdot'], sol.states[1]['qdot']))
+    u = np.hstack((sol.controls[0]['tau'], sol.controls[1]['tau']))
 
     np.save('q_optim', q)
     np.save('qdot_optim', qdot)

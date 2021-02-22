@@ -26,29 +26,34 @@ In the following, bold symbols denote vectors and starred ones ($^*$) denote ref
 \caption{\small Overview of computational results for the different OCPs cases and links to detailed implementations. The single shooting state trajectory is obtained by forwardly integrating the initial state with the optimized control inputs during 1~second. The single shooting error is computed as the mean RMSE between the optimized state vector and the single shooting one at 1~second.}
 \label{tab:Perfs_and_detailed_implementations_of_each_example}
 \centering
-\begin{tabular}{c l rl rl rl}
-\cmidrule[\heavyrulewidth](lr){2-8}
-& & \multicolumn{2}{l}{\ref{ex:poiting} Activation-driven pointing} & \multicolumn{2}{l}{Ex\# 2} & \multicolumn{2}{l}{Ex\# 3} \\
-\cmidrule[\heavyrulewidth](lr){3-4}
-\cmidrule[\heavyrulewidth](lr){5-6}
-\cmidrule[\heavyrulewidth](lr){7-8}
+\begin{tabular}{c l rcl rcl rcl rcl rcl rcl}
+\cmidrule[\heavyrulewidth](lr){2-20}
+& & \multicolumn{3}{c}{\ref{ex:poiting} Pointing task} & \multicolumn{3}{c}{Ex\# 2} & \multicolumn{3}{c}{Ex\# 3} & \multicolumn{3}{c}{Ex\# 4} & \multicolumn{3}{c}{Ex\# 5} & \multicolumn{3}{c}{Ex\# 6}\\
+\cmidrule[\heavyrulewidth](lr){3-5}
+\cmidrule[\heavyrulewidth](lr){6-8}
+\cmidrule[\heavyrulewidth](lr){9-11}
+\cmidrule[\heavyrulewidth](lr){12-14}
+\cmidrule[\heavyrulewidth](lr){15-17}
+\cmidrule[\heavyrulewidth](lr){18-20}
 
-\mymultirow{4}{Setup} & \# states $\xt$            & \multicolumn{2}{c}{4}  & --    & --     & --    & --\\
-                      & \# control $\ut$           & \multicolumn{2}{c}{6}  & --    & --     & --    & --\\
-                      & \# shooting nodes          & \multicolumn{2}{c}{50} & --    & --     & --    & --\\
-                      & OCP duration (s)           & \multicolumn{2}{c}{2}  & --    & --     & --    & --\\
-                      &                            & \ipopt  & \acados        & \ipopt  & \acados  & \ipopt  & \acados \\
-\mymultirow{3}{Solve} & \# NLP iterations          & 47     & 19            & --    & --     & --    & --\\
-                      & Optimized cost             & 20.8 & 23.2        & --    & --     & --    & --\\
-                      & Time to convergence (s)    & 22.3    & 0.45          & --    & --     & --    & --\\
-                      & Single shooting error    & $<10^{-7}$    & $<10^{-13}$          & --    & --     & --    & --\\
+\mymultirow{4}{Setup} & \# states $\xt$        &   & 4  &   &   & -- &   &   & -- &   &   & -- &   &   & -- &   &  & --\\
+                      & \# control $\ut$       &   & 6  &   &   & -- &   &   & -- &   &   & -- &   &   & -- &   &  & --\\
+                      & \# shooting nodes      &   & 50 &   &   & -- &   &   & -- &   &   & -- &   &   & -- &   &  & --\\
+                      & OCP duration (s)       &   & 2  &   &   & -- &   &   & -- &   &   & -- &   &   & -- &   &  & --\\
+                      &&&&&&&&&\\
+                      &       Solver               & \ipopt & & \acados & \multicolumn{3}{c}{\ipopt}  & \ipopt & & \acados & \multicolumn{3}{c}{\ipopt} & \multicolumn{3}{c}{\acados} & \multicolumn{3}{c}{\ipopt} \\
+                      &       Integrator               & \ipopt & & \acados & \multicolumn{3}{c}{\ipopt}  & \ipopt & & \acados & \multicolumn{3}{c}{\ipopt} & \multicolumn{3}{c}{\acados} & \multicolumn{3}{c}{\ipopt} \\
+\mymultirow{3}{Solve} & \# NLP iterations          & 47    & & 19                        &\multicolumn{3}{c}{--}& --  &  & -- &\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}\\
+                      & Optimized cost             & 20.8 & & 23.2                       &\multicolumn{3}{c}{--}& --  &  & -- &\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}\\
+                      & Time to convergence (s)    & 22.3   & & 0.45                     &\multicolumn{3}{c}{--}& --  &  & -- &\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}\\
+                      & Single shooting error    & $<10^{-7}$  &  & $<10^{-13}$          &\multicolumn{3}{c}{--}& --  &  & -- &\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}&\multicolumn{3}{c}{--}\\
 %Example & Link & IPOPT & ACADOS \\ 
 
 %\midrule
 %Muscle activation driven pointing task & \href{https://github.com/pyomeca/BiorbdOptim/blob/master/examples/muscle_driven_ocp/static_arm.py}{$\star$} & $10.10$ & $0.2018$  \\ 
 %\midrule
 %$\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ \\ 
-\cmidrule[\heavyrulewidth](lr){2-8}
+\cmidrule[\heavyrulewidth](lr){2-20}
 \end{tabular}
 \end{table*}
 %
