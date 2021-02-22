@@ -9,6 +9,7 @@ import numpy as np
 from casadi import dot, Function, vertcat, MX, mtimes, nlpsol, mmax
 import biorbd
 import bioviz
+from time import time 
 from matplotlib import pyplot as plt
 import Load_exp_data
 
@@ -476,6 +477,7 @@ if __name__ == "__main__":
         nb_threads=4,
     )
     solver = Solver.IPOPT
+    tic = time()
     # --- Solve the program --- #
     sol = ocp.solve(
         solver=solver,
@@ -488,7 +490,7 @@ if __name__ == "__main__":
         },
         show_online_optim=False,
     )
-    
+    toc = time() - tic
     sol_ss = sol.integrate(shooting_type=Shooting.SINGLE, merge_phases=False)
     ss_err = []
     for p in range(nb_phases):
@@ -496,7 +498,7 @@ if __name__ == "__main__":
 
     print("*********************************************")
     print(f"Problem solved with {solver.value}")
-    print(f"Solving time : {sol.time_to_optimize}s")
+    print(f"Solving time : {toc} s")
     print(f"Single shooting error : {np.mean(ss_err)}")
 
     # --- Show results --- #
