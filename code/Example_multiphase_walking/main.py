@@ -491,15 +491,15 @@ if __name__ == "__main__":
         show_online_optim=False,
     )
     toc = time() - tic
-    sol_ss = sol.integrate(shooting_type=Shooting.SINGLE, merge_phases=False)
-    ss_err = []
-    for p in range(nb_phases):
-        ss_err+=[np.sqrt(np.mean((sol_ss.states[p]["q"][:, 0::ocp.nlp[p].n_integration_steps] - sol.states[p]["q"]) ** 2))]
+    sol_ss = sol.integrate(shooting_type=Shooting.SINGLE_CONTINUOUS, merge_phases=False)
+    ss_err_trans = np.sqrt(np.mean((sol_ss.states[-1]["q"][:3, -1] - sol.states[-1]["q"][:3, -1]) ** 2))
+    ss_err_rot = np.sqrt(np.mean((sol_ss.states[-1]["q"][3:, -1] - sol.states[-1]["q"][3:, -1]) ** 2))
 
     print("*********************************************")
     print(f"Problem solved with {solver.value}")
     print(f"Solving time : {toc} s")
-    print(f"Single shooting error : {np.mean(ss_err)}")
+    print(f"Single shooting error for translation: {ss_err_trans} m")
+    print(f"Single shooting error for rotation: {ss_err_rot * 180/np.pi} degrees")
 
     # --- Show results --- #
     sol.animate(show_meshes=True,
