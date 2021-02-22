@@ -33,7 +33,7 @@ def forward_dynamics(states: MX.sym, controls: MX.sym, biorbd_model, use_activat
             muscles_activations_dot = biorbd_model.activationDot(muscle_states).to_mx()
     muscles_tau = biorbd_model.muscularJointTorque(muscle_states, q, qdot).to_mx()
     qddot = biorbd.Model.ForwardDynamics(biorbd_model, q, qdot, muscles_tau).to_mx()
-    # qdot = biorbd_model.computeQdot(q, qdot).to_mx()
+    qdot = biorbd_model.computeQdot(q, qdot).to_mx()
     if use_activation:
         xdot = vertcat(qdot, qddot)
     else:
@@ -95,6 +95,8 @@ def compute_error_single_shooting(
     x: np.array,
     u: np.array,
     step: int,
+    Ns_mhe: int,
+    N_init: int,
     ratio: int,
     Tf: int,
     duration: int,
@@ -113,6 +115,12 @@ def compute_error_single_shooting(
        The controls of the system
     step: int
         Step of runge kutta integrations
+    Ns_mhe: int
+        Windows size
+    N_init: int
+        Initial node
+    ratio:
+        Ratio of data send to estimator
     Tf: int
         final time of optimisation
     duration: int
@@ -127,24 +135,25 @@ def compute_error_single_shooting(
         raise ValueError(f"Single shooting integration duration must be smaller than ocp duration :{Tf} s")
 
     get_xdot = xdot_funct(biorbd_model, use_activation=use_activation)
-    N = int(x.shape[1] / Tf) * duration
-    step_time = duration / N
-    x_ss = np.ndarray((x.shape[0], x.shape[1]))
+    from math import ceil
+
+    N = x.shape[1] - 1
+    Tf = (N_init - N_init % ratio) / (N_init / Tf)
+    T = Tf - (Ns_mhe * (Tf / (N + Ns_mhe)))
+    step_time = T / N
+    N_ss = ceil(N / T * duration)
+    x_ss = np.ndarray((x.shape[0], N_ss + 1))
     x_ss[:, 0] = x[:, 0]
     h = step_time / step
-    x_tmp = []
-    for i in range(1, x.shape[1]):
+    x_tmp = x[:, 0]
+    for i in range(1, N_ss + 1):
         for j in range(step):
-            if i == 1 and j == 0:
-                x_prev = x_ss[:, 0]
-            else:
-                x_prev = x_tmp
+            x_prev = x_tmp
             k1 = dxdt(x_prev, u[:, i - 1], get_xdot)
             k2 = dxdt(x_prev + h / 2 * k1, u[:, i - 1], get_xdot)
             k3 = dxdt(x_prev + h / 2 * k2, u[:, i - 1], get_xdot)
             k4 = dxdt(x_prev + h * k3, u[:, i - 1], get_xdot)
             x_tmp = x_prev + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
         x_ss[:, i] = x_tmp
-    x_ss = x_ss[:, ::ratio] if use_activation is not True else x_ss
-    err = [np.sqrt(np.mean((x[:, N] - x_ss[:, N]) ** 2))]
+    err = np.sqrt(np.mean((x[:4, N_ss] * 180 / np.pi - x_ss[:4, N_ss] * 180 / np.pi) ** 2))
     return err

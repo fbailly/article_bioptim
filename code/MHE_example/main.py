@@ -131,11 +131,13 @@ def warm_start_mhe(ocp, sol):
     return x0, u0, x_out, u_out
 
 
-def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd.Model):
+def define_objective(q: np.array, iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd.Model):
     """
     Define the objective function for the ocp
     Parameters
     ----------
+    q: np.array
+        State to track
     iter: int
         Current iteration
     rt_ratio: int
@@ -150,9 +152,9 @@ def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd
     """
     objectives = ObjectiveList()
     if use_noise is not True:
-        weight = {"track_state": 100000, "min_act": 1000, "min_dq": 1000, "min_q": 100}
+        weight = {"track_state": 1000000, "min_act": 1000, "min_dq": 10, "min_q": 10}
     else:
-        weight = {"track_state": 10000, "min_act": 1000, "min_dq": 1000, "min_q": 100}
+        weight = {"track_state": 1000, "min_act": 100, "min_dq": 100, "min_q": 10}
     objectives.add(ObjectiveFcn.Lagrange.MINIMIZE_MUSCLES_CONTROL, weight=weight["min_act"])
     objectives.add(
         ObjectiveFcn.Lagrange.MINIMIZE_STATE,
@@ -164,10 +166,11 @@ def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd
         weight=weight["min_q"],
         index=np.array(range(biorbd_model.nbQ())),
     )
+    q = q[:, ::rt_ratio]
     objectives.add(
         ObjectiveFcn.Lagrange.TRACK_STATE,
         weight=weight["track_state"],
-        target=q_ref[:, iter * rt_ratio : (Ns_mhe + 1 + iter) * rt_ratio : rt_ratio],
+        target=q[:, iter : (Ns_mhe + 1 + iter)],
         index=range(biorbd_model.nbQ()),
     )
     return objectives
@@ -226,7 +229,7 @@ if __name__ == "__main__":
     """
     Prepare and solve the MHE example
     """
-    use_noise = True  # True to track noisy joint angle if not False
+    use_noise = True  # True to add noise on reference joint angles
     model = "arm_wt_rot_scap.bioMod"
     T = 8
     Ns = 800
@@ -245,20 +248,20 @@ if __name__ == "__main__":
     T_mhe = T / (Ns / rt_ratio) * Ns_mhe
     x_wt_noise = np.concatenate((q_ref, dq_ref))
 
-    force_ref_tmp = np.ndarray((biorbd_model.nbMuscles(), Ns))
+    force_ref_tmp = np.ndarray((biorbd_model.nbMuscles(), u_ref.shape[1]))
     get_force = force_func(biorbd_model, use_activation=False)
     for i in range(biorbd_model.nbMuscles()):
-        for k in range(Ns):
+        for k in range(u_ref.shape[1]):
             force_ref_tmp[i, k] = get_force(q_ref[:, k], dq_ref[:, k], a_ref[:, k], u_ref[:, k])[i, :]
-    force_ref = force_ref_tmp[:, 0:Ns:rt_ratio]
+    force_ref = force_ref_tmp[:, ::rt_ratio]
 
     Q_noise = 5
     if use_noise:
         q_ref = generate_noise(biorbd_model, q_ref, Q_noise)
     x_ref = np.concatenate((q_ref, dq_ref))
 
-    X_est = np.zeros((biorbd_model.nbQ() * 2, ceil((Ns + 1) / rt_ratio) - Ns_mhe))
-    U_est = np.zeros((biorbd_model.nbMuscles(), ceil(Ns / rt_ratio) - Ns_mhe))
+    X_est = np.zeros((biorbd_model.nbQ() * 2, x_ref[:, ::rt_ratio].shape[1] - Ns_mhe))
+    U_est = np.zeros((biorbd_model.nbMuscles(), u_ref[:, ::rt_ratio].shape[1] - Ns_mhe))
 
     # Initial and final state
     get_force = force_func(biorbd_model)
@@ -278,7 +281,7 @@ if __name__ == "__main__":
     ocp.update_initial_guess(x_init, u_init)
 
     # Update objectives functions
-    objectives = define_objective(0, rt_ratio, Ns_mhe, biorbd_model)
+    objectives = define_objective(q_ref, 0, rt_ratio, Ns_mhe, biorbd_model)
     ocp.update_objectives(objectives)
 
     # Initialize the solver options
@@ -286,14 +289,14 @@ if __name__ == "__main__":
         solver=Solver.ACADOS,
         show_online_optim=False,
         solver_options={
-            "nlp_solver_tol_comp": 1e-5,
-            "nlp_solver_tol_eq": 1e-5,
-            "nlp_solver_tol_stat": 1e-5,
+            "nlp_solver_tol_comp": 1e-10,
+            "nlp_solver_tol_eq": 1e-10,
+            "nlp_solver_tol_stat": 1e-8,
             "integrator_type": "IRK",
             "nlp_solver_type": "SQP",
             "sim_method_num_steps": 1,
             "print_level": 0,
-            "nlp_solver_max_iter": 15,
+            "nlp_solver_max_iter": 30,
         },
     )
 
@@ -301,7 +304,7 @@ if __name__ == "__main__":
     x0, u0, X_est[:, 0], U_est[:, 0] = warm_start_mhe(ocp, sol)
 
     tic = time()  # Save initial time
-    for iter in range(1, ceil((Ns + 1) / rt_ratio - Ns_mhe)):
+    for iter in range(1, X_est.shape[1]):
         # set initial state
         ocp.nlp[0].x_bounds.min[:, 0] = x0[:, 0]
         ocp.nlp[0].x_bounds.max[:, 0] = x0[:, 0]
@@ -312,7 +315,7 @@ if __name__ == "__main__":
         ocp.update_initial_guess(x_init, u_init)
 
         # Update objectives functions
-        objectives = define_objective(iter, rt_ratio, Ns_mhe, biorbd_model)
+        objectives = define_objective(q_ref, iter, rt_ratio, Ns_mhe, biorbd_model)
         ocp.update_objectives(objectives)
 
         # Solve problem
@@ -320,22 +323,22 @@ if __name__ == "__main__":
             solver=Solver.ACADOS,
             show_online_optim=False,
             solver_options={
-                "nlp_solver_tol_comp": 1e-4,
-                "nlp_solver_tol_eq": 1e-4,
-                "nlp_solver_tol_stat": 1e-4,
+                "nlp_solver_tol_comp": 1e-6,
+                "nlp_solver_tol_eq": 1e-6,
+                "nlp_solver_tol_stat": 1e-5,
             },
         )
         # Set solutions and set initial guess for next optimisation
         x0, u0, x_out, u_out = warm_start_mhe(ocp, sol)
         X_est[:, iter] = x_out
-        if iter < ceil(Ns / rt_ratio) - Ns_mhe:
+        if iter < U_est.shape[1]:
             U_est[:, iter] = u_out
 
     a_est = U_est
-    q_ref = q_ref[:, 0 : Ns + 1 : rt_ratio]
-    force_est = np.ndarray((biorbd_model.nbMuscles(), int(ceil(Ns / rt_ratio) - Ns_mhe)))
+    q_ref = q_ref[:, ::rt_ratio]
+    force_est = np.ndarray((biorbd_model.nbMuscles(), U_est.shape[1]))
     for i in range(biorbd_model.nbMuscles()):
-        for k in range(int(ceil(Ns / rt_ratio) - Ns_mhe)):
+        for k in range(U_est.shape[1]):
             force_est[i, k] = get_force(
                 X_est[: biorbd_model.nbQ(), k],
                 X_est[biorbd_model.nbQ() : biorbd_model.nbQ() * 2, k],
@@ -344,8 +347,6 @@ if __name__ == "__main__":
             )[i, :]
 
     toc = time() - tic
-    print(time() - tic)
-    print(toc / ceil((Ns + 1) / rt_ratio - Ns_mhe))
     final_offset = 5  # Number of last nodes to ignore when calculate RMSE
     init_offset = 5  # Number of initial nodes to ignore when calculate RMSE
     offset = Ns_mhe
@@ -399,13 +400,15 @@ if __name__ == "__main__":
     }
     sio.savemat(f"Data/MHE_results.mat", dic)
     duration = 1
-    ss_err = compute_error_single_shooting(biorbd_model, X_est, U_est, 5, rt_ratio, T, duration)
+    T = 8
+    Ns = 800
+    ss_err = compute_error_single_shooting(biorbd_model, X_est, U_est, 5, Ns_mhe, Ns, rt_ratio, T, duration)
 
     print("*********************************************")
     print(f"Problem solved with Acados")
     print(f"Solving time : {dic['time_tot']}s")
     print(f"Solving frequency : {1/dic['time_per_mhe']}s")
-    print(f"Single shooting error at {duration}s= {ss_err}")
+    print(f"Single shooting error on the Q at {duration}s = {ss_err}deg")
 
     # ------ Animate ------ #
     b = bioviz.Viz(model)
