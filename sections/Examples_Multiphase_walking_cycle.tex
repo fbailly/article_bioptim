@@ -1,10 +1,4 @@
-\begin{figure*}[t!]
-\centering
-\includegraphics[width=\textwidth]{figures/multiphase_walking_cycle.eps}
-\caption{Snapshots of a walking gait cycle driven by muscles activation with histogram of muscle activations below. The red lines represent muscles lines of action and the blue points depict the tracked markers. The activation of the Gluteus Maximus is the mean of its three parts and the Hamstring is the mean activation of the Semimembranous, Semitendinous and Biceps Femoris. }
-\label{fig:snapshots_multiphase_walking_cycle}
-\end{figure*}
-This example is presented to introduce \textit{bioptim}'s ability to deal with a multiphase locomotion estimation problem including muscle actuation and contact forces.
+\vspace*{-0em} This example is presented to introduce \textit{bioptim}'s ability to deal with a multiphase locomotion estimation problem including muscle actuation and contact forces.
 The goal was to estimate muscle activations by tracking markers trajectories and ground reaction forces and moments. 
 The model was a 3D leg with 12 DoFs (6-DoFs pelvis, 3-DoFs hip, 1-DoF knee and 2-DoFs ankle), driven by 17 muscle activations and residual joint torques to compensate for potential muscle actuation weaknesses. 
 The gait cycle was defined from the first heel strike to the end of the swing phase discretized into 90 shooting intervals. 
@@ -35,7 +29,7 @@ $}
 \noindent where $\omega_1$=1e5, $\omega_2$=0.1, $\omega_3$=0.1, $\omega_4$=10 are  weighting factors and $T$ is the the duration of the current phase.\\
 
 Non-slipping ($\mathtt{NON\_SLIPPING}$) and unilateral contact force ($\mathtt{CONTACT\_FORCE}$) constraints were added to prevent the foot from slipping and pulling from the ground. 
-In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to represent the gain or loss of contact(s) in the dynamics (e.g., swing phase to heel strike ~\cite{felis_synthesis_2016}) \\
+In between phases, the use of the $\mathtt{IMPACT}$ state transition allowed to represent the gain or loss of contact(s) in the dynamics (e.g., swing phase to heel strike ~\cite{felis_synthesis_2016}).\\
 
 Tracking experimental data allowed to reproduce leg motion during the walking cycle (Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
 The root mean square tracking error on markers trajectories was $27$ mm (mean errors on pelvic and foot markers were $7.5$ mm and $14.7$ mm, respectively). 
