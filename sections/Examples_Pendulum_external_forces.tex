@@ -26,8 +26,17 @@ This objective function, exclusively composed of Lagrange terms, was formulated 
 The first term of the objective function (Eq.~\ref{eq:ocp_Pendulum}) acts as a position controller for the mass.
 The second was added for control regularization.
 
+\begin{figure*}[t!]
+\centering
+\includegraphics[width=\textwidth]{figures/multiphase_walking_cycle.eps}
+\caption{Snapshots of a walking gait cycle driven by muscles activation with histogram of muscle activations below. The red lines represent muscles lines of action and the blue points depict the tracked markers. The activation of the Gluteus Maximus is the mean of its three parts and the Hamstring is the mean activation of the Semimembranous, Semitendinous and Biceps Femoris.}
+\label{fig:snapshots_multiphase_walking_cycle}
+\vspace*{-0.5cm}
+\end{figure*}
 
 During the first phase, the mass is passively oscillating around its stationary position due to the spring force (Fig.~\ref{fig:Mass_Pendulum_Fext_graphs}).
 At the beginning of the second phase, when an additional external force acts on the mass, it stabilizes around the targeted position.
 The standard deviation between the position and the targeted position is $\SI{0.04}{\m}$.
 This example highlights the possibility of using optimal control to find activation patterns compensating for external passive forces (e.g., ortheses flexibility, contact surface deformation, interaction between two models, etc.).
+\newpage
+
