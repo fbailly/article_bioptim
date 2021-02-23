@@ -2,7 +2,7 @@ import numpy as np
 import biorbd
 from bioptim import PlotType
 
-from jumper_optimization_program import Jumper5Phases
+from .jumper_optimization_program import Jumper5Phases
 
 
 def com_height(x, nlp):
