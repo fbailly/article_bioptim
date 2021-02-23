@@ -422,6 +422,7 @@ def get_phase_time_shooting_numbers(c3d_file, dt):
         number_shooting_points.append(int(time/dt) - 1)
     return phase_time, number_shooting_points
 
+
 def get_experimental_data(model, c3d_file, Q_file, Qdot_file, number_shooting_points):
     q_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
                                         data=Load_exp_data.Get_Q(Q_file=Q_file, nb_q=model.nbQ()),
@@ -442,6 +443,65 @@ def get_experimental_data(model, c3d_file, Q_file, Qdot_file, number_shooting_po
                                           data=Load_exp_data.GetCoP(c3d_file=c3d_file),
                                           nb_shooting=number_shooting_points)
     return q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref
+
+
+def generate_table(out):
+    root_path_model = "/".join(__file__.split("/")[:-1])
+    biorbd_model = (
+        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_heel.bioMod"),
+        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_flatfoot.bioMod"),
+        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_forefoot.bioMod"),
+        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_0contact.bioMod")
+    )
+
+    # --- files path ---
+    c3d_file = 'Data/normal01_out.c3d'
+    Q_KalmanFilter_file = 'Data/normal01_q_KalmanFilter.txt'
+    Qdot_KalmanFilter_file = 'Data/normal01_qdot_KalmanFilter.txt'
+    # --- phase time and number of shooting ---
+    phase_time, number_shooting_points = get_phase_time_shooting_numbers(c3d_file, 0.01)
+    # --- get experimental data ---
+    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(biorbd_model[0],
+                                                                                        c3d_file,
+                                                                                        Q_KalmanFilter_file,
+                                                                                        Qdot_KalmanFilter_file,
+                                                                                       number_shooting_points)
+    ocp = prepare_ocp(
+        biorbd_model=biorbd_model,
+        final_time= phase_time,
+        nb_shooting=number_shooting_points,
+        markers_ref=markers_ref,
+        grf_ref=grf_ref,
+        q_ref=q_ref,
+        qdot_ref=qdot_ref,
+        M_ref=moments_ref,
+        CoP=cop_ref,
+        nb_threads=4,
+    )
+
+    # --- Solve the program --- #
+    tic = time()
+    sol = ocp.solve(
+        solver=Solver.IPOPT,
+        solver_options={
+            "ipopt.tol": 1e-3,
+            "ipopt.max_iter": 5000,
+            "ipopt.hessian_approximation": "exact",
+            "ipopt.limited_memory_max_history": 50,
+            "ipopt.linear_solver": "ma57",
+        },
+    )
+    toc = time() - tic
+    sol_merged = sol.merge_phases()
+
+    out.nx = sol_merged.states["all"].shape[0]
+    out.nu = sol_merged.controls["all"].shape[0]
+    out.ns = sol_merged.ns[0]
+    out.solver.append(out.Solver("Ipopt"))
+    out.solver[0].n_iteration = sol.iterations
+    out.solver[0].cost = sol.cost
+    out.solver[0].convergence_time = toc
+    out.solver[0].compute_error_single_shooting(sol, 1)
 
 
 if __name__ == "__main__":
