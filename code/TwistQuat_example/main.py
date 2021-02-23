@@ -28,41 +28,6 @@ from bioptim import (
     OdeSolver,
 )
 
-
-def compute_error_single_shooting(ocp, sol, duration):
-
-    if type(ocp.nlp[0].tf) == cas.casadi.MX:
-        t_opt = sol.parameters['time'][0]
-    else:
-        t_opt = ocp.nlp[0].tf
-
-    if t_opt < duration:
-        raise ValueError(f'Single shooting integration duration must be smaller than ocp duration :{t_opt} s')
-
-    trans_idx = []
-    rot_idx = []
-    for i in range(ocp.nlp[0].model.nbQ()):
-        if ocp.nlp[0].model.nameDof()[i].to_string()[-4:-1] == 'Rot':
-            rot_idx += [i]
-        else:
-            trans_idx += [i]
-    rot_idx = np.array(rot_idx)
-    trans_idx = np.array(trans_idx)
-
-    sol_int = sol.integrate(shooting_type=Shooting.SINGLE, continuous=True)
-    sn_1s = int(ocp.nlp[0].ns / t_opt * duration)  # shooting node at {duration} second
-    if len(rot_idx) > 0:
-        err_rot = np.sqrt(np.mean((sol_int.states['all'][rot_idx, 5 * sn_1s] - sol.states['all'][rot_idx, sn_1s]) ** 2))
-    else:
-        err_rot = 0
-    if len(trans_idx) > 0:
-        err_trans = np.sqrt(np.mean((sol_int.states['all'][trans_idx, 5 * sn_1s] - sol.states['all'][trans_idx, sn_1s]) ** 2))
-    else:
-        err_trans = 0
-
-    return err_rot*180/np.pi, err_trans/1000
-
-
 def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> OptimalControlProgram:
     """
     Prepare the Euler version of the ocp
@@ -133,9 +98,9 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
 
     # Define control path constraint
     U_bounds = BoundsList()
-    U_bounds.add(bounds=Bounds([tau_min] * n_tau, [tau_max] * n_tau))
+    U_bounds.add([tau_min] * n_tau, [tau_max] * n_tau)
 
-    U_mapping = BiMapping(Mapping([-1, -1, -1, -1, -1, -1, 0, 1]), Mapping([0, 1]))
+    U_mapping = BiMapping([-1, -1, -1, -1, -1, -1, 0, 1], [0, 1])
 
     U_init = InitialGuessList()
     U_init.add([tau_init] * n_tau)
@@ -249,9 +214,9 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
 
     # Define control path constraint
     U_bounds = BoundsList()
-    U_bounds.add(bounds=Bounds([tau_min] * n_tau, [tau_max] * n_tau))
+    U_bounds.add([tau_min] * n_tau, [tau_max] * n_tau)
 
-    U_mapping = BiMapping(Mapping([-1, -1, -1, -1, -1, -1, 0, 1]), Mapping([0, 1]))
+    U_mapping = BiMapping([-1, -1, -1, -1, -1, -1, 0, 1], [0, 1])
 
     U_init = InitialGuessList()
     U_init.add([tau_init] * n_tau)
@@ -280,38 +245,58 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
     )
 
 
+def generate_table(out, Quaternion):
+
+    if Quaternion:
+        model_path = "/".join(__file__.split("/")[:-1]) + "/JeChMesh_RootQuat.bioMod"
+        ocp = prepare_ocp_Quat(model_path,
+                               final_time=1.5,
+                               n_shooting=100)
+    else:
+        model_path = "/".join(__file__.split("/")[:-1]) + "/JeChMesh_8DoF.bioMod"
+        ocp = prepare_ocp(model_path,
+                          final_time=1.5,
+                          n_shooting=100)
+
+    # --- Solve the program --- #
+    tic = time()
+    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 10000})
+    toc = time() - tic
+
+    out.nx = sol.states["all"].shape[0]
+    out.nu = sol.controls["all"].shape[0]
+    out.ns = sol.ns[0]
+    out.solver.append(out.Solver("Ipopt"))
+    out.solver[0].n_iteration = sol.iterations
+    out.solver[0].cost = sol.cost
+    out.solver[0].convergence_time = toc
+    out.solver[0].compute_error_single_shooting(sol, 1)
+
+
 if __name__ == "__main__":
     Quaternion = False
     np.random.seed(42)
 
     if Quaternion:
-        biorbd_model_path = "JeChMesh_RootQuat.bioMod"
-        ocp = prepare_ocp_Quat(biorbd_model_path,
+        model_path = "JeChMesh_RootQuat.bioMod"
+        ocp = prepare_ocp_Quat(model_path,
                                final_time=1.5,
                                n_shooting=100)
     else:
-        biorbd_model_path = "JeChMesh_8DoF.bioMod"
-        ocp = prepare_ocp(biorbd_model_path,
+        model_path = "JeChMesh_8DoF.bioMod"
+        ocp = prepare_ocp(model_path,
                           final_time=1.5,
                           n_shooting=100)
 
 
     # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve(solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 10000}) # solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 0}
+    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 10000})
     toc = time() - tic
 
     q_opt = sol.states['q']
 
-    ss_err_rot, ss_err_trans = compute_error_single_shooting(ocp, sol, 1)
-    print("*********************************************")
-    print(f"Single shooting error rotation: {ss_err_rot} degrees")
-    print(f"Single shooting error translation: {ss_err_trans} mm")
-    print(f"Time to solve : {toc}sec")
-
     if Quaternion:
         np.save('q_optim_quaternion_42', q_opt)
-        ligne_q, colone_q = 3, 3
     else:
         np.save('q_optim_Euler_42', q_opt)
-        ligne_q, colone_q = 2, 4
