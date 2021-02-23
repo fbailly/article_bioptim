@@ -7,8 +7,6 @@ import biorbd
 import casadi as cas
 import numpy as np
 from time import time
-import matplotlib.pyplot as plt
-import seaborn
 import utils
 
 from bioptim import (
@@ -18,17 +16,16 @@ from bioptim import (
     ConstraintFcn,
     ObjectiveFcn,
     Mapping,
-    BidirectionalMapping,
+    BiMapping,
     ConstraintList,
     InitialGuessList,
     InterpolationType,
     ObjectiveList,
     Node,
-    Data,
     DynamicsList,
     BoundsList,
-    ShowResult,
-    Simulate,
+    Shooting,
+    OdeSolver,
 )
 
 def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> OptimalControlProgram:
@@ -103,7 +100,7 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
     U_bounds = BoundsList()
     U_bounds.add(bounds=Bounds([tau_min] * n_tau, [tau_max] * n_tau))
 
-    U_mapping = BidirectionalMapping(Mapping([-1, -1, -1, -1, -1, -1, 0, 1]), Mapping([0, 1]))
+    U_mapping = BiMapping(Mapping([-1, -1, -1, -1, -1, -1, 0, 1]), Mapping([0, 1]))
 
     U_init = InitialGuessList()
     U_init.add([tau_init] * n_tau)
@@ -125,6 +122,7 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
         constraints,
         n_threads=4,
         tau_mapping=U_mapping,
+        ode_solver=OdeSolver.RK8,
     )
 
 
@@ -218,7 +216,7 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
     U_bounds = BoundsList()
     U_bounds.add(bounds=Bounds([tau_min] * n_tau, [tau_max] * n_tau))
 
-    U_mapping = BidirectionalMapping(Mapping([-1, -1, -1, -1, -1, -1, 0, 1]), Mapping([0, 1]))
+    U_mapping = BiMapping(Mapping([-1, -1, -1, -1, -1, -1, 0, 1]), Mapping([0, 1]))
 
     U_init = InitialGuessList()
     U_init.add([tau_init] * n_tau)
@@ -243,11 +241,13 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
         constraints,
         n_threads=4,
         tau_mapping=U_mapping,
+        ode_solver=OdeSolver.RK8,
     )
 
 
 if __name__ == "__main__":
     Quaternion = False
+    np.random.seed(42)
 
     if Quaternion:
         biorbd_model_path = "JeChMesh_RootQuat.bioMod"
@@ -263,48 +263,75 @@ if __name__ == "__main__":
 
     # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve(solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15}) # solver_options={'ipopt.tol': 1e-5, 'ipopt.constr_viol_tol': 1e-5, 'ipopt.max_iter': 10000}
+    sol = ocp.solve(solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 10000}) # solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 0}
     toc = time() - tic
 
-    result = ShowResult(ocp, sol)
-    result.objective_functions()
-    sol_opt = sol['x']
-    sol_ss = Simulate.from_solve(ocp, sol, True)['x']
-    ss_err = np.sqrt(np.mean((sol_ss - sol_opt) ** 2))
+
+    def compute_error_single_shooting(ocp, sol, duration, t_opt):
+        sol_int = sol.integrate(shooting_type=Shooting.SINGLE, continuous=True)
+        sn_1s = int(ocp.nlp[0].ns / t_opt * duration)  # shooting node at {duration} second
+        err = np.sqrt(np.mean((sol_int.states['all'][:, 5 * sn_1s] - sol.states['all'][:, sn_1s]) ** 2))
+        return err
+
+
+    q_opt = sol.states['q']
+    qdot_opt = sol.states['qdot']
+    t_opt = sol.parameters['time'][0]
+
+    ss_err = compute_error_single_shooting(ocp, sol, 1, t_opt)
     print("*********************************************")
     print(f"Single shooting error : {ss_err}")
     print(f"Time to solve : {toc}sec")
 
-    Solution_data = Data.get_data(ocp, sol, get_states=True)
-    q = Solution_data[0]['q']
-
     if Quaternion:
-        np.save('q_optim_quaternion', q)
-        ligne_q, colone_q = 2, 4
-    else:
-        np.save('q_optim_Euler', q)
+        np.save('q_optim_quaternion_42', q_opt)
         ligne_q, colone_q = 3, 3
+    else:
+        np.save('q_optim_Euler_42', q_opt)
+        ligne_q, colone_q = 2, 4
 
 
-    fig = plt.figure(figsize=(20, 5))
-    plt.gcf().subplots_adjust(left=0.1, right=0.9, wspace=0.35, hspace=0.1, bottom=0.15)
+    # import matplotlib.pyplot as plt
+    # import seaborn
+    # fig = plt.figure(figsize=(20, 5))
+    # plt.gcf().subplots_adjust(left=0.1, right=0.9, wspace=0.35, hspace=0.1, bottom=0.15)
+    #
+    # seaborn.set_style("whitegrid")
+    # seaborn.color_palette()
+    #
+    # label_DoF = []
+    # for iplt in range(biorbd.Model(biorbd_model_path).nbQ()):
+    #     label_DoF += biorbd.Model(biorbd_model_path).nameDof()[iplt].to_string()
+    #     ax = plt.subplot(ligne_q, colone_q, iplt + 1)
+    #     ax.plot(q_opt[iplt, :], label='Optimal solution')
+    #     ax.plot(sol_ss[iplt, :], label='Single shooting')
+    #     ax.set_title(label_DoF[iplt])
+    #     if iplt == 0:
+    #         ax.legend(bbox_to_anchor=(1.1, 1.25), loc="upper center", borderaxespad=0.0, ncol=2, frameon=False)
+    # plt.show()
+    #
+    #
+    # fig = plt.figure(figsize=(20, 5))
+    # plt.gcf().subplots_adjust(left=0.1, right=0.9, wspace=0.35, hspace=0.1, bottom=0.15)
+    #
+    # seaborn.set_style("whitegrid")
+    # seaborn.color_palette()
+    #
+    # label_DoF = []
+    # for iplt in range(biorbd.Model(biorbd_model_path).nbQ()):
+    #     label_DoF += biorbd.Model(biorbd_model_path).nameDof()[iplt].to_string()
+    #     ax = plt.subplot(ligne_q, colone_q, iplt + 1)
+    #     ax.plot(qdot_opt[iplt, :], label='Optimal solution')
+    #     ax.plot(sol_ss[iplt+biorbd.Model(biorbd_model_path).nbQ(), :], label='Single shooting')
+    #     ax.set_title(label_DoF[iplt])
+    #     if iplt == 0:
+    #         ax.legend(bbox_to_anchor=(1.1, 1.25), loc="upper center", borderaxespad=0.0, ncol=2, frameon=False)
+    # plt.show()
 
-    seaborn.set_style("whitegrid")
-    seaborn.color_palette()
-
-    label_DoF = []
-    for iplt in range(biorbd.Model(biorbd_model_path).nbQ()):
-        label_DoF += biorbd.Model(biorbd_model_path).nameDof()[iplt].to_string()
-        ax = plt.subplot(ligne_q, colone_q, iplt + 1)
-        ax.plot(q[iplt, :], 'Optimal solution')
-        ax.plot(sol_ss[iplt, :], label='Single shooting')
-        ax.set_title(label_DoF[iplt])
-        if iplt == 0:
-            ax.legend(bbox_to_anchor=(1.1, 1.25), loc="upper center", borderaxespad=0.0, ncol=2, frameon=False)
-    plt.show()
-
-
-
+    # import bioviz
+    # b = bioviz.Viz(biorbd_model_path)
+    # b.load_movement(q_opt)
+    # b.exec()
 
 
 
