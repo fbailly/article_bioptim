@@ -55,11 +55,11 @@ class TableOCP:
                 print(f"\t\t\tsingle_shoot_error = {self.single_shoot_error}")
 
             def compute_error_single_shooting(self, sol, duration):
-                if sol.phase_time[-1] < duration:
-                    raise ValueError(
-                        f'Single shooting integration duration must be smaller than ocp duration :{sol.phase_time[-1]} s')
                 sol_int = sol.integrate(shooting_type=Shooting.SINGLE_CONTINUOUS, merge_phases=True)
                 sol_merged = sol.merge_phases()
+                if sol_merged.phase_time[-1] < duration:
+                    raise ValueError(
+                        f'Single shooting integration duration must be smaller than ocp duration :{sol_merged.phase_time[-1]} s')
 
                 sn_1s = int(sol_int.ns / sol_int.phase_time[-1] * duration)  # shooting node at {duration} second
                 self.single_shoot_error = np.sqrt(np.mean((sol_int.states['all'][:, sn_1s] - sol_merged.states['all'][:, sn_1s]) ** 2))
