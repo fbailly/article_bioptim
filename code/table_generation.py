@@ -58,12 +58,13 @@ class TableOCP:
                 print(f"\t\t\tsingle_shoot_error translation (mm) = {self.single_shoot_error_t}")
                 print(f"\t\t\tsingle_shoot_error rotation (°) = {self.single_shoot_error_r}")
 
-            def compute_error_single_shooting(self, sol, duration):
+            def compute_error_single_shooting(self, sol, duration, use_final_time=False):
                 sol_merged = sol.merge_phases()
 
-                if sol_merged.phase_time[-1] < duration:
+                if sol_merged.phase_time[-1] < duration and not use_final_time:
                     raise ValueError(
-                        f'Single shooting integration duration must be smaller than ocp duration :{sol_merged.phase_time[-1]} s')
+                        f'Single shooting integration duration must be smaller than ocp duration :{sol_merged.phase_time[-1]} s. '
+                        f'You can set use_final_time=True if you want to use the final time for the Single shooting integration duration')
 
                 trans_idx = []
                 rot_idx = []
@@ -77,7 +78,10 @@ class TableOCP:
                 trans_idx = np.array(list(set(trans_idx)))
 
                 sol_int = sol.integrate(shooting_type=Shooting.SINGLE_CONTINUOUS, merge_phases=True, keepdims=True)
-                sn_1s = int(sol_int.ns[0] / sol_int.phase_time[-1] * duration)  # shooting node at {duration} second
+                if use_final_time:
+                    sn_1s = -1
+                else:
+                    sn_1s = int(sol_int.ns[0] / sol_int.phase_time[-1] * duration)  # shooting node at {duration} second
                 if len(rot_idx) > 0:
                     self.single_shoot_error_r = np.sqrt(
                             np.mean((sol_int.states['q'][rot_idx, sn_1s] - sol_merged.states['q'][rot_idx, sn_1s]) ** 2))\
