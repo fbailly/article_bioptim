@@ -7,6 +7,7 @@ The main features illustrated by the six provided examples are (Tab.~\ref{tab:Pe
 \item the possibility to solve advanced OCPs (possibly multiphase) in a few seconds or minutes, that previously took us hours;
 \item the interface with two different NLP solvers
 \end{itemize}
+\hl{add getting started example and mention parameter optimization feature and custom examples}\\
 In the following, several aspects of \textit{bioptim} are discussed.
 
 
@@ -23,7 +24,7 @@ One of the reasons explaining the performances of \bioptim is the rewriting of t
 The gain in accuracy for the calculation of derivatives leads to shorter convergence times (due to much less iterations) and to optimal solutions reached with lower tolerances.
 This last aspect must be emphasized for complex motions (fast, highly dynamics ones), because, for instance when using \ipopt, an optimal solution obtained with a convergence criterion of $10^{-2}$ is very unlikely to be dynamically sound; 
 i.e., it would diverge when forwardly integrating the controls in a single-shooting manner. 
-A lower tolerance ($10^{-6}$. $10^{-8}$), which is only reachable with exact derivatives---for most of OCPs in biomechanics---, is expected to lead to better forward dynamics results.
+A lower tolerance ($10^{-6}$ or $10^{-8}$), which is only reachable with exact derivatives---for most of OCPs in biomechanics---, is expected to lead to better forward dynamics results.
 
 \subsection{Python based, but fast!}
 
@@ -72,10 +73,9 @@ First, it is based on  \biorbd which is not as advanced as \opensim or \anybody 
 Nevertheless,  \biorbd is actively maintained, fast and \casadi-compatible for automatic differentiation.
 The variety of proposed examples highlighted simple to advanced models.
 Even if defining a new model was made straightforward thanks to the \texttt{.bioMod} file format, \textit{biorbd} does not include a GUI for building models. 
-Some Opensim models can be translated into \texttt{.bioMod} \hl{[LINK]} but \biorbd does not yet support multiple wrapping objects, non-orthogonal DoFs between bodies, compliant contact force models (\cite{serrancoli2019subject}) or muscle-tendon equilibrium. 
-As seen in \cite{dembia2020opensim}, wrapping objects are rare due to computational cost and required optimization when a line of action is in contact with more than one object, which compromises automatic differentiation. 
-Via points [\addref] and pre-processed moment arms \cite{van2011implicit} (to be expressed as polynomial functions of crossed DoFs) are often preferred. 
-%Algorithms available in RBDL (core of biorbd for XXX) for ellipsoid foot model XXXXX (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6693511/).    
+Some Opensim models can be translated into \texttt{.bioMod} but \biorbd does not yet support multiple wrapping objects, non-orthogonal DoFs between bodies, compliant contact force models (\cite{serrancoli2019subject}) or muscle-tendon equilibrium. 
+As seen in \cite{dembia2020opensim}, wrapping objects are rare due to the computational cost and required optimization when a line of action is in contact with more than one object, which compromises automatic differentiation. 
+Via-points and pre-processed moment arms \cite{van2011implicit} (to be expressed as polynomial functions of crossed DoFs) are often preferred. 
 
 \subsection{Future directions}
 
@@ -88,3 +88,4 @@ The implementation of muscle-tendon equilibrium is planned for fast movements or
 It will require an additional optimization step to achieve the equilibrium as done in \textit{CEINMS} \cite{pizzolato2015ceinms} or the addition of muscle lengths as state variables, as in \cite{van2011implicit}.  
 Moreover, an effort will be made to extend the compatibility of \acados with all the features of \bioptim (multiphase, nonlinear constraints, etc.). 
 Finally, we plan to add an inverse optimal control module to \bioptim.
+\hl{Muscle synergy dynamics ref friegly??}.

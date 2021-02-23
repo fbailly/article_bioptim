@@ -10,7 +10,7 @@ The formulation, also called discretization, consists in turning a continuous tr
 The main family of so-called \textit{direct} transcription methods comes from numerical optimal control. 
 They consist in straightforwardly choosing the state and/or the control as optimization variables at a given number of points along the trajectory and they rely on the integration of the system dynamics between these points. 
 
-For instance, the \textit{direct collocation} method has shown its efficiency in some studies investigating human motion [\addref\comment{, \`a prendre dans papier MOCO}{Sinon j'en ai un paquet dans mon Zotero que j'avais fait pour ma préparation de synthèse}]. 
+For instance, the \textit{direct collocation} method has shown its efficiency in some studies investigating human motion \cite{febrer-nafriaComparisonDifferentOptimal2020, ezatiComparisonDirectCollocation2020}.
 It consists in approximating the integration of the system dynamics using polynomials that describe the state and control trajectories.
 Its main advantages are that it leads to very sparse NLPs, that knowledge about the state trajectory can be used in the initialization, and that it handles unstable systems well. 
 Its major disadvantage is that adaptive integration error control implies regridding the whole problem and thus changes the NLP dimensions, discarding its use for such application \cite{diehl2006fast}.
@@ -25,7 +25,7 @@ Most of the time, when investigating complex biomechanics issues, we do not have
 \includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
 \caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:flowchart}.}
 \label{fig:dependencies}
-\vspace*{-0.5cm}
+\vspace*{-0.8cm}
 \end{figure}
 
 Concerning the non-linear solver, a variety of software exist and have been used to solve transcribed musculoskeletal NLPs.
@@ -34,7 +34,7 @@ Therefore, derivatives of the NLP cost function and constraints are required to 
 These derivatives can be obtained by finite differences (often implemented but inaccurate thus comprising convergence) or computed exactly using automatic differentiation (requiring to write all dependencies of the software in symbolic variables), using, e.g., \casadi \cite{andersson2019casadi}.
 
 In order to promote the use of musculoskeletal optimal control among biomechanics researcher, we identified a strong need for a dedicated tool, as shown by the recently launched \moco \cite{dembia2020opensim}. 
-The biomechanics community being mainly composed of software users [\addref], such a tool should request a flexible user interface written in a widely used high-level and if possible open-source language (e.g. Python) with a low-level core (e.g. C++) for efficiency. 
+The biomechanics community being mainly composed of software users, such a tool should request a flexible user interface written in a widely used high-level and if possible open-source language (e.g. Python) with a low-level core (e.g. C++) for efficiency. 
 
 To develop such a software, four interrelated components are essential to us: \textit{i)} a musculoskeletal modeling software, with a visualization module (multibody kinematics and dynamics, muscle dynamics, etc.), \textit{ii)} a method for automatic differentiation, \textit{iii)} a discretization approach, and \textit{iv)} one or several nonlinear programming (NLP) solvers. 
 General-purpose optimal control software (e.g. \gpopsii \cite{patterson2014gpops}, \muscodii \cite{leineweber2003efficient1,leineweber2003efficient2}, \acado \cite{houska2011acado}]) address \textit{ii)} to \textit{iv)} but they need to be interfaced with a musculoskeletal modeling module and they do not provide any built-in biomechanics features (physiological cost functions, kinematic constraints, etc.). 
