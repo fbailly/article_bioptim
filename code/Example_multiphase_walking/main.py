@@ -11,7 +11,7 @@ import biorbd
 import bioviz
 from time import time 
 from matplotlib import pyplot as plt
-import Load_exp_data
+from .Load_exp_data import LoadData
 
 from bioptim import (
     OptimalControlProgram,
@@ -415,33 +415,21 @@ def prepare_ocp(biorbd_model: tuple,
     )
 
 
-def get_phase_time_shooting_numbers(c3d_file, dt):
-    phase_time = Load_exp_data.GetTime(c3d_file)
+def get_phase_time_shooting_numbers(Data, dt):
+    phase_time = Data.GetTime()
     number_shooting_points = []
     for time in phase_time:
         number_shooting_points.append(int(time/dt) - 1)
     return phase_time, number_shooting_points
 
 
-def get_experimental_data(model, c3d_file, Q_file, Qdot_file, number_shooting_points):
-    q_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                        data=Load_exp_data.Get_Q(Q_file=Q_file, nb_q=model.nbQ()),
-                                        nb_shooting=number_shooting_points)
-    qdot_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                           data=Load_exp_data.Get_Q(Q_file=Qdot_file, nb_q=model.nbQ()),
-                                           nb_shooting=number_shooting_points)
-    markers_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                              data=Load_exp_data.GetMarkers_Position(c3d_file=c3d_file, nb_marker=model.nbMarkers()),
-                                              nb_shooting=number_shooting_points)
-    grf_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                          data=Load_exp_data.GetForces(c3d_file=c3d_file),
-                                          nb_shooting=number_shooting_points)
-    moments_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                              data=Load_exp_data.GetMoment(c3d_file=c3d_file),
-                                              nb_shooting=number_shooting_points)
-    cop_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                          data=Load_exp_data.GetCoP(c3d_file=c3d_file),
-                                          nb_shooting=number_shooting_points)
+def get_experimental_data(Data, number_shooting_points):
+    q_ref = Data.dispatch_data(data=Data.Get_Q(), nb_shooting=number_shooting_points)
+    qdot_ref = Data.dispatch_data(data=Data.Get_Q(), nb_shooting=number_shooting_points)
+    markers_ref = Data.dispatch_data(data=Data.GetMarkers_Position(),nb_shooting=number_shooting_points)
+    grf_ref = Data.dispatch_data(data=Data.GetForces(), nb_shooting=number_shooting_points)
+    moments_ref = Data.dispatch_data(data=Data.GetMoment(), nb_shooting=number_shooting_points)
+    cop_ref = Data.dispatch_data(data=Data.GetCoP(), nb_shooting=number_shooting_points)
     return q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref
 
 
@@ -455,17 +443,16 @@ def generate_table(out):
     )
 
     # --- files path ---
-    c3d_file = 'Data/normal01_out.c3d'
-    Q_KalmanFilter_file = 'Data/normal01_q_KalmanFilter.txt'
-    Qdot_KalmanFilter_file = 'Data/normal01_qdot_KalmanFilter.txt'
+    c3d_file = root_path_model + 'Data/normal01_out.c3d'
+    Q_KalmanFilter_file = root_path_model + 'Data/normal01_q_KalmanFilter.txt'
+    Qdot_KalmanFilter_file = root_path_model + 'Data/normal01_qdot_KalmanFilter.txt'
+    Data = LoadData(biorbd_model[0], c3d_file, Q_KalmanFilter_file, Qdot_KalmanFilter_file)
+
     # --- phase time and number of shooting ---
-    phase_time, number_shooting_points = get_phase_time_shooting_numbers(c3d_file, 0.01)
+    phase_time, number_shooting_points = get_phase_time_shooting_numbers(Data, 0.01)
     # --- get experimental data ---
-    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(biorbd_model[0],
-                                                                                        c3d_file,
-                                                                                        Q_KalmanFilter_file,
-                                                                                        Qdot_KalmanFilter_file,
-                                                                                       number_shooting_points)
+    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(Data, number_shooting_points)
+
     ocp = prepare_ocp(
         biorbd_model=biorbd_model,
         final_time= phase_time,
@@ -525,17 +512,13 @@ if __name__ == "__main__":
     c3d_file = 'Data/normal01_out.c3d'
     Q_KalmanFilter_file = 'Data/normal01_q_KalmanFilter.txt'
     Qdot_KalmanFilter_file = 'Data/normal01_qdot_KalmanFilter.txt'
+    Data = LoadData(biorbd_model[0], c3d_file, Q_KalmanFilter_file, Qdot_KalmanFilter_file)
 
     # --- phase time and number of shooting ---
-    dt = 0.01
-    phase_time, number_shooting_points = get_phase_time_shooting_numbers(c3d_file, dt)
-
+    phase_time, number_shooting_points = get_phase_time_shooting_numbers(Data, 0.01)
     # --- get experimental data ---
-    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(biorbd_model[0],
-                                                                                        c3d_file,
-                                                                                        Q_KalmanFilter_file,
-                                                                                        Qdot_KalmanFilter_file,
-                                                                                        number_shooting_points)
+    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(Data, number_shooting_points)
+
     ocp = prepare_ocp(
         biorbd_model=biorbd_model,
         final_time= phase_time,
