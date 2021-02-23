@@ -76,6 +76,19 @@ class LoadData:
             q[:, n] = Q[n * self.nb_q : n * self.nb_q + self.nb_q]
         return q
 
+    def Get_Qdot(self):
+        """
+        get joints trajectories computed using Kalman filter
+        :param Qdot_file: path of the text file (Qdot Kalman)
+        :return: joint velocities (Qdot)
+        """
+        Qdot = np.loadtxt(self.Qdot_file)
+        nb_frame = int(len(Qdot) / self.nb_qdot)
+        qdot = np.zeros((self.nb_qdot, nb_frame))
+        for n in range(nb_frame):
+            qdot[:, n] = Qdot[n * self.nb_qdot : n * self.nb_qdot + self.nb_qdot]
+        return qdot
+
     def GetForces(self):
         """
         get ground reaction forces from force platform
