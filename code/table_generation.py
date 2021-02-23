@@ -1,6 +1,6 @@
 from Pendulum_example.main import generate_table as pendulum_table
 from muscle_exc_pointing.main import generate_table as pointing_table
-
+from MHE_example.main import generate_table as MHE_table
 from jumper.main import generate_table as jumper_table
 
 
@@ -96,10 +96,12 @@ table = TableOCP()
 
 table.add("pointing")
 table.add("pendulum")
+table.add("MHE")
 # table.add("jumper")
 
 pointing_table(table["pointing"])
 pendulum_table(table["pendulum"])
+MHE_table(table['MHE'])
 # jumper_table(table["jumper"])
 
 table.print()
