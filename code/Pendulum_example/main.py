@@ -17,12 +17,13 @@ from bioptim import (
     InitialGuessList,
     InterpolationType,
     Shooting,
+    Solver,
 )
 
 from .utils import custom_configure, custom_dynamic
 
 
-def prepare_ocp(biorbd_model_path: str) -> OptimalControlProgram:
+def prepare_ocp(biorbd_model_path: str, use_sx: bool=False,) -> OptimalControlProgram:
     """
     Prepare the ocp
     Parameters
@@ -86,6 +87,8 @@ def prepare_ocp(biorbd_model_path: str) -> OptimalControlProgram:
         X_bounds,
         u_bounds,
         objective_functions,
+        n_threads=8,
+        use_sx=use_sx,
     )
 
 
@@ -93,11 +96,14 @@ def generate_table(out):
     model_path = "/".join(__file__.split("/")[:-1]) + "/MassPoint_pendulum.bioMod"
     np.random.seed(0)
 
+    # IPOPT
+    biorbd_model_ip = biorbd.Model(model_path)
     ocp = prepare_ocp(biorbd_model_path=model_path)
+    opts = {"linear_solver": "ma57"}
 
     # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve()
+    sol = ocp.solve(solver=Solver.IPOPT, solver_options=opts)
     toc = time() - tic
     sol_merged = sol.merge_phases()
 

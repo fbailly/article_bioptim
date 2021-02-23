@@ -280,14 +280,16 @@ class Jumper5Phases:
             if limit_memory_max_iter > 0:
                 sol = self.ocp.solve(
                     show_online_optim=exact_max_iter == 0 and not force_no_graph,
-                    solver_options={"hessian_approximation": "limited-memory", "max_iter": limit_memory_max_iter}
+                    solver_options={"linear_solver": "ma57", "hessian_approximation": "limited-memory",
+                                    "max_iter": limit_memory_max_iter}
                 )
             if limit_memory_max_iter > 0 and exact_max_iter > 0:
                 warm_start_nmpc(self.ocp, sol)
             if exact_max_iter > 0:
                 sol = self.ocp.solve(
                     show_online_optim=True and not force_no_graph,
-                    solver_options={"hessian_approximation": "exact",
+                    solver_options={"linear_solver": "ma57",
+                                    "hessian_approximation": "exact",
                                     "max_iter": exact_max_iter,
                                     "warm_start_init_point": "yes",
                                     }

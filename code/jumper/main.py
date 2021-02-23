@@ -20,7 +20,7 @@ def generate_table(out):
     time_min = 0.2, 0.05, 0.6, 0.05, 0.1
     time_max = 0.7, 0.5, 2.0, 0.5, 0.5
     phase_time = 0.3, 0.2, 0.6, 0.2, 0.2
-    jumper = Jumper5Phases(model_paths, n_shoot, time_min, phase_time, time_max, initial_pose, n_thread=4)
+    jumper = Jumper5Phases(model_paths, n_shoot, time_min, phase_time, time_max, initial_pose, n_thread=8)
 
     tic = time()
     sol = jumper.solve(limit_memory_max_iter=200, exact_max_iter=1000, force_no_graph=True)
