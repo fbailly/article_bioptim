@@ -498,7 +498,7 @@ if __name__ == "__main__":
     print("*********************************************")
     print(f"Problem solved with {solver.value}")
     print(f"Solving time : {toc} s")
-    print(f"Single shooting error for translation: {ss_err_trans} m")
+    print(f"Single shooting error for translation: {ss_err_trans/1000} mm")
     print(f"Single shooting error for rotation: {ss_err_rot * 180/np.pi} degrees")
 
     # --- Show results --- #
