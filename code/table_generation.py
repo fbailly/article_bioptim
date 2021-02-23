@@ -1,6 +1,6 @@
 from Pendulum_example.main import generate_table as pendulum_table
 from muscle_exc_pointing.main import generate_table as pointing_table
-
+from Example_multiphase_walking.main import generate_table as gait_table
 from jumper.main import generate_table as jumper_table
 
 
@@ -97,9 +97,11 @@ table = TableOCP()
 table.add("pointing")
 table.add("pendulum")
 # table.add("jumper")
+table.add("gait")
 
 pointing_table(table["pointing"])
 pendulum_table(table["pendulum"])
 # jumper_table(table["jumper"])
+gait_table(table["gait"])
 
 table.print()
