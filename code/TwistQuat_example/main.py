@@ -7,7 +7,7 @@ import biorbd
 import casadi as cas
 import numpy as np
 from time import time
-import utils
+from .utils import *
 
 from bioptim import (
     OptimalControlProgram,
@@ -122,7 +122,7 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
         constraints,
         n_threads=4,
         tau_mapping=U_mapping,
-        ode_solver=OdeSolver.RK8,
+        ode_solver=OdeSolver.RK8(),
     )
 
 
@@ -151,9 +151,9 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
     # Add objective functions
     objective_functions = ObjectiveList()
     states_MX = cas.MX.sym('states_MX', n_q + n_qdot)
-    states2eulerRate_func = utils.states2eulerRate(states_MX)
-    states2euler_func = utils.states2euler(states_MX)
-    objective_functions.add(utils.MaxTwistQuat, states2eulerRate_func=states2eulerRate_func,
+    states2eulerRate_func = states2eulerRate(states_MX)
+    states2euler_func = states2euler(states_MX)
+    objective_functions.add(MaxTwistQuat, states2eulerRate_func=states2eulerRate_func,
                             custom_type=ObjectiveFcn.Lagrange, weight=-1)
     objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_TORQUE, weight=1e-6)
 
@@ -171,8 +171,8 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
     Eul_MX = cas.MX.sym('Eul_MX', 3)
     Quat_MX = cas.MX.sym('Quat_MX', 4)
     EulRate_MX = cas.MX.sym('EulRate_MX', 3)
-    Eul2Quat_func = utils.Eul2Quat(Eul_MX)
-    EulRate2BodyVel_func = utils.EulRate2BodyVel(Quat_MX, EulRate_MX, Eul_MX)
+    Eul2Quat_func = Eul2Quat(Eul_MX)
+    EulRate2BodyVel_func = EulRate2BodyVel(Quat_MX, EulRate_MX, Eul_MX)
     RootEuler = np.zeros((3, n_shooting + 1))
     RootEulerRate = np.zeros((3, n_shooting + 1))
     RootEuler[0, :] = np.linspace(0.01, 2 * np.pi, n_shooting + 1)
@@ -224,7 +224,7 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
     # Set time as a variable
     constraints = ConstraintList()
     constraints.add(ConstraintFcn.TIME_CONSTRAINT, node=Node.END, min_bound=0.5, max_bound=1.5)
-    constraints.add(utils.FinalPositionQuat, states2euler_func=states2euler_func, node=Node.END,
+    constraints.add(FinalPositionQuat, states2euler_func=states2euler_func, node=Node.END,
                     min_bound=-15*np.pi/180, max_bound=15*np.pi/180)
 
 
@@ -241,7 +241,7 @@ def prepare_ocp_Quat(biorbd_model_path, final_time, n_shooting):
         constraints,
         n_threads=4,
         tau_mapping=U_mapping,
-        ode_solver=OdeSolver.RK8,
+        ode_solver=OdeSolver.RK8(),
     )
 
 
@@ -260,7 +260,7 @@ def generate_table(out, Quaternion):
 
     # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 10000})
+    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1})
     toc = time() - tic
 
     out.nx = sol.states["all"].shape[0]
