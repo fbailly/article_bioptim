@@ -10,7 +10,7 @@ The formulation, also called discretization, consists in turning a continuous tr
 The main family of so-called \textit{direct} transcription methods comes from numerical optimal control. 
 They consist in straightforwardly choosing the state and/or the control as optimization variables at a given number of points along the trajectory and they rely on the integration of the system dynamics between these points. 
 
-For instance, the \textit{direct collocation} method has shown its efficiency in some studies investigating human motion [\addref\comment{, \`a prendre dans papier MOCO}{Sinon j'en ai un paquet dans mon Zotero que j'avais fait pour ma préparation de synthèse}]. 
+For instance, the \textit{direct collocation} method has shown its efficiency in some studies investigating human motion \cite{febrer-nafriaComparisonDifferentOptimal2020, ezatiComparisonDirectCollocation2020}.
 It consists in approximating the integration of the system dynamics using polynomials that describe the state and control trajectories.
 Its main advantages are that it leads to very sparse NLPs, that knowledge about the state trajectory can be used in the initialization, and that it handles unstable systems well. 
 Its major disadvantage is that adaptive integration error control implies regridding the whole problem and thus changes the NLP dimensions, discarding its use for such application \cite{diehl2006fast}.
@@ -25,7 +25,7 @@ Most of the time, when investigating complex biomechanics issues, we do not have
 \includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
 \caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:flowchart}.}
 \label{fig:dependencies}
-\vspace*{-0.5cm}
+\vspace*{-0.8cm}
 \end{figure}
 
 Concerning the non-linear solver, a variety of software exist and have been used to solve transcribed musculoskeletal NLPs.

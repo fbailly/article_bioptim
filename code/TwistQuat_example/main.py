@@ -274,7 +274,7 @@ def generate_table(out, Quaternion):
 
 
 if __name__ == "__main__":
-    Quaternion = False
+    Quaternion = True
     np.random.seed(42)
 
     if Quaternion:
@@ -288,13 +288,13 @@ if __name__ == "__main__":
                           final_time=1.5,
                           n_shooting=100)
 
-
-    # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 10000})
+    sol = ocp.solve(solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 10000}) # solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 0}
     toc = time() - tic
 
     q_opt = sol.states['q']
+    qdot_opt = sol.states['qdot']
+    t_opt = sol.parameters['time'][0]
 
     if Quaternion:
         np.save('q_optim_quaternion_42', q_opt)

@@ -1,5 +1,6 @@
 import biorbd
 import casadi as cas
+from bioptim import PenaltyNodes
 
 def states2eulerRate(states):
     # maximizing Lagrange twist velocity (indetermination of Quaternion to Euler of 2*pi*n)
@@ -30,10 +31,10 @@ def states2eulerRate(states):
     return Func
 
 
-def MaxTwistQuat(ocp, nlp, t, x, u, p, states2eulerRate_func):
+def MaxTwistQuat(pn: PenaltyNodes, states2eulerRate_func) -> cas.MX:
     val = []
-    for i in range(nlp.ns):
-        val = cas.vertcat(val, states2eulerRate_func(x[i])[-1])
+    for i in range(pn.nlp.ns):
+        val = cas.vertcat(val, states2eulerRate_func(pn.x[i])[-1])
     return val
 
 
@@ -46,8 +47,8 @@ def states2euler(states):
     return Func
 
 
-def FinalPositionQuat(ocp, nlp, t, x, u, p, states2euler_func):
-    val = states2euler_func(x[0])[0]
+def FinalPositionQuat(pn: PenaltyNodes, states2euler_func) -> cas.MX:
+    val = states2euler_func(pn.x[0])[0]
     return val
 
 

@@ -1,5 +1,6 @@
 In this example of acrobatic sports biomechanics, the goal was to maximize the twist rotation ($\phi$) of an 8-DoF model in a backward somersault. 
 It illustrates \bioptim 's ability to handle quaternionic representations of rotations.
+
 The model was composed of a 6-DoF root segment and two 1-DoF torque actuated shoulder joints.
 Two different numerical descriptions of the root segment rotations were used: Euler angles and quaternions.
 The objective function was as follows:
@@ -14,7 +15,7 @@ The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds t
 \includegraphics[width=\columnwidth]{figures/Twisting_armTech.eps}
 \caption{Right (top) and left(bottom) arm kinematics of the twisting avatar for the euler angles (blues line) and the quaternion (orange line) representation of the orientation of the free base.}
 \label{fig:Twist_armTech_graphs}
-\vspace*{-1cm}
+\vspace*{-1.5cm}
 \end{figure}
 
 The movement lasted for approximately 1 second and was discretized with 100 shooting nodes, a kinogram is presented in Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}.
@@ -32,6 +33,7 @@ To overcome this challenge, \bioptim performs a normalization after each Rungeâ€
 \includegraphics[width=0.35\columnwidth]{figures/Mass_Pendulum_Model_2.png}
 \caption{Spring-mass-pendulum model of Ex.~\ref{ex:spring}.}
 \label{fig:Mass_Pendulum_Model}
+\vspace*{-0.5cm}
 \end{figure}
 
 \begin{figure}[h!]

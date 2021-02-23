@@ -14,7 +14,7 @@ from bioptim import (
     QAndQDotBounds,
     PhaseTransitionList,
     PhaseTransitionFcn,
-    BidirectionalMapping,
+    BiMapping,
     InitialGuess,
     InterpolationType,
     OptimalControlProgram,
@@ -150,10 +150,10 @@ class Jumper5Phases:
         self.initial_states = np.array([list(initial_pose) + initial_velocity]).T
 
     def _set_dimensions_and_mapping(self):
-        q_mapping = BidirectionalMapping([0, 1, 2, None, 3, None, 3, 4, 5, 6, 4, 5, 6], [0, 1, 2, 4, 7, 8, 9])
+        q_mapping = BiMapping([0, 1, 2, None, 3, None, 3, 4, 5, 6, 4, 5, 6], [0, 1, 2, 4, 7, 8, 9])
         self.q_mapping = [q_mapping for _ in range(self.n_phases)]
         self.qdot_mapping = [q_mapping for _ in range(self.n_phases)]
-        tau_mapping = BidirectionalMapping([None, None, None, None, 0, None, 0, 1, 2, 3, 1, 2, 3], [4, 7, 8, 9])
+        tau_mapping = BiMapping([None, None, None, None, 0, None, 0, 1, 2, 3, 1, 2, 3], [4, 7, 8, 9])
         self.tau_mapping = [tau_mapping for _ in range(self.n_phases)]
         self.n_q = q_mapping.to_first.len
         self.n_qdot = self.n_q
@@ -258,15 +258,14 @@ class Jumper5Phases:
         self.x_bounds[4].min[self.n_q:, 0] = 2 * self.x_bounds[4].min[self.n_q:, 0]
         self.x_bounds[4].max[self.n_q:, 0] = 2 * self.x_bounds[4].max[self.n_q:, 0]
 
-    def solve(self, limit_memory_max_iter, exact_max_iter, load_path=None):
+    def solve(self, limit_memory_max_iter, exact_max_iter, load_path=None, force_no_graph=False):
         def warm_start_nmpc(ocp, sol):
             state, ctrl, param = sol.states, sol.controls, sol.parameters
             u_init_guess = InitialGuessList()
             x_init_guess = InitialGuessList()
             for i in range(ocp.n_phases):
-                u_init_guess.add(np.concatenate([ctrl[d][i][:, :-1] for d in ctrl]),
-                                 interpolation=InterpolationType.EACH_FRAME)
-                x_init_guess.add(np.concatenate([state[d][i] for d in state]), interpolation=InterpolationType.EACH_FRAME)
+                u_init_guess.add(ctrl[i]["all"][:, :-1], interpolation=InterpolationType.EACH_FRAME)
+                x_init_guess.add(state[i]["all"], interpolation=InterpolationType.EACH_FRAME)
 
             time_init_guess = InitialGuess(param["time"], name="time")
             ocp.update_initial_guess(x_init=x_init_guess, u_init=u_init_guess, param_init=time_init_guess)
@@ -280,15 +279,17 @@ class Jumper5Phases:
             sol = None
             if limit_memory_max_iter > 0:
                 sol = self.ocp.solve(
-                    show_online_optim=exact_max_iter == 0,
-                    solver_options={"hessian_approximation": "limited-memory", "max_iter": limit_memory_max_iter}
+                    show_online_optim=exact_max_iter == 0 and not force_no_graph,
+                    solver_options={"linear_solver": "ma57", "hessian_approximation": "limited-memory",
+                                    "max_iter": limit_memory_max_iter}
                 )
             if limit_memory_max_iter > 0 and exact_max_iter > 0:
                 warm_start_nmpc(self.ocp, sol)
             if exact_max_iter > 0:
                 sol = self.ocp.solve(
-                    show_online_optim=True,
-                    solver_options={"hessian_approximation": "exact",
+                    show_online_optim=True and not force_no_graph,
+                    solver_options={"linear_solver": "ma57",
+                                    "hessian_approximation": "exact",
                                     "max_iter": exact_max_iter,
                                     "warm_start_init_point": "yes",
                                     }
