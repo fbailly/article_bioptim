@@ -9,7 +9,6 @@ from jumper.main import generate_table as jumper_table
 
 import numpy as np
 from bioptim import Shooting
-import casadi as cas
 
 class TableOCP:
     def __init__(self):
@@ -102,21 +101,21 @@ class TableOCP:
 table = TableOCP()
 
 
-# table.add("pointing")
-# table.add("pendulum")
+table.add("pointing")
+table.add("pendulum")
 table.add("MHE")
-# table.add("jumper")
-# table.add("TwistQuat_quaternion")
-# table.add("TwistQuat_euler")
-# table.add("gait")
+table.add("jumper")
+table.add("TwistQuat_quaternion")
+table.add("TwistQuat_euler")
+table.add("gait")
 
 
-# pointing_table(table["pointing"])
-# pendulum_table(table["pendulum"])
+pointing_table(table["pointing"])
+pendulum_table(table["pendulum"])
 MHE_table(table['MHE'])
-# jumper_table(table["jumper"])
-# TwistQuat_table(table["TwistQuat_quaternion"], True)
-# TwistQuat_table(table["TwistQuat_euler"], False)
-# gait_table(table["gait"])
+jumper_table(table["jumper"])
+TwistQuat_table(table["TwistQuat_quaternion"], True)
+TwistQuat_table(table["TwistQuat_euler"], False)
+gait_table(table["gait"])
 
 table.print()

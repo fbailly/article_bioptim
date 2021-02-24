@@ -351,7 +351,7 @@ def generate_table(out):
         sol = ocp.solve(
             solver=Solver.ACADOS,
             show_online_optim=False,
-            solver_options={"nlp_solver_tol_comp": 1e-6,"nlp_solver_tol_eq": 1e-6,"nlp_solver_tol_stat": 1e-5},
+            solver_options={"nlp_solver_tol_comp": 1e-6, "nlp_solver_tol_eq": 1e-6, "nlp_solver_tol_stat": 1e-5},
         )
         # Set solutions and set initial guess for next optimisation
         x0, u0, x_out, u_out = warm_start_mhe(sol)
@@ -371,8 +371,8 @@ def generate_table(out):
     out.nx = X_est.shape[0]
     out.nu = U_est.shape[0]
     out.ns = N
-    out.solver[0].n_iteration = iter
-    out.solver[0].cost = sol.cost
+    out.solver[0].n_iteration = 'N.A.'
+    out.solver[0].cost = 'N.A.'
     out.solver[0].convergence_time = toc
     out.solver[0].compute_error_single_shooting(sol, 1)
 
