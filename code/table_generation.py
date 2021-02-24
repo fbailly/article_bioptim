@@ -108,6 +108,5 @@ jumper_table(table["jumper"])
 pendulum_table(table["pendulum"])
 pointing_table(table["pointing"])
 somersault_table(table["somersault"])
-walking_table(table["walking_table"])
 
 table.print()
