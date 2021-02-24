@@ -1,8 +1,8 @@
 from jumper.generate_table import generate_table as jumper_table
 from pendulum.generate_table import generate_table as pendulum_table
 from pointing.generate_table import generate_table as pointing_table
+from somersault.generate_table import generate_table as somersault_table
 from walking.generate_table import generate_table as walking_table
-# from TwistQuat_example.main import generate_table as TwistQuat_table
 
 import numpy as np
 from bioptim import Shooting
@@ -63,8 +63,10 @@ class TableOCP:
 
                 if sol_merged.phase_time[-1] < duration and not use_final_time:
                     raise ValueError(
-                        f'Single shooting integration duration must be smaller than ocp duration :{sol_merged.phase_time[-1]} s. '
-                        f'You can set use_final_time=True if you want to use the final time for the Single shooting integration duration')
+                        f'Single shooting integration duration must be smaller than '
+                        f'ocp duration: {sol_merged.phase_time[-1]} s. '
+                        f'You can set use_final_time=True if you want to use the final time for the '
+                        f'Single shooting integration duration')
 
                 trans_idx = []
                 rot_idx = []
@@ -83,9 +85,7 @@ class TableOCP:
                 else:
                     sn_1s = int(sol_int.ns[0] / sol_int.phase_time[-1] * duration)  # shooting node at {duration} second
                 if len(rot_idx) > 0:
-                    self.single_shoot_error_r = np.sqrt(
-                            np.mean((sol_int.states['q'][rot_idx, sn_1s] - sol_merged.states['q'][rot_idx, sn_1s]) ** 2))\
-                                                * 180 / np.pi
+                    self.single_shoot_error_r = np.sqrt(np.mean((sol_int.states['q'][rot_idx, sn_1s] - sol_merged.states['q'][rot_idx, sn_1s]) ** 2)) * 180 / np.pi
                 else:
                     self.single_shoot_error_r = 'N.A.'
                 if len(trans_idx) > 0:
@@ -95,23 +95,20 @@ class TableOCP:
                     self.single_shoot_error_t = 'N.A.'
 
 
-
 table = TableOCP()
 
 table.add("jumper")
 table.add("pendulum")
 table.add("pointing")
 table.add("walking")
-# table.add("TwistQuat_quaternion")
-# table.add("TwistQuat_euler")
+table.add("somersault")
 # table.add("gait")
 
 jumper_table(table["jumper"])
 pendulum_table(table["pendulum"])
 pointing_table(table["pointing"])
+somersault_table(table["somersault"])
 walking_table(table["walking_table"])
-# TwistQuat_table(table["TwistQuat_quaternion"], True)
-# TwistQuat_table(table["TwistQuat_euler"], False)
 # gait_table(table["gait"])
 
 table.print()
