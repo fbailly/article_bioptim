@@ -100,18 +100,18 @@ class TableOCP:
 
 table = TableOCP()
 
-table.add("pointing")
-table.add("pendulum")
-table.add("jumper")
+# table.add("pointing")
+# table.add("pendulum")
+# table.add("jumper")
 table.add("TwistQuat_quaternion")
 table.add("TwistQuat_euler")
-table.add("gait")
+# table.add("gait")
 
-pointing_table(table["pointing"])
-pendulum_table(table["pendulum"])
-jumper_table(table["jumper"])
+# pointing_table(table["pointing"])
+# pendulum_table(table["pendulum"])
+# jumper_table(table["jumper"])
 TwistQuat_table(table["TwistQuat_quaternion"], True)
 TwistQuat_table(table["TwistQuat_euler"], False)
-gait_table(table["gait"])
+# gait_table(table["gait"])
 
 table.print()
