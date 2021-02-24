@@ -5,13 +5,13 @@ from jumper.ocp import Jumper5Phases
 
 
 if __name__ == "__main__":
-    root_path_model = "models/"
+    root_path = "/".join(__file__.split("/")[:-1]) + "/"
     model_paths = (
-        root_path_model + "jumper2contacts.bioMod",
-        root_path_model + "jumper1contacts.bioMod",
-        root_path_model + "jumper1contacts.bioMod",
-        root_path_model + "jumper1contacts.bioMod",
-        root_path_model + "jumper2contacts.bioMod",
+        root_path + "models/jumper2contacts.bioMod",
+        root_path + "models/jumper1contacts.bioMod",
+        root_path + "models/jumper1contacts.bioMod",
+        root_path + "models/jumper1contacts.bioMod",
+        root_path + "models/jumper2contacts.bioMod",
     )
     initial_pose = 0, 0, -0.5336, 1.4, 0.8, -0.9, 0.47
     n_shoot = 30, 15, 20, 30, 30
