@@ -9,8 +9,9 @@ import numpy as np
 from casadi import dot, Function, vertcat, MX, mtimes, nlpsol, mmax
 import biorbd
 import bioviz
+from time import time 
 from matplotlib import pyplot as plt
-import Load_exp_data
+from .Load_exp_data import LoadData
 
 from bioptim import (
     OptimalControlProgram,
@@ -19,17 +20,17 @@ from bioptim import (
     BoundsList,
     QAndQDotBounds,
     InitialGuessList,
-    ShowResult,
     ObjectiveList,
     ObjectiveFcn,
     InterpolationType,
-    Data,
     Node,
     ConstraintList,
     ConstraintFcn,
     PhaseTransitionList,
     PhaseTransitionFcn,
+    PenaltyNodes,
     Solver,
+    Shooting, 
 )
 
 # --- force nul at last point ---
@@ -410,8 +411,84 @@ def prepare_ocp(biorbd_model: tuple,
         objective_functions,
         constraints,
         phase_transitions=phase_transitions,
-        nb_threads=nb_threads,
+        n_threads=nb_threads,
     )
+
+
+def get_phase_time_shooting_numbers(Data, dt):
+    phase_time = Data.GetTime()
+    number_shooting_points = []
+    for time in phase_time:
+        number_shooting_points.append(int(time/dt) - 1)
+    return phase_time, number_shooting_points
+
+
+def get_experimental_data(Data, number_shooting_points):
+    q_ref = Data.dispatch_data(data=Data.Get_Q(), nb_shooting=number_shooting_points)
+    qdot_ref = Data.dispatch_data(data=Data.Get_Q(), nb_shooting=number_shooting_points)
+    markers_ref = Data.dispatch_data(data=Data.GetMarkers_Position(),nb_shooting=number_shooting_points)
+    grf_ref = Data.dispatch_data(data=Data.GetForces(), nb_shooting=number_shooting_points)
+    moments_ref = Data.dispatch_data(data=Data.GetMoment(), nb_shooting=number_shooting_points)
+    cop_ref = Data.dispatch_data(data=Data.GetCoP(), nb_shooting=number_shooting_points)
+    return q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref
+
+
+def generate_table(out):
+    root_path_model = "/".join(__file__.split("/")[:-1])
+    biorbd_model = (
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_heel.bioMod"),
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_flatfoot.bioMod"),
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_forefoot.bioMod"),
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_0contact.bioMod")
+    )
+
+    # --- files path ---
+    c3d_file = root_path_model + '/Data/normal01_out.c3d'
+    Q_KalmanFilter_file = root_path_model + '/Data/normal01_q_KalmanFilter.txt'
+    Qdot_KalmanFilter_file = root_path_model + '/Data/normal01_qdot_KalmanFilter.txt'
+    Data = LoadData(biorbd_model[0], c3d_file, Q_KalmanFilter_file, Qdot_KalmanFilter_file)
+
+    # --- phase time and number of shooting ---
+    phase_time, number_shooting_points = get_phase_time_shooting_numbers(Data, 0.01)
+    # --- get experimental data ---
+    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(Data, number_shooting_points)
+
+    ocp = prepare_ocp(
+        biorbd_model=biorbd_model,
+        final_time= phase_time,
+        nb_shooting=number_shooting_points,
+        markers_ref=markers_ref,
+        grf_ref=grf_ref,
+        q_ref=q_ref,
+        qdot_ref=qdot_ref,
+        M_ref=moments_ref,
+        CoP=cop_ref,
+        nb_threads=8,
+    )
+
+    # --- Solve the program --- #
+    tic = time()
+    sol = ocp.solve(
+        solver=Solver.IPOPT,
+        solver_options={
+            "ipopt.tol": 1e-3,
+            "ipopt.max_iter": 1,
+            "ipopt.hessian_approximation": "exact",
+            "ipopt.limited_memory_max_history": 50,
+            "ipopt.linear_solver": "ma57",
+        },
+    )
+    toc = time() - tic
+    sol_merged = sol.merge_phases()
+
+    out.nx = sol_merged.states["all"].shape[0]
+    out.nu = sol_merged.controls["all"].shape[0]
+    out.ns = sol_merged.ns[0]
+    out.solver.append(out.Solver("Ipopt"))
+    out.solver[0].n_iteration = sol.iterations
+    out.solver[0].cost = sol.cost
+    out.solver[0].convergence_time = toc
+    out.solver[0].compute_error_single_shooting(sol, 1, use_final_time=True)
 
 
 if __name__ == "__main__":
@@ -435,33 +512,12 @@ if __name__ == "__main__":
     c3d_file = 'Data/normal01_out.c3d'
     Q_KalmanFilter_file = 'Data/normal01_q_KalmanFilter.txt'
     Qdot_KalmanFilter_file = 'Data/normal01_qdot_KalmanFilter.txt'
+    Data = LoadData(biorbd_model[0], c3d_file, Q_KalmanFilter_file, Qdot_KalmanFilter_file)
 
     # --- phase time and number of shooting ---
-    dt = 0.01
-    phase_time = Load_exp_data.GetTime(c3d_file)
-    number_shooting_points = []
-    for time in phase_time:
-        number_shooting_points.append(int(time/0.01) - 1)
-
+    phase_time, number_shooting_points = get_phase_time_shooting_numbers(Data, 0.01)
     # --- get experimental data ---
-    q_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                        data=Load_exp_data.Get_Q(Q_file=Q_KalmanFilter_file, nb_q=nb_q),
-                                        nb_shooting=number_shooting_points)
-    qdot_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                           data=Load_exp_data.Get_Q(Q_file=Qdot_KalmanFilter_file, nb_q=nb_q),
-                                           nb_shooting=number_shooting_points)
-    markers_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                              data=Load_exp_data.GetMarkers_Position(c3d_file=c3d_file, nb_marker=nb_markers),
-                                              nb_shooting=number_shooting_points)
-    grf_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                          data=Load_exp_data.GetForces(c3d_file=c3d_file),
-                                          nb_shooting=number_shooting_points)
-    moments_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                              data=Load_exp_data.GetMoment(c3d_file=c3d_file),
-                                              nb_shooting=number_shooting_points)
-    cop_ref = Load_exp_data.dispatch_data(c3d_file=c3d_file,
-                                          data=Load_exp_data.GetCoP(c3d_file=c3d_file),
-                                          nb_shooting=number_shooting_points)
+    q_ref, qdot_ref, markers_ref, grf_ref, moments_ref, cop_ref = get_experimental_data(Data, number_shooting_points)
 
     ocp = prepare_ocp(
         biorbd_model=biorbd_model,
@@ -473,12 +529,13 @@ if __name__ == "__main__":
         qdot_ref=qdot_ref,
         M_ref=moments_ref,
         CoP=cop_ref,
-        nb_threads=4,
+        nb_threads=8,
     )
-
+    solver = Solver.IPOPT
+    tic = time()
     # --- Solve the program --- #
     sol = ocp.solve(
-        solver=Solver.IPOPT,
+        solver=solver,
         solver_options={
             "ipopt.tol": 1e-3,
             "ipopt.max_iter": 5000,
@@ -488,16 +545,22 @@ if __name__ == "__main__":
         },
         show_online_optim=False,
     )
+    toc = time() - tic
+    sol_ss = sol.integrate(shooting_type=Shooting.SINGLE_CONTINUOUS, merge_phases=False)
+    ss_err_trans = np.sqrt(np.mean((sol_ss.states[-1]["q"][:3, -1] - sol.states[-1]["q"][:3, -1]) ** 2))
+    ss_err_rot = np.sqrt(np.mean((sol_ss.states[-1]["q"][3:, -1] - sol.states[-1]["q"][3:, -1]) ** 2))
 
-    # --- Get Results --- #
-    states_sol, controls_sol = Data.get_data(ocp, sol["x"])
-    q = states_sol["q"]
-    q_dot = states_sol["q_dot"]
-    tau = controls_sol["tau"]
-    activation = controls_sol["muscles"]
+    print("*********************************************")
+    print(f"Problem solved with {solver.value}")
+    print(f"Solving time : {toc} s")
+    print(f"Single shooting error for translation: {ss_err_trans/1000} mm")
+    print(f"Single shooting error for rotation: {ss_err_rot * 180/np.pi} degrees")
 
     # --- Show results --- #
-    ShowResult(ocp, sol).animate()
+    sol.animate(show_meshes=True,
+                background_color=(1, 1, 1),
+                show_local_ref_frame=False,)
+    # sol.graphs()
 
     # --- Save results --- #
     ocp.save(sol, 'gait.bo')
