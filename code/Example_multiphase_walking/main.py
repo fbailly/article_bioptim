@@ -436,16 +436,16 @@ def get_experimental_data(Data, number_shooting_points):
 def generate_table(out):
     root_path_model = "/".join(__file__.split("/")[:-1])
     biorbd_model = (
-        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_heel.bioMod"),
-        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_flatfoot.bioMod"),
-        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_forefoot.bioMod"),
-        biorbd.Model(root_path_model + "Modeles/Gait_1leg_12dof_0contact.bioMod")
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_heel.bioMod"),
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_flatfoot.bioMod"),
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_forefoot.bioMod"),
+        biorbd.Model(root_path_model + "/Modeles/Gait_1leg_12dof_0contact.bioMod")
     )
 
     # --- files path ---
-    c3d_file = root_path_model + 'Data/normal01_out.c3d'
-    Q_KalmanFilter_file = root_path_model + 'Data/normal01_q_KalmanFilter.txt'
-    Qdot_KalmanFilter_file = root_path_model + 'Data/normal01_qdot_KalmanFilter.txt'
+    c3d_file = root_path_model + '/Data/normal01_out.c3d'
+    Q_KalmanFilter_file = root_path_model + '/Data/normal01_q_KalmanFilter.txt'
+    Qdot_KalmanFilter_file = root_path_model + '/Data/normal01_qdot_KalmanFilter.txt'
     Data = LoadData(biorbd_model[0], c3d_file, Q_KalmanFilter_file, Qdot_KalmanFilter_file)
 
     # --- phase time and number of shooting ---
@@ -463,7 +463,7 @@ def generate_table(out):
         qdot_ref=qdot_ref,
         M_ref=moments_ref,
         CoP=cop_ref,
-        nb_threads=4,
+        nb_threads=8,
     )
 
     # --- Solve the program --- #
@@ -472,7 +472,7 @@ def generate_table(out):
         solver=Solver.IPOPT,
         solver_options={
             "ipopt.tol": 1e-3,
-            "ipopt.max_iter": 5000,
+            "ipopt.max_iter": 1,
             "ipopt.hessian_approximation": "exact",
             "ipopt.limited_memory_max_history": 50,
             "ipopt.linear_solver": "ma57",
@@ -488,7 +488,7 @@ def generate_table(out):
     out.solver[0].n_iteration = sol.iterations
     out.solver[0].cost = sol.cost
     out.solver[0].convergence_time = toc
-    out.solver[0].compute_error_single_shooting(sol, 1)
+    out.solver[0].compute_error_single_shooting(sol, 1, use_final_time=True)
 
 
 if __name__ == "__main__":
@@ -529,7 +529,7 @@ if __name__ == "__main__":
         qdot_ref=qdot_ref,
         M_ref=moments_ref,
         CoP=cop_ref,
-        nb_threads=4,
+        nb_threads=8,
     )
     solver = Solver.IPOPT
     tic = time()
