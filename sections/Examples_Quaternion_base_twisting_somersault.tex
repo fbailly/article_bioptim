@@ -13,7 +13,7 @@ The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds t
 \begin{figure}[t!]
 \centering
 \includegraphics[width=\columnwidth]{figures/Twisting_armTech.eps}
-\caption{Right (top) and left(bottom) arm kinematics of the twisting avatar for the euler angles (blues line) and the quaternion (orange line) representation of the orientation of the free base.}
+\caption{Right (top) and left(bottom) arm kinematics of the twisting avatar for the Euler angles (blues line) and the quaternion (orange line) representation of the orientation of the free base.}
 \label{fig:Twist_armTech_graphs}
 \vspace*{-1.5cm}
 \end{figure}
@@ -21,7 +21,7 @@ The first term of the objective function (Eq.~\ref{eq:ocp_Trampo}) corresponds t
 The movement lasted for approximately 1 second and was discretized with 100 shooting nodes, a kinogram is presented in Fig.~\ref{fig:snapshots_quaternion_base_twisting_somersault}.
 The optimal kinematics were different for the two types of models (Fig.~\ref{fig:Twist_armTech_graphs}) because of the presence of local minima.
 However, both models take profits of a common biomechanical strategy (i.e. tilting the body to bring closer together the twist axis and the angular momentum vector) highlighting the equivalence of the two rotation representations.
-Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the Gimbal lock (leading to numerical instabilities).
+Euler angles have the advantage to be easily interpretable, but they suffer from the loss of a DoF at the gimbal lock (leading to numerical instabilities).
 The use of a quaternion-based representation tackles this numerical stability issue when a joint is free to rotate on a three-dimensional range of motion.
 Quaternion's integration must be handled with care~\cite{bailly2020optimal}.
 Indeed, when representing orientations, quaternions must be unitary and thus belong to a constrained manifold (namely, the unit 3-sphere $S^3$). 

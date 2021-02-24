@@ -12,9 +12,9 @@ import scipy.io as sio
 import bioviz
 from math import ceil
 from casadi import MX, Function
-from single_shooting_funct import *
 from bioptim import (
     OptimalControlProgram,
+    Solution,
     ObjectiveList,
     ObjectiveFcn,
     DynamicsList,
@@ -23,7 +23,6 @@ from bioptim import (
     QAndQDotBounds,
     InitialGuess,
     Solver,
-    Data,
     InterpolationType,
 )
 
@@ -104,7 +103,7 @@ def generate_noise(biorbd_model, q: np.array, q_noise_lvl: float):
     return q_noise
 
 
-def warm_start_mhe(ocp, sol):
+def warm_start_mhe(sol):
     """
     Ensures the problems continuity
     Parameters
@@ -118,11 +117,8 @@ def warm_start_mhe(ocp, sol):
     Initial states and controls for next problem (x0, u0)
     States and controls to save as solution (x_out, u_out)
     """
-    data = Data.get_data(ocp, sol)
-    q = data[0]["q"]
-    dq = data[0]["qdot"]
-    u = data[1]["muscles"]
-    x = np.vstack([q, dq])
+    x = sol.states['all']
+    u = sol.controls['all']
 
     x0 = np.hstack((x[:, 1:], np.tile(x[:, [-1]], 1)))  # discard oldest estimate of the window, duplicates youngest
     u0 = u[:, :-1]
@@ -131,11 +127,13 @@ def warm_start_mhe(ocp, sol):
     return x0, u0, x_out, u_out
 
 
-def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd.Model):
+def define_objective(q: np.array, iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd.Model, use_noise=True):
     """
     Define the objective function for the ocp
     Parameters
     ----------
+    q: np.array
+        State to track
     iter: int
         Current iteration
     rt_ratio: int
@@ -144,15 +142,17 @@ def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd
         Size of the windows
     biorbd_model: biorbd.Model
         biorbd model build with the bioMod
+    use_noise: bool
+        True if noisy reference data
     Returns
     ---------
     The objective function
     """
     objectives = ObjectiveList()
     if use_noise is not True:
-        weight = {"track_state": 100000, "min_act": 1000, "min_dq": 1000, "min_q": 100}
+        weight = {"track_state": 1000000, "min_act": 1000, "min_dq": 10, "min_q": 10}
     else:
-        weight = {"track_state": 10000, "min_act": 1000, "min_dq": 1000, "min_q": 100}
+        weight = {"track_state": 1000, "min_act": 100, "min_dq": 100, "min_q": 10}
     objectives.add(ObjectiveFcn.Lagrange.MINIMIZE_MUSCLES_CONTROL, weight=weight["min_act"])
     objectives.add(
         ObjectiveFcn.Lagrange.MINIMIZE_STATE,
@@ -164,10 +164,11 @@ def define_objective(iter: int, rt_ratio: int, Ns_mhe: int, biorbd_model: biorbd
         weight=weight["min_q"],
         index=np.array(range(biorbd_model.nbQ())),
     )
+    q = q[:, ::rt_ratio]
     objectives.add(
         ObjectiveFcn.Lagrange.TRACK_STATE,
         weight=weight["track_state"],
-        target=q_ref[:, iter * rt_ratio : (Ns_mhe + 1 + iter) * rt_ratio : rt_ratio],
+        target=q[:, iter : (Ns_mhe + 1 + iter)],
         index=range(biorbd_model.nbQ()),
     )
     return objectives
@@ -222,11 +223,165 @@ def prepare_ocp(biorbd_model: biorbd.Model, final_time: float, number_shooting_p
     )
 
 
+def prepare_short_ocp(biorbd_model: biorbd.Model, final_time: float, number_shooting_points: int):
+    """
+    Prepare to build a blank short ocp to use single shooting bioptim function
+    Parameters
+    ----------
+    biorbd_model: biorbd.Model
+        biorbd model build with the bioMod
+    final_time: float
+        The time at the final node
+    n_shooting: int
+        The number of shooting points
+    Returns
+    -------
+    The blank OptimalControlProgram
+    """
+    # Add objective functions
+    objective_functions = ObjectiveList()
+
+    # Dynamics
+    dynamics = DynamicsList()
+    dynamics.add(DynamicsFcn.MUSCLE_ACTIVATIONS_DRIVEN)
+
+    # Path constraint
+    x_bounds = BoundsList()
+    x_bounds.add(bounds=QAndQDotBounds(biorbd_model))
+
+    # Define control path constraint
+    u_bounds = BoundsList()
+    u_bounds.add([0] * biorbd_model.nbMuscles(), [1] * biorbd_model.nbMuscles())
+
+    x_init = InitialGuess([0] * biorbd_model.nbQ() * 2)
+    u_init = InitialGuess([0] * biorbd_model.nbMuscles())
+
+    # ------------- #
+
+    return OptimalControlProgram(
+        biorbd_model,
+        dynamics,
+        number_shooting_points,
+        final_time,
+        x_init,
+        u_init,
+        x_bounds,
+        u_bounds,
+        objective_functions,
+        use_sx=True,
+    )
+
+
+def generate_table(out):
+    model_path = "/".join(__file__.split("/")[:-1]) + "/arm_wt_rot_scap.bioMod"
+    biorbd_model = biorbd.Model(model_path)
+
+    # --- Prepare and solve MHE --- #
+    T = 8
+    Ns = 800
+    Ns_mhe = 7
+    rt_ratio = 3
+    T_mhe = T / (Ns / rt_ratio) * Ns_mhe
+
+    # --- Prepare reference data --- #
+    with open(f"MHE_example/Data/sim_ac_8000ms_800sn_REACH2_co_level_0_step5_ERK.bob", "rb") as file:
+        data = pickle.load(file)
+    states = data["data"][0]
+    controls = data["data"][1]
+    q_ref, dq_ref, u_ref = states["q"], states["qdot"], controls["muscles"]
+
+    ocp = prepare_ocp(biorbd_model=biorbd_model, final_time=T_mhe, number_shooting_points=Ns_mhe)
+    Q_noise = 5
+    x_ref = np.concatenate((generate_noise(biorbd_model, q_ref, Q_noise), dq_ref))
+    X_est = np.zeros((biorbd_model.nbQ() * 2, x_ref[:, ::rt_ratio].shape[1] - Ns_mhe))
+    U_est = np.zeros((biorbd_model.nbMuscles(), u_ref[:, ::rt_ratio].shape[1] - Ns_mhe))
+
+    # Update bounds
+    x_bounds = BoundsList()
+    x_bounds.add(bounds=QAndQDotBounds(biorbd_model))
+    x_bounds[0].min[: biorbd_model.nbQ(), 0] = x_ref[: biorbd_model.nbQ(), 0] - 0.1
+    x_bounds[0].max[: biorbd_model.nbQ(), 0] = x_ref[: biorbd_model.nbQ(), 0] + 0.1
+    ocp.update_bounds(x_bounds)
+
+    # Update initial guess
+    x_init = InitialGuess(x_ref[:, : Ns_mhe + 1], interpolation=InterpolationType.EACH_FRAME)
+    u_init = InitialGuess([0.2] * biorbd_model.nbMuscles(), interpolation=InterpolationType.CONSTANT)
+    ocp.update_initial_guess(x_init, u_init)
+
+    # Update objectives functions
+    objectives = define_objective(q_ref, 0, rt_ratio, Ns_mhe, biorbd_model)
+    ocp.update_objectives(objectives)
+
+    # Initialize the solver options
+    sol = ocp.solve(
+        solver=Solver.ACADOS,
+        show_online_optim=False,
+        solver_options={
+            "nlp_solver_tol_comp": 1e-10,
+            "nlp_solver_tol_eq": 1e-10,
+            "nlp_solver_tol_stat": 1e-8,
+            "integrator_type": "IRK",
+            "nlp_solver_type": "SQP",
+            "sim_method_num_steps": 1,
+            "print_level": 0,
+            "nlp_solver_max_iter": 30,
+        },
+    )
+
+    # Set solutions and set initial guess for next optimisation
+    x0, u0, X_est[:, 0], U_est[:, 0] = warm_start_mhe(sol)
+    cost = []
+    n_iter = []
+    tic = time()  # Save initial time
+    for iter in range(1, X_est.shape[1]):
+        # set initial state
+        ocp.nlp[0].x_bounds.min[:, 0] = x0[:, 0]
+        ocp.nlp[0].x_bounds.max[:, 0] = x0[:, 0]
+
+        # Update initial guess
+        x_init = InitialGuess(x0, interpolation=InterpolationType.EACH_FRAME)
+        u_init = InitialGuess(u0, interpolation=InterpolationType.EACH_FRAME)
+        ocp.update_initial_guess(x_init, u_init)
+
+        # Update objectives functions
+        objectives = define_objective(q_ref, iter, rt_ratio, Ns_mhe, biorbd_model)
+        ocp.update_objectives(objectives)
+
+        # Solve problem
+        sol = ocp.solve(
+            solver=Solver.ACADOS,
+            show_online_optim=False,
+            solver_options={"nlp_solver_tol_comp": 1e-6, "nlp_solver_tol_eq": 1e-6, "nlp_solver_tol_stat": 1e-5},
+        )
+        # Set solutions and set initial guess for next optimisation
+        x0, u0, x_out, u_out = warm_start_mhe(sol)
+        X_est[:, iter] = x_out
+        if iter < U_est.shape[1]:
+            U_est[:, iter] = u_out
+    toc = time() - tic
+    N = X_est.shape[1] - 1
+    Tf = (Ns - Ns % rt_ratio) / (Ns / T)
+    final_time = Tf - (Ns_mhe * (Tf / (N + Ns_mhe)))
+    short_ocp = prepare_short_ocp(biorbd_model, final_time=final_time, number_shooting_points=N)
+    X_init_guess = InitialGuess(X_est, interpolation=InterpolationType.EACH_FRAME)
+    U_init_guess = InitialGuess(U_est, interpolation=InterpolationType.EACH_FRAME)
+    sol = Solution(short_ocp, [X_init_guess, U_init_guess])
+
+    out.solver.append(out.Solver("Acados"))
+    out.nx = X_est.shape[0]
+    out.nu = U_est.shape[0]
+    out.ns = N
+    out.solver[0].n_iteration = 'N.A.'
+    out.solver[0].cost = 'N.A.'
+    out.solver[0].convergence_time = toc
+    out.solver[0].compute_error_single_shooting(sol, 1)
+
+
 if __name__ == "__main__":
     """
     Prepare and solve the MHE example
     """
-    use_noise = True  # True to track noisy joint angle if not False
+    use_noise = True  # True to add noise on reference joint angles
     model = "arm_wt_rot_scap.bioMod"
     T = 8
     Ns = 800
@@ -245,20 +400,20 @@ if __name__ == "__main__":
     T_mhe = T / (Ns / rt_ratio) * Ns_mhe
     x_wt_noise = np.concatenate((q_ref, dq_ref))
 
-    force_ref_tmp = np.ndarray((biorbd_model.nbMuscles(), Ns))
+    force_ref_tmp = np.ndarray((biorbd_model.nbMuscles(), u_ref.shape[1]))
     get_force = force_func(biorbd_model, use_activation=False)
     for i in range(biorbd_model.nbMuscles()):
-        for k in range(Ns):
+        for k in range(u_ref.shape[1]):
             force_ref_tmp[i, k] = get_force(q_ref[:, k], dq_ref[:, k], a_ref[:, k], u_ref[:, k])[i, :]
-    force_ref = force_ref_tmp[:, 0:Ns:rt_ratio]
+    force_ref = force_ref_tmp[:, ::rt_ratio]
 
     Q_noise = 5
     if use_noise:
         q_ref = generate_noise(biorbd_model, q_ref, Q_noise)
     x_ref = np.concatenate((q_ref, dq_ref))
 
-    X_est = np.zeros((biorbd_model.nbQ() * 2, ceil((Ns + 1) / rt_ratio) - Ns_mhe))
-    U_est = np.zeros((biorbd_model.nbMuscles(), ceil(Ns / rt_ratio) - Ns_mhe))
+    X_est = np.zeros((biorbd_model.nbQ() * 2, x_ref[:, ::rt_ratio].shape[1] - Ns_mhe))
+    U_est = np.zeros((biorbd_model.nbMuscles(), u_ref[:, ::rt_ratio].shape[1] - Ns_mhe))
 
     # Initial and final state
     get_force = force_func(biorbd_model)
@@ -278,7 +433,7 @@ if __name__ == "__main__":
     ocp.update_initial_guess(x_init, u_init)
 
     # Update objectives functions
-    objectives = define_objective(0, rt_ratio, Ns_mhe, biorbd_model)
+    objectives = define_objective(q_ref, 0, rt_ratio, Ns_mhe, biorbd_model)
     ocp.update_objectives(objectives)
 
     # Initialize the solver options
@@ -286,22 +441,22 @@ if __name__ == "__main__":
         solver=Solver.ACADOS,
         show_online_optim=False,
         solver_options={
-            "nlp_solver_tol_comp": 1e-5,
-            "nlp_solver_tol_eq": 1e-5,
-            "nlp_solver_tol_stat": 1e-5,
+            "nlp_solver_tol_comp": 1e-10,
+            "nlp_solver_tol_eq": 1e-10,
+            "nlp_solver_tol_stat": 1e-8,
             "integrator_type": "IRK",
             "nlp_solver_type": "SQP",
             "sim_method_num_steps": 1,
             "print_level": 0,
-            "nlp_solver_max_iter": 15,
+            "nlp_solver_max_iter": 30,
         },
     )
 
     # Set solutions and set initial guess for next optimisation
-    x0, u0, X_est[:, 0], U_est[:, 0] = warm_start_mhe(ocp, sol)
+    x0, u0, X_est[:, 0], U_est[:, 0] = warm_start_mhe(sol)
 
     tic = time()  # Save initial time
-    for iter in range(1, ceil((Ns + 1) / rt_ratio - Ns_mhe)):
+    for iter in range(1, X_est.shape[1]):
         # set initial state
         ocp.nlp[0].x_bounds.min[:, 0] = x0[:, 0]
         ocp.nlp[0].x_bounds.max[:, 0] = x0[:, 0]
@@ -312,7 +467,7 @@ if __name__ == "__main__":
         ocp.update_initial_guess(x_init, u_init)
 
         # Update objectives functions
-        objectives = define_objective(iter, rt_ratio, Ns_mhe, biorbd_model)
+        objectives = define_objective(q_ref, iter, rt_ratio, Ns_mhe, biorbd_model)
         ocp.update_objectives(objectives)
 
         # Solve problem
@@ -320,22 +475,22 @@ if __name__ == "__main__":
             solver=Solver.ACADOS,
             show_online_optim=False,
             solver_options={
-                "nlp_solver_tol_comp": 1e-4,
-                "nlp_solver_tol_eq": 1e-4,
-                "nlp_solver_tol_stat": 1e-4,
+                "nlp_solver_tol_comp": 1e-6,
+                "nlp_solver_tol_eq": 1e-6,
+                "nlp_solver_tol_stat": 1e-5,
             },
         )
         # Set solutions and set initial guess for next optimisation
-        x0, u0, x_out, u_out = warm_start_mhe(ocp, sol)
+        x0, u0, x_out, u_out = warm_start_mhe(sol)
         X_est[:, iter] = x_out
-        if iter < ceil(Ns / rt_ratio) - Ns_mhe:
+        if iter < U_est.shape[1]:
             U_est[:, iter] = u_out
 
     a_est = U_est
-    q_ref = q_ref[:, 0 : Ns + 1 : rt_ratio]
-    force_est = np.ndarray((biorbd_model.nbMuscles(), int(ceil(Ns / rt_ratio) - Ns_mhe)))
+    q_ref = q_ref[:, ::rt_ratio]
+    force_est = np.ndarray((biorbd_model.nbMuscles(), U_est.shape[1]))
     for i in range(biorbd_model.nbMuscles()):
-        for k in range(int(ceil(Ns / rt_ratio) - Ns_mhe)):
+        for k in range(U_est.shape[1]):
             force_est[i, k] = get_force(
                 X_est[: biorbd_model.nbQ(), k],
                 X_est[biorbd_model.nbQ() : biorbd_model.nbQ() * 2, k],
@@ -344,8 +499,6 @@ if __name__ == "__main__":
             )[i, :]
 
     toc = time() - tic
-    print(time() - tic)
-    print(toc / ceil((Ns + 1) / rt_ratio - Ns_mhe))
     final_offset = 5  # Number of last nodes to ignore when calculate RMSE
     init_offset = 5  # Number of initial nodes to ignore when calculate RMSE
     offset = Ns_mhe
@@ -399,13 +552,13 @@ if __name__ == "__main__":
     }
     sio.savemat(f"Data/MHE_results.mat", dic)
     duration = 1
-    ss_err = compute_error_single_shooting(biorbd_model, X_est, U_est, 5, rt_ratio, T, duration)
+    T = 8
+    Ns = 800
 
     print("*********************************************")
     print(f"Problem solved with Acados")
     print(f"Solving time : {dic['time_tot']}s")
     print(f"Solving frequency : {1/dic['time_per_mhe']}s")
-    print(f"Single shooting error at {duration}s= {ss_err}")
 
     # ------ Animate ------ #
     b = bioviz.Viz(model)
