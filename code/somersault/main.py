@@ -13,13 +13,9 @@ if __name__ == "__main__":
     np.random.seed(42)
 
     if is_quaternion:
-        ocp = prepare_ocp_quaternion(root_folder + "/models/JeChMesh_RootQuat.bioMod",
-                                     final_time=1.5,
-                                     n_shooting=100)
+        ocp = prepare_ocp_quaternion(root_folder + "/models/JeChMesh_RootQuat.bioMod", final_time=1.5, n_shooting=100)
     else:
-        ocp = prepare_ocp(root_folder + "/models/JeChMesh_8DoF.bioMod",
-                          final_time=1.5,
-                          n_shooting=100)
+        ocp = prepare_ocp(root_folder + "/models/JeChMesh_8DoF.bioMod", final_time=1.5, n_shooting=100)
 
-    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1000})
+    sol = ocp.solve(solver_options={"tol": 1e-15, "constr_viol_tol": 1e-15, "max_iter": 1000})
     sol.animate()

@@ -139,7 +139,7 @@ if __name__ == "__main__":
         for k in range(u_est.shape[1]):
             force_est[i, k] = get_force(
                 x_est[: biorbd_model.nbQ(), k],
-                x_est[biorbd_model.nbQ(): biorbd_model.nbQ() * 2, k],
+                x_est[biorbd_model.nbQ() : biorbd_model.nbQ() * 2, k],
                 a_est[:, k],
                 u_est[:, k],
             )[i, :]
@@ -153,7 +153,7 @@ if __name__ == "__main__":
     rmse_q = (
         np.sqrt(
             np.square(
-                x_est[: biorbd_model.nbQ(), init_offset:-final_offset] - q_ref[:, init_offset: -final_offset - ns_mhe]
+                x_est[: biorbd_model.nbQ(), init_offset:-final_offset] - q_ref[:, init_offset : -final_offset - ns_mhe]
             ).mean(axis=1)
         ).mean()
         * 180
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     std_q = (
         np.sqrt(
             np.square(
-                x_est[: biorbd_model.nbQ(), init_offset:-final_offset] - q_ref[:, init_offset: -final_offset - ns_mhe]
+                x_est[: biorbd_model.nbQ(), init_offset:-final_offset] - q_ref[:, init_offset : -final_offset - ns_mhe]
             ).mean(axis=1)
         ).std()
         * 180

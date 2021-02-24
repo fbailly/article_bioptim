@@ -34,9 +34,11 @@ def maximal_tau(nodes: PenaltyNodes, minimal_tau):
     for n in range(len(nodes.u)):
         bound = func(q[n], qdot[n])
         min_bound.append(
-            nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 1], minimal_tau), minimal_tau, bound[:, 1])))
+            nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 1], minimal_tau), minimal_tau, bound[:, 1]))
+        )
         max_bound.append(
-            nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 0], minimal_tau), minimal_tau, bound[:, 0])))
+            nlp.mapping["tau"].to_first.map(if_else(lt(bound[:, 0], minimal_tau), minimal_tau, bound[:, 0]))
+        )
 
     obj = vertcat(*nodes.u)
     min_bound = vertcat(*min_bound)
@@ -53,7 +55,7 @@ def com_dot_z(nodes: PenaltyNodes):
     nlp = nodes.nlp
     x = nodes.x
     q = nlp.mapping["q"].to_second.map(x[0][: nlp.shape["q"]])
-    qdot = nlp.mapping["q"].to_second.map(x[0][nlp.shape["q"]:])
+    qdot = nlp.mapping["q"].to_second.map(x[0][nlp.shape["q"] :])
     com_dot_func = biorbd.to_casadi_func("Compute_CoM_dot", nlp.model.CoMdot, nlp.q, nlp.qdot)
     com_dot = com_dot_func(q, qdot)
     return com_dot[2]
@@ -175,13 +177,17 @@ class Jumper5Phases:
         self.constraints.add(com_dot_z, phase=1, node=Node.END, min_bound=0, max_bound=np.inf)
 
         # Constraint arm positivity (prevent from local minimum with arms in the back)
-        self.constraints.add(ConstraintFcn.TRACK_STATE, phase=self.takeoff, node=Node.END, index=3, min_bound=1.0, max_bound=np.inf)
+        self.constraints.add(
+            ConstraintFcn.TRACK_STATE, phase=self.takeoff, node=Node.END, index=3, min_bound=1.0, max_bound=np.inf
+        )
 
         # Floor constraints for flat foot phases
         for p in self.flat_foot_phases:
             # Do not pull on floor
             for i in self.heel_and_toe_idx:
-                self.constraints.add(ConstraintFcn.CONTACT_FORCE, phase=p, node=Node.ALL, contact_force_idx=i, max_bound=np.inf)
+                self.constraints.add(
+                    ConstraintFcn.CONTACT_FORCE, phase=p, node=Node.ALL, contact_force_idx=i, max_bound=np.inf
+                )
 
             # Non-slipping constraints
             self.constraints.add(  # On only one of the feet
@@ -197,7 +203,9 @@ class Jumper5Phases:
         for p in self.toe_only_phases:
             # Do not pull on floor
             for i in self.toe_idx:
-                self.constraints.add(ConstraintFcn.CONTACT_FORCE, phase=p, node=Node.ALL, contact_force_idx=i, max_bound=np.inf)
+                self.constraints.add(
+                    ConstraintFcn.CONTACT_FORCE, phase=p, node=Node.ALL, contact_force_idx=i, max_bound=np.inf
+                )
 
             # Non-slipping constraints
             self.constraints.add(  # On only one of the feet
@@ -215,26 +223,42 @@ class Jumper5Phases:
 
         # Minimize unnecessary movement during for the aerial and reception phases
         for p in range(2, 5):
-            self.objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_STATE_DERIVATIVE, weight=0.1, phase=p, index=range(self.n_q, self.n_q + self.n_qdot))
+            self.objective_functions.add(
+                ObjectiveFcn.Lagrange.MINIMIZE_STATE_DERIVATIVE,
+                weight=0.1,
+                phase=p,
+                index=range(self.n_q, self.n_q + self.n_qdot),
+            )
 
         for i in range(self.n_phases):
             # Minimize time of the phase
             if self.time_min[i] != self.time_max[i]:
                 self.objective_functions.add(
-                    ObjectiveFcn.Mayer.MINIMIZE_TIME, weight=0.1, phase=i, min_bound=self.time_min[i], max_bound=self.time_max[i]
+                    ObjectiveFcn.Mayer.MINIMIZE_TIME,
+                    weight=0.1,
+                    phase=i,
+                    min_bound=self.time_min[i],
+                    max_bound=self.time_max[i],
                 )
 
     def _set_boundary_conditions(self):
         for i in range(self.n_phases):
             # Path constraints
-            self.x_bounds.add(bounds=QAndQDotBounds(self.models[i], q_mapping=self.q_mapping[i], qdot_mapping=self.qdot_mapping[i]))
+            self.x_bounds.add(
+                bounds=QAndQDotBounds(self.models[i], q_mapping=self.q_mapping[i], qdot_mapping=self.qdot_mapping[i])
+            )
             self.u_bounds.add([-500] * self.n_tau, [500] * self.n_tau)
 
         # Enforce the initial pose and velocity
         self.x_bounds[0][:, 0] = self.initial_states[:, 0]
 
         # Target the final pose (except for translation) and velocity
-        self.objective_functions.add(ObjectiveFcn.Mayer.TRACK_STATE, phase=self.n_phases - 1, index=range(2, self.n_q + self.n_qdot), target=self.initial_states[2:, :])
+        self.objective_functions.add(
+            ObjectiveFcn.Mayer.TRACK_STATE,
+            phase=self.n_phases - 1,
+            index=range(2, self.n_q + self.n_qdot),
+            target=self.initial_states[2:, :],
+        )
 
     def _set_initial_guesses(self):
         for i in range(self.n_phases):
@@ -253,10 +277,10 @@ class Jumper5Phases:
         self.constraints.add(heel_on_floor, phase=3, node=Node.END, min_bound=-0.001, max_bound=0.001)
 
         # Allow for passive velocity at reception
-        self.x_bounds[3].min[self.n_q:, 0] = 2 * self.x_bounds[3].min[self.n_q:, 0]
-        self.x_bounds[3].max[self.n_q:, 0] = 2 * self.x_bounds[3].max[self.n_q:, 0]
-        self.x_bounds[4].min[self.n_q:, 0] = 2 * self.x_bounds[4].min[self.n_q:, 0]
-        self.x_bounds[4].max[self.n_q:, 0] = 2 * self.x_bounds[4].max[self.n_q:, 0]
+        self.x_bounds[3].min[self.n_q :, 0] = 2 * self.x_bounds[3].min[self.n_q :, 0]
+        self.x_bounds[3].max[self.n_q :, 0] = 2 * self.x_bounds[3].max[self.n_q :, 0]
+        self.x_bounds[4].min[self.n_q :, 0] = 2 * self.x_bounds[4].min[self.n_q :, 0]
+        self.x_bounds[4].max[self.n_q :, 0] = 2 * self.x_bounds[4].max[self.n_q :, 0]
 
     def solve(self, limit_memory_max_iter, exact_max_iter, load_path=None, force_no_graph=False):
         def warm_start_nmpc(ocp, sol):
@@ -280,19 +304,23 @@ class Jumper5Phases:
             if limit_memory_max_iter > 0:
                 sol = self.ocp.solve(
                     show_online_optim=exact_max_iter == 0 and not force_no_graph,
-                    solver_options={"linear_solver": "ma57", "hessian_approximation": "limited-memory",
-                                    "max_iter": limit_memory_max_iter}
+                    solver_options={
+                        "linear_solver": "ma57",
+                        "hessian_approximation": "limited-memory",
+                        "max_iter": limit_memory_max_iter,
+                    },
                 )
             if limit_memory_max_iter > 0 and exact_max_iter > 0:
                 warm_start_nmpc(self.ocp, sol)
             if exact_max_iter > 0:
                 sol = self.ocp.solve(
                     show_online_optim=True and not force_no_graph,
-                    solver_options={"linear_solver": "ma57",
-                                    "hessian_approximation": "exact",
-                                    "max_iter": exact_max_iter,
-                                    "warm_start_init_point": "yes",
-                                    }
+                    solver_options={
+                        "linear_solver": "ma57",
+                        "hessian_approximation": "exact",
+                        "max_iter": exact_max_iter,
+                        "warm_start_init_point": "yes",
+                    },
                 )
 
             return sol

@@ -19,7 +19,7 @@ def custom_dynamic(states, controls, parameters, nlp):
     q, qdot, tau = DynamicsFunctions.dispatch_q_qdot_tau_data(states, controls, nlp)
 
     force_vector = cas.MX.zeros(6)
-    force_vector[5] = -200*q[0]
+    force_vector[5] = -200 * q[0]
 
     f_ext = biorbd.VecBiorbdSpatialVector()
     f_ext.append(biorbd.SpatialVector(force_vector))
@@ -56,14 +56,25 @@ def prepare_ocp(biorbd_model_path: str, use_sx: bool = False) -> OptimalControlP
     )
 
     # Problem parameters
-    number_shooting_points = (50, 50, )
-    final_time = (5, 5, )
+    number_shooting_points = (
+        50,
+        50,
+    )
+    final_time = (
+        5,
+        5,
+    )
     tau_min, tau_max, tau_init = -500, 500, 0
 
     # Add objective functions
     objective_functions = ObjectiveList()
-    objective_functions.add(ObjectiveFcn.Lagrange.TRACK_STATE, weight=1, index=0,
-                            target=np.ones((1, number_shooting_points[0] + 1)) * -0.5, phase=1)
+    objective_functions.add(
+        ObjectiveFcn.Lagrange.TRACK_STATE,
+        weight=1,
+        index=0,
+        target=np.ones((1, number_shooting_points[0] + 1)) * -0.5,
+        phase=1,
+    )
     objective_functions.add(ObjectiveFcn.Lagrange.MINIMIZE_TORQUE, weight=1e-6, phase=1)
 
     # Dynamics
@@ -73,10 +84,20 @@ def prepare_ocp(biorbd_model_path: str, use_sx: bool = False) -> OptimalControlP
 
     # Path constraint
     x_bounds = BoundsList()
-    x_bounds.add(bounds=Bounds(np.array([-10, -4 * np.pi, -1000, -1000]), np.array([10, 4 * np.pi, 1000, 1000]),
-                               interpolation=InterpolationType.CONSTANT))
-    x_bounds.add(bounds=Bounds(np.array([-10, -4*np.pi, -1000, -1000]), np.array([10, 4*np.pi, 1000, 1000]),
-                               interpolation=InterpolationType.CONSTANT))
+    x_bounds.add(
+        bounds=Bounds(
+            np.array([-10, -4 * np.pi, -1000, -1000]),
+            np.array([10, 4 * np.pi, 1000, 1000]),
+            interpolation=InterpolationType.CONSTANT,
+        )
+    )
+    x_bounds.add(
+        bounds=Bounds(
+            np.array([-10, -4 * np.pi, -1000, -1000]),
+            np.array([10, 4 * np.pi, 1000, 1000]),
+            interpolation=InterpolationType.CONSTANT,
+        )
+    )
 
     # Define control path constraint
     u_bounds = BoundsList()

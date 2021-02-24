@@ -102,8 +102,8 @@ def warm_start_mhe(sol):
     Initial states and controls for next problem (x0, u0)
     States and controls to save as solution (x_out, u_out)
     """
-    x = sol.states['all']
-    u = sol.controls['all']
+    x = sol.states["all"]
+    u = sol.controls["all"]
 
     x0 = np.hstack((x[:, 1:], np.tile(x[:, [-1]], 1)))  # discard oldest estimate of the window, duplicates youngest
     u0 = u[:, :-1]
@@ -113,7 +113,7 @@ def warm_start_mhe(sol):
 
 
 def define_objective(
-        q: np.array, iteration: int, rt_ratio: int, ns_mhe: int, biorbd_model: biorbd.Model, use_noise=True
+    q: np.array, iteration: int, rt_ratio: int, ns_mhe: int, biorbd_model: biorbd.Model, use_noise=True
 ):
     """
     Define the objective function for the ocp
@@ -155,7 +155,7 @@ def define_objective(
     objectives.add(
         ObjectiveFcn.Lagrange.TRACK_STATE,
         weight=weight["track_state"],
-        target=q[:, iteration: (ns_mhe + 1 + iteration)],
+        target=q[:, iteration : (ns_mhe + 1 + iteration)],
         index=range(biorbd_model.nbQ()),
     )
     return objectives

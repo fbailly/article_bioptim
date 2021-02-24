@@ -14,14 +14,16 @@ def generate_table(out):
     # IPOPT
     use_ipopt = True
     weights = np.array([100, 1, 1, 100000])
-    ocp = prepare_ocp(biorbd_model=biorbd_model_ip, final_time=2, n_shooting=50,
-                      use_sx=not use_ipopt, weights=weights)
+    ocp = prepare_ocp(biorbd_model=biorbd_model_ip, final_time=2, n_shooting=50, use_sx=not use_ipopt, weights=weights)
     opts = {"linear_solver": "ma57", "hessian_approximation": "exact"}
     solver = Solver.IPOPT
 
     # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve(solver=solver, solver_options=opts,)
+    sol = ocp.solve(
+        solver=solver,
+        solver_options=opts,
+    )
     toc = time() - tic
     sol_merged = sol.merge_phases()
 
@@ -37,13 +39,15 @@ def generate_table(out):
     # ACADOS
     use_ipopt = False
     biorbd_model_ac = biorbd.Model(model_path)
-    ocp = prepare_ocp(biorbd_model=biorbd_model_ac, final_time=2, n_shooting=50,
-                      use_sx=not use_ipopt, weights=weights)
+    ocp = prepare_ocp(biorbd_model=biorbd_model_ac, final_time=2, n_shooting=50, use_sx=not use_ipopt, weights=weights)
     opts = {"sim_method_num_steps": 5, "tol": 1e-8, "integrator_type": "ERK", "hessian_approx": "GAUSS_NEWTON"}
     solver = Solver.ACADOS
 
     # --- Solve the program --- #
-    sol = ocp.solve(solver=solver, solver_options=opts,)
+    sol = ocp.solve(
+        solver=solver,
+        solver_options=opts,
+    )
 
     out.solver.append(out.Solver("Acados"))
     out.solver[1].n_iteration = sol.iterations

@@ -64,16 +64,17 @@ class TableOCP:
 
                 if sol_merged.phase_time[-1] < duration and not use_final_time:
                     raise ValueError(
-                        f'Single shooting integration duration must be smaller than '
-                        f'ocp duration: {sol_merged.phase_time[-1]} s. '
-                        f'You can set use_final_time=True if you want to use the final time for the '
-                        f'Single shooting integration duration')
+                        f"Single shooting integration duration must be smaller than "
+                        f"ocp duration: {sol_merged.phase_time[-1]} s. "
+                        f"You can set use_final_time=True if you want to use the final time for the "
+                        f"Single shooting integration duration"
+                    )
 
                 trans_idx = []
                 rot_idx = []
-                for i in sol.ocp.nlp[0].mapping['q'].to_second.map_idx:
+                for i in sol.ocp.nlp[0].mapping["q"].to_second.map_idx:
                     if i is not None:
-                        if sol.ocp.nlp[0].model.nameDof()[i].to_string()[-4:-1] == 'Rot':
+                        if sol.ocp.nlp[0].model.nameDof()[i].to_string()[-4:-1] == "Rot":
                             rot_idx += [i]
                         else:
                             trans_idx += [i]
@@ -86,14 +87,26 @@ class TableOCP:
                 else:
                     sn_1s = int(sol_int.ns[0] / sol_int.phase_time[-1] * duration)  # shooting node at {duration} second
                 if len(rot_idx) > 0:
-                    self.single_shoot_error_r = np.sqrt(np.mean((sol_int.states['q'][rot_idx, sn_1s] - sol_merged.states['q'][rot_idx, sn_1s]) ** 2)) * 180 / np.pi
+                    self.single_shoot_error_r = (
+                        np.sqrt(
+                            np.mean((sol_int.states["q"][rot_idx, sn_1s] - sol_merged.states["q"][rot_idx, sn_1s]) ** 2)
+                        )
+                        * 180
+                        / np.pi
+                    )
                 else:
-                    self.single_shoot_error_r = 'N.A.'
+                    self.single_shoot_error_r = "N.A."
                 if len(trans_idx) > 0:
-                    self.single_shoot_error_t = np.sqrt(np.mean(
-                        (sol_int.states['q'][trans_idx, sn_1s] - sol_merged.states['q'][trans_idx, sn_1s]) ** 2)) / 1000
+                    self.single_shoot_error_t = (
+                        np.sqrt(
+                            np.mean(
+                                (sol_int.states["q"][trans_idx, sn_1s] - sol_merged.states["q"][trans_idx, sn_1s]) ** 2
+                            )
+                        )
+                        / 1000
+                    )
                 else:
-                    self.single_shoot_error_t = 'N.A.'
+                    self.single_shoot_error_t = "N.A."
 
 
 table = TableOCP()

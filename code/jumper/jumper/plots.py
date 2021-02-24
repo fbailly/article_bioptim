@@ -42,38 +42,68 @@ def add_jumper_plots(jumper: Jumper5Phases):
     for i in range(jumper.n_phases):
         nlp = jumper.ocp.nlp[i]
         # Plot Torque Bounds
-        jumper.ocp.add_plot("tau", lambda x, u, p: torque_bounds(x, 0, nlp), phase=i, plot_type=PlotType.STEP, color="g", linestyle="-.")
-        jumper.ocp.add_plot("tau", lambda x, u, p: -torque_bounds(x, 1, nlp), phase=i, plot_type=PlotType.STEP, color="g", linestyle="-.")
-        jumper.ocp.add_plot("tau", lambda x, u, p: torque_bounds(x, 0, nlp, minimal_tau=jumper.tau_min), phase=i, plot_type=PlotType.STEP, color="g")
-        jumper.ocp.add_plot("tau", lambda x, u, p: -torque_bounds(x, 1, nlp, minimal_tau=jumper.tau_min), phase=i, plot_type=PlotType.STEP, color="g")
-        jumper.ocp.add_plot("tau", lambda x, u, p: np.zeros((4, len(x[0]))), phase=i, plot_type=PlotType.STEP, color="k")
+        jumper.ocp.add_plot(
+            "tau", lambda x, u, p: torque_bounds(x, 0, nlp), phase=i, plot_type=PlotType.STEP, color="g", linestyle="-."
+        )
+        jumper.ocp.add_plot(
+            "tau",
+            lambda x, u, p: -torque_bounds(x, 1, nlp),
+            phase=i,
+            plot_type=PlotType.STEP,
+            color="g",
+            linestyle="-.",
+        )
+        jumper.ocp.add_plot(
+            "tau",
+            lambda x, u, p: torque_bounds(x, 0, nlp, minimal_tau=jumper.tau_min),
+            phase=i,
+            plot_type=PlotType.STEP,
+            color="g",
+        )
+        jumper.ocp.add_plot(
+            "tau",
+            lambda x, u, p: -torque_bounds(x, 1, nlp, minimal_tau=jumper.tau_min),
+            phase=i,
+            plot_type=PlotType.STEP,
+            color="g",
+        )
+        jumper.ocp.add_plot(
+            "tau", lambda x, u, p: np.zeros((4, len(x[0]))), phase=i, plot_type=PlotType.STEP, color="k"
+        )
 
         # Plot center of mass pos and speed
-        jumper.ocp.add_plot("Center of mass height", lambda x, u, p: com_height(x, nlp), phase=i, plot_type=PlotType.PLOT)
-        jumper.ocp.add_plot("Center of mass upward velocity", lambda x, u, p: com_upward_velocity(x, nlp), phase=i, plot_type=PlotType.PLOT)
+        jumper.ocp.add_plot(
+            "Center of mass height", lambda x, u, p: com_height(x, nlp), phase=i, plot_type=PlotType.PLOT
+        )
+        jumper.ocp.add_plot(
+            "Center of mass upward velocity",
+            lambda x, u, p: com_upward_velocity(x, nlp),
+            phase=i,
+            plot_type=PlotType.PLOT,
+        )
 
         # Plot q and nb_qdot ranges
         jumper.ocp.add_plot(
             "q",
-            lambda x, u, p: np.repeat(jumper.x_bounds[i].min[:jumper.n_q, 1][:, np.newaxis], x.shape[1], axis=1),
+            lambda x, u, p: np.repeat(jumper.x_bounds[i].min[: jumper.n_q, 1][:, np.newaxis], x.shape[1], axis=1),
             phase=i,
             plot_type=PlotType.PLOT,
         )
         jumper.ocp.add_plot(
             "q",
-            lambda x, u, p: np.repeat(jumper.x_bounds[i].max[:jumper.n_q, 1][:, np.newaxis], x.shape[1], axis=1),
+            lambda x, u, p: np.repeat(jumper.x_bounds[i].max[: jumper.n_q, 1][:, np.newaxis], x.shape[1], axis=1),
             phase=i,
             plot_type=PlotType.PLOT,
         )
         jumper.ocp.add_plot(
             "qdot",
-            lambda x, u, p: np.repeat(jumper.x_bounds[i].min[jumper.n_q:, 1][:, np.newaxis], x.shape[1], axis=1),
+            lambda x, u, p: np.repeat(jumper.x_bounds[i].min[jumper.n_q :, 1][:, np.newaxis], x.shape[1], axis=1),
             phase=i,
             plot_type=PlotType.PLOT,
         )
         jumper.ocp.add_plot(
             "qdot",
-            lambda x, u, p: np.repeat(jumper.x_bounds[i].max[jumper.n_q:, 1][:, np.newaxis], x.shape[1], axis=1),
+            lambda x, u, p: np.repeat(jumper.x_bounds[i].max[jumper.n_q :, 1][:, np.newaxis], x.shape[1], axis=1),
             phase=i,
             plot_type=PlotType.PLOT,
         )

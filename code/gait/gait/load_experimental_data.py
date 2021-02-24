@@ -129,9 +129,9 @@ class C3dData:
 
         # get markers position
         markers = C3dData.get_marker_trajectories(self.c3d, self.marker_names)
-        heel = markers[:, 19, idx_start: idx_stop_stance]
-        meta1 = markers[:, 20, idx_start: idx_stop_stance]
-        meta5 = markers[:, 24, idx_start: idx_stop_stance]
+        heel = markers[:, 19, idx_start:idx_stop_stance]
+        meta1 = markers[:, 20, idx_start:idx_stop_stance]
+        meta5 = markers[:, 24, idx_start:idx_stop_stance]
 
         # Heel rise
         idx_heel = np.where(heel[2, :] > threshold)
@@ -163,7 +163,7 @@ class LoadData:
             nb_frame = int(len(data_tp) / size)
             out = np.zeros((size, nb_frame))
             for n in range(nb_frame):
-                out[:, n] = data_tp[n * size: n * size + size]
+                out[:, n] = data_tp[n * size : n * size + size]
             return out
 
         self.model = model
@@ -187,17 +187,17 @@ class LoadData:
             a = (index[i + 1] + 1 - index[i]) / (nb_shooting[i] + 1)
             if len(data.shape) == 3:
                 if a.is_integer():
-                    x = data[:, :, index[i]:index[i + 1] + 1]
-                    out.append(x[:, :, 0::int(a)])
+                    x = data[:, :, index[i] : index[i + 1] + 1]
+                    out.append(x[:, :, 0 :: int(a)])
                 else:
-                    x = data[:, :, index[i]:index[i + 1]]
-                    out.append(x[:, :, 0::int(a)])
+                    x = data[:, :, index[i] : index[i + 1]]
+                    out.append(x[:, :, 0 :: int(a)])
 
             else:
                 if a.is_integer():
-                    x = data[:, index[i]:index[i + 1] + 1]
-                    out.append(x[:, 0::int(a)])
+                    x = data[:, index[i] : index[i + 1] + 1]
+                    out.append(x[:, 0 :: int(a)])
                 else:
-                    x = data[:, index[i]:index[i + 1]]
-                    out.append(x[:, 0::int(a)])
+                    x = data[:, index[i] : index[i + 1]]
+                    out.append(x[:, 0 :: int(a)])
         return out

@@ -114,7 +114,7 @@ def generate_table(out):
     out.nx = x_est.shape[0]
     out.nu = u_est.shape[0]
     out.ns = n
-    out.solver[0].n_iteration = 'N.A.'
-    out.solver[0].cost = 'N.A.'
+    out.solver[0].n_iteration = "N.A."
+    out.solver[0].cost = "N.A."
     out.solver[0].convergence_time = toc
     out.solver[0].compute_error_single_shooting(sol, 1)

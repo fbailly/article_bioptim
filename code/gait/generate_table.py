@@ -15,7 +15,7 @@ def generate_table(out):
         biorbd.Model(root_path + "/models/Gait_1leg_12dof_heel.bioMod"),
         biorbd.Model(root_path + "/models/Gait_1leg_12dof_flatfoot.bioMod"),
         biorbd.Model(root_path + "/models/Gait_1leg_12dof_forefoot.bioMod"),
-        biorbd.Model(root_path + "/models/Gait_1leg_12dof_0contact.bioMod")
+        biorbd.Model(root_path + "/models/Gait_1leg_12dof_0contact.bioMod"),
     )
 
     # --- files path ---
@@ -31,7 +31,7 @@ def generate_table(out):
 
     ocp = prepare_ocp(
         biorbd_model=biorbd_model,
-        final_time= phase_time,
+        final_time=phase_time,
         nb_shooting=number_shooting_points,
         markers_ref=markers_ref,
         grf_ref=grf_ref,

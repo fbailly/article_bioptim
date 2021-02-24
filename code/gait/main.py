@@ -20,7 +20,7 @@ if __name__ == "__main__":
         biorbd.Model(root_path + "models/Gait_1leg_12dof_heel.bioMod"),
         biorbd.Model(root_path + "models/Gait_1leg_12dof_flatfoot.bioMod"),
         biorbd.Model(root_path + "models/Gait_1leg_12dof_forefoot.bioMod"),
-        biorbd.Model(root_path + "models/Gait_1leg_12dof_0contact.bioMod")
+        biorbd.Model(root_path + "models/Gait_1leg_12dof_0contact.bioMod"),
     )
 
     # Problem parameters
@@ -80,10 +80,12 @@ if __name__ == "__main__":
     print(f"Single shooting error for rotation: {ss_err_rot * 180/np.pi} degrees")
 
     # --- Show results --- #
-    sol.animate(show_meshes=True,
-                background_color=(1, 1, 1),
-                show_local_ref_frame=False,)
+    sol.animate(
+        show_meshes=True,
+        background_color=(1, 1, 1),
+        show_local_ref_frame=False,
+    )
     # sol.graphs()
 
     # --- Save results --- #
-    ocp.save(sol, 'gait.bo')
+    ocp.save(sol, "gait.bo")
