@@ -18,7 +18,7 @@ biorbd_model = biorbd.Model(model)
 T = 8
 Ns = 800
 final_offset = 1
-init_offset = 1
+init_offset = 2
 
 # Get data from MHE problem
 mat_content = sio.loadmat(f"Data/MHE_results.mat")
@@ -29,6 +29,7 @@ q_est = mat_content["X_est"][: biorbd_model.nbQ(), :]
 dq_est = mat_content["X_est"][biorbd_model.nbQ() : biorbd_model.nbQ() * 2, :]
 u_est = mat_content["U_est"]
 f_est = mat_content["f_est"]
+x_init = mat_content["x_init"]
 x_ref = mat_content["x_ref"]
 q_ref = mat_content["x_ref"]
 u_ref = mat_content["u_ref"]
@@ -38,6 +39,7 @@ f_ref = mat_content["f_ref"]
 seaborn.set_style("whitegrid")
 seaborn.color_palette()
 q_ref = q_ref[:, ::ratio]
+x_init = x_init[:, ::ratio]
 t_x = np.linspace(0, T, q_est.shape[1] - init_offset - final_offset)
 t_u = np.linspace(0, T, u_est.shape[1] - init_offset - final_offset)
 
@@ -52,16 +54,17 @@ for i in [1, 3]:
     if i == 1:
         plt.ylabel("Joint angle (°)", fontsize=size_police)
     plt.plot(t_x, x_est[i, init_offset:-final_offset] * 180 / np.pi)
+    plt.plot(t_x, x_init[i, init_offset : -Ns_mhe - final_offset] * 180 / np.pi, alpha=0.8)
     plt.plot(t_x, q_ref[i, init_offset : -Ns_mhe - final_offset] * 180 / np.pi, alpha=0.8)
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))
     plt.title(Q_name[i], fontsize=size_police)
     if i == 1:
         plt.legend(
-            labels=["Estimation", "Reference"],
-            bbox_to_anchor=(1.05, 1.2),
+            labels=["Estimation", "Reference", "Noisy reference"],
+            bbox_to_anchor=(1.05, 1.25),
             loc="upper center",
             borderaxespad=0.0,
-            ncol=2,
+            ncol=3,
             frameon=False,
             fontsize=size_police,
         )
@@ -79,4 +82,5 @@ for i in range(len(muscles_names)):
     plt.plot(t_u, fref_to_plot[i, init_offset : -Ns_mhe - final_offset], alpha=0.8)
     plt.title(muscles_names[i], fontsize=size_police)
     plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter("{x:,.0f}"))
+u_ref = u_ref[:, ::ratio]
 plt.show()

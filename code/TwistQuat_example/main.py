@@ -260,7 +260,7 @@ def generate_table(out, Quaternion):
 
     # --- Solve the program --- #
     tic = time()
-    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1})
+    sol = ocp.solve(solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1, "linear_solver": "ma57"})
     toc = time() - tic
 
     out.nx = sol.states["all"].shape[0]
@@ -289,7 +289,7 @@ if __name__ == "__main__":
                           n_shooting=100)
 
     tic = time()
-    sol = ocp.solve(solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 10000}) # solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 0}
+    sol = ocp.solve(solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 1}) # solver_options={'ipopt.tol': 1e-15, 'ipopt.constr_viol_tol': 1e-15, 'ipopt.max_iter': 0}
     toc = time() - tic
 
     q_opt = sol.states['q']
