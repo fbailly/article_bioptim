@@ -1,11 +1,8 @@
 from Pendulum_example.main import generate_table as pendulum_table
 from muscle_exc_pointing.main import generate_table as pointing_table
-<<<<<<< HEAD
 from MHE_example.main import generate_table as MHE_table
-=======
 from TwistQuat_example.main import generate_table as TwistQuat_table
 from Example_multiphase_walking.main import generate_table as gait_table
->>>>>>> 945636301d465cbca08a6e1b39f1a3eaafb99ee2
 from jumper.main import generate_table as jumper_table
 
 
@@ -104,30 +101,20 @@ class TableOCP:
 
 table = TableOCP()
 
-<<<<<<< HEAD
 table.add("pointing")
 table.add("pendulum")
 table.add("MHE")
-=======
-# table.add("pointing")
-# table.add("pendulum")
->>>>>>> 945636301d465cbca08a6e1b39f1a3eaafb99ee2
 # table.add("jumper")
-table.add("TwistQuat_quaternion")
-table.add("TwistQuat_euler")
+# table.add("TwistQuat_quaternion")
+# table.add("TwistQuat_euler")
 # table.add("gait")
 
-<<<<<<< HEAD
 pointing_table(table["pointing"])
 pendulum_table(table["pendulum"])
 MHE_table(table['MHE'])
-=======
-# pointing_table(table["pointing"])
-# pendulum_table(table["pendulum"])
->>>>>>> 945636301d465cbca08a6e1b39f1a3eaafb99ee2
 # jumper_table(table["jumper"])
-TwistQuat_table(table["TwistQuat_quaternion"], True)
-TwistQuat_table(table["TwistQuat_euler"], False)
+# TwistQuat_table(table["TwistQuat_quaternion"], True)
+# TwistQuat_table(table["TwistQuat_euler"], False)
 # gait_table(table["gait"])
 
 table.print()
