@@ -1,12 +1,21 @@
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 import bioviz
 
-model_path = "MassPoint_pendulum.bioMod"
+from pendulum.ocp import prepare_ocp
 
-q = np.load('q_optim.npy')
-qdot = np.load('qdot_optim.npy')
-u = np.load('u_optim.npy')
+root_path = "/".join(__file__.split("/")[:-1]) + "/"
+model_path = root_path + "models/MassPoint_pendulum.bioMod"
+np.random.seed(0)
+
+ocp = prepare_ocp(biorbd_model_path=model_path)
+sol = ocp.solve(show_online_optim=False)
+
+q = np.hstack((sol.states[0]['q'], sol.states[1]['q']))
+qdot = np.hstack((sol.states[0]['qdot'], sol.states[1]['qdot']))
+u = np.hstack((sol.controls[0]['tau'], sol.controls[1]['tau']))
 
 time_vector = np.linspace(0, 10, 102)
 
@@ -64,7 +73,11 @@ ax2.step(time_vector[:-1], -10*q[0, :-1], '-', color='#2ca02c', label='Spring Fo
 ax2.set_ylabel('Spring external force\n[N]', color='#2ca02c').set_fontsize(16)
 ax2.tick_params(axis='y', labelcolor='#2ca02c')
 
-plt.savefig('Mass_Pendulum_Fext.eps', format='eps')
+try:
+    os.mkdir(root_path + "figure")
+except FileExistsError:
+    pass
+plt.savefig('figure/Mass_Pendulum_Fext.eps', format='eps')
 plt.show()
 
 print('RMS q_m - q*_m : ', np.std(q[0, 51:]-0.5))
