@@ -168,6 +168,11 @@ cython_debug/
 # PyCharm
 .idea
 
+# Figures and data
+*.eps
+*.npy
+*.bo
+
 # Videos from example
 code/muscle_exc_pointing/videos/
 .DS_Store
