@@ -1,6 +1,6 @@
-This example is presented to introduce \bioptim's ability to provide real-time estimation of biomechanical variables.
+This example is presented to introduce \Bioptim's ability to provide real-time estimation of biomechanical variables.
 The goal was to perform a real-time estimation of dynamically consistent joint kinematics and muscle forces, using a moving horizon estimation (MHE) approach (i.e. an optimization approach that uses a series of measurements observed over time). 
-A shoulder elevation motion was performed with a 4-DoFs ($\bf{q}$) arm actuated by 19 Hill-type muscle elements.
+A shoulder elevation motion was performed with a 4-DoF ($\bf{q}$) arm actuated by 19 Hill-type muscle elements.
 The control inputs of the model were the muscle activations ($\bf{a}$).
 The MHE implementation consists in splitting the OCP into a succession of smaller one for processing fixed-size subsets of the tracking data moving forward in time. 
 Each time one subproblem is solved, a new measurement is added, the oldest one is discarded and a new subproblem is defined. 
@@ -17,7 +17,7 @@ Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three
 \includegraphics[width=\textwidth]{figures/MHE_results.pdf}\\
 \caption{Ex.~\ref{ex:mhe}. Top row - Real-time estimated joint angles (blue), ground-truth joint angles (orange) and tracked noisy joint angles (green) for a cyclic motion of the arm.
 Bottom row - Real-time estimated muscle forces (blue) and ground truth muscle forces (orange) for the same motion.
-Only four muscles with significative action (peak forces $>$ 15~N), on the two selected DoFs, are shown.
+Only four muscles with significative action (peak forces $>$ $\SI{15}{\newton}$), on the two selected DoFs, are shown.
 Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.} 
 \label{fig:MHE_results}
 \end{figure*} 
