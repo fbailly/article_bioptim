@@ -3,11 +3,9 @@ This is an example on how to use quaternion to represent the orientation of the 
 The avatar must complete one somersault rotation while maximizing the twist rotation.
 """
 
-import biorbd
-import casadi as cas
 import numpy as np
 from time import time
-from .utils import *
+from somersault.somersault.ocp import *
 
 from bioptim import (
     OptimalControlProgram,
@@ -15,7 +13,6 @@ from bioptim import (
     Bounds,
     ConstraintFcn,
     ObjectiveFcn,
-    Mapping,
     BiMapping,
     ConstraintList,
     InitialGuessList,
@@ -24,7 +21,6 @@ from bioptim import (
     Node,
     DynamicsList,
     BoundsList,
-    Shooting,
     OdeSolver,
 )
 
@@ -278,12 +274,12 @@ if __name__ == "__main__":
     np.random.seed(42)
 
     if Quaternion:
-        model_path = "JeChMesh_RootQuat.bioMod"
+        model_path = "models/JeChMesh_RootQuat.bioMod"
         ocp = prepare_ocp_Quat(model_path,
                                final_time=1.5,
                                n_shooting=100)
     else:
-        model_path = "JeChMesh_8DoF.bioMod"
+        model_path = "models/JeChMesh_8DoF.bioMod"
         ocp = prepare_ocp(model_path,
                           final_time=1.5,
                           n_shooting=100)
