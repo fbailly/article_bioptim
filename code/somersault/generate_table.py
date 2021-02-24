@@ -19,12 +19,12 @@ def generate_table(out):
     # --- Solve the program --- #
     tic = time()
     sol_euler = ocp_euler.solve(
-        solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1, "linear_solver": "ma57"}
+        solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1000, "linear_solver": "ma57"}
     )
     toc_euler = time() - tic
     tic = time()
     sol_quaternion = ocp_quaternion.solve(
-        solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1, "linear_solver": "ma57"}
+        solver_options={'tol': 1e-15, 'constr_viol_tol': 1e-15, 'max_iter': 1000, "linear_solver": "ma57"}
     )
     toc_quaternion = time() - tic
 

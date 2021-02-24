@@ -7,7 +7,7 @@ from .pendulum.ocp import prepare_ocp
 
 
 def generate_table(out):
-    root_path = "/".join(__file__.split("/")[:-1]) + "/"
+    root_path = "/".join(__file__.split("/")[:-1])
     model_path = root_path + "/models/MassPoint_pendulum.bioMod"
     np.random.seed(0)
 

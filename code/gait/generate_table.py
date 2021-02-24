@@ -8,20 +8,20 @@ from .gait.ocp import prepare_ocp, get_phase_time_shooting_numbers, get_experime
 
 
 def generate_table(out):
-    root_path = "/".join(__file__.split("/")[:-1]) + "/"
+    root_path = "/".join(__file__.split("/")[:-1])
 
     # Define the problem -- model path
     biorbd_model = (
-        biorbd.Model(root_path + "models/Gait_1leg_12dof_heel.bioMod"),
-        biorbd.Model(root_path + "models/Gait_1leg_12dof_flatfoot.bioMod"),
-        biorbd.Model(root_path + "models/Gait_1leg_12dof_forefoot.bioMod"),
-        biorbd.Model(root_path + "models/Gait_1leg_12dof_0contact.bioMod")
+        biorbd.Model(root_path + "/models/Gait_1leg_12dof_heel.bioMod"),
+        biorbd.Model(root_path + "/models/Gait_1leg_12dof_flatfoot.bioMod"),
+        biorbd.Model(root_path + "/models/Gait_1leg_12dof_forefoot.bioMod"),
+        biorbd.Model(root_path + "/models/Gait_1leg_12dof_0contact.bioMod")
     )
 
     # --- files path ---
-    c3d_file = root_path + "data/normal01_out.c3d"
-    q_kalman_filter_file = root_path + "data/normal01_q_KalmanFilter.txt"
-    qdot_kalman_filter_file = root_path + "data/normal01_qdot_KalmanFilter.txt"
+    c3d_file = root_path + "/data/normal01_out.c3d"
+    q_kalman_filter_file = root_path + "/data/normal01_q_KalmanFilter.txt"
+    qdot_kalman_filter_file = root_path + "/data/normal01_qdot_KalmanFilter.txt"
     data = LoadData(biorbd_model[0], c3d_file, q_kalman_filter_file, qdot_kalman_filter_file)
 
     # --- phase time and number of shooting ---
@@ -48,7 +48,7 @@ def generate_table(out):
         solver=Solver.IPOPT,
         solver_options={
             "tol": 1e-3,
-            "max_iter": 1,
+            "max_iter": 1000,
             "hessian_approximation": "exact",
             "limited_memory_max_history": 50,
             "linear_solver": "ma57",

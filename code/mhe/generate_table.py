@@ -16,7 +16,8 @@ from .mhe.ocp import prepare_ocp, prepare_short_ocp, generate_noise, define_obje
 
 
 def generate_table(out):
-    model_path = "/".join(__file__.split("/")[:-1]) + "/models/arm_wt_rot_scap.bioMod"
+    root_path = "/".join(__file__.split("/")[:-1])
+    model_path = root_path + "/models/arm_wt_rot_scap.bioMod"
     biorbd_model = biorbd.Model(model_path)
 
     # --- Prepare and solve MHE --- #
@@ -27,7 +28,7 @@ def generate_table(out):
     t_mhe = t / (ns / rt_ratio) * ns_mhe
 
     # --- Prepare reference data --- #
-    with open(f"mhe/Data/sim_ac_8000ms_800sn_REACH2_co_level_0_step5_ERK.bob", "rb") as file:
+    with open(f"{root_path}/data/sim_ac_8000ms_800sn_REACH2_co_level_0_step5_ERK.bob", "rb") as file:
         data = pickle.load(file)
     states = data["data"][0]
     controls = data["data"][1]
