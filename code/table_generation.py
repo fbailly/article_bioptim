@@ -109,7 +109,6 @@ table.add("TwistQuat_quaternion")
 table.add("TwistQuat_euler")
 table.add("gait")
 
-
 pointing_table(table["pointing"])
 pendulum_table(table["pendulum"])
 MHE_table(table['MHE'])
