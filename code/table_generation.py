@@ -1,8 +1,8 @@
+from gait.generate_table import generate_table as gait_table
 from jumper.generate_table import generate_table as jumper_table
 from pendulum.generate_table import generate_table as pendulum_table
 from pointing.generate_table import generate_table as pointing_table
 from somersault.generate_table import generate_table as somersault_table
-from walking.generate_table import generate_table as walking_table
 
 import numpy as np
 from bioptim import Shooting
@@ -97,18 +97,17 @@ class TableOCP:
 
 table = TableOCP()
 
+table.add("gait")
 table.add("jumper")
 table.add("pendulum")
 table.add("pointing")
-table.add("walking")
 table.add("somersault")
-# table.add("gait")
 
+gait_table(table["gait"])
 jumper_table(table["jumper"])
 pendulum_table(table["pendulum"])
 pointing_table(table["pointing"])
 somersault_table(table["somersault"])
 walking_table(table["walking_table"])
-# gait_table(table["gait"])
 
 table.print()

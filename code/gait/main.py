@@ -8,8 +8,8 @@ import numpy as np
 import biorbd
 from bioptim import Solver, Shooting
 
-from walking.load_experimental_data import LoadData
-from walking.ocp import prepare_ocp, get_phase_time_shooting_numbers, get_experimental_data
+from gait.load_experimental_data import LoadData
+from gait.ocp import prepare_ocp, get_phase_time_shooting_numbers, get_experimental_data
 
 
 if __name__ == "__main__":
