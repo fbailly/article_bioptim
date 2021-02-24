@@ -32,7 +32,7 @@ Then, it implements the ordinary differential equation governing the state dynam
 \label{eq:state_transition}
 \]
 
-\noindent More than 10 dynamics are already implemented in \bioptim, among which the controls can be muscle excitations, muscle activations and/or joint torques, the states can be muscle activations and/or joint kinematics.
+\noindent More than 10 dynamics are already implemented in \bioptim, among which the controls (piecewise constant or linear) can be muscle excitations, muscle activations and/or joint torques, the states can be muscle activations and/or joint kinematics.
 They can include contact points, external forces, etc.
 Even if these dynamics types exhaustively span the current usages in biomechanics, a custom dynamics type is also pre-implemented to easily customize problems.
 
@@ -42,7 +42,7 @@ Lagrange types are running objectives, integrated over the NLP duration. Mayer t
 Classically, they correspond to a terminal objective, but to be more versatile, they can be defined at any instant in \bioptim.
 
 \objectives can depend on any of the optimization variables, \textit{i.e.} the controls, the states, the parameters and the duration of the problem. 
-A lot of objective function types are already implemented in \bioptim ($>\!20$), among which tracking\:/\:minimizing, on states\:/\:controls\:/\:markers\:/\:contact\:forces\:/\:problem\:duration, etc. 
+A lot of objective function types are already implemented in \bioptim ($>\negmedspace 20$), among which tracking\:/\:minimizing, on states\:/\:controls\:/\:markers\:/\:contact\:forces\:/\:problem\:duration, etc. 
 Should one go missing, a custom objective type is also possible to define.
 
 When declaring the desired list of objective functions for a given NLP, each objective function type is associated with a weight, and the user can choose on which components of the vector variables the objective must apply. 

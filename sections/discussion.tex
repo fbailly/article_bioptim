@@ -7,14 +7,14 @@ The main features illustrated by the six provided examples are (Tab.~\ref{tab:Pe
 \item the possibility to solve advanced OCPs (possibly multiphase) in a few seconds or minutes, that previously took us hours;
 \item the interface with two different NLP solvers
 \end{itemize}
-\hl{add getting started example and mention parameter optimization feature and custom examples}\\
+In addition, every feature of \bioptim is thoroughly illustrated by the examples of the \href{https://github.com/pyomeca/bioptim/tree/master/examples/getting_started}{getting\_started} folder (parameter optimization, custom objects, etc.).
 In the following, several aspects of \textit{bioptim} are discussed.
 
 
 \subsection{Direct multiple shooting-based}
 
-While the debate remains about the performances of direct collocations versus direct multiple shooting \cite{diehl2006fast, porsa2016direct}, the development of \bioptim was oriented toward the latter, because: \textit{i)} it allows to select effortlessly an arbitrary accuracy for the integration (e.g., order and numbers of RK steps); \textit{ii)} it allows to use DMS-based fast NLP solvers such as \acados.
-Concerning the integration, either internally or via \acados, several schemes are implemented in \textit{bioptim} (RK4, RK8, IRK).
+While the debate remains about the performances of direct collocations versus direct multiple shooting \cite{diehl2006fast, porsa2016direct}, the development of \bioptim was oriented toward the latter, because: \textit{i)} it allows to select effortlessly an arbitrary accuracy for the integration (e.g., order and numbers of RK steps); \textit{ii)} it allows to use multiple shooting-based fast NLP solvers such as \acados.
+Concerning the integration, either internally or via \acados, several schemes are implemented in \textit{bioptim} (RK4, RK8, implicit RK).
 While IRK showed better convergence in our experience with hard problems in \acados, RK4 showed to be a good speed/robustness tradeoff in most of the cases. 
 In contrast to what is claimed in \cite{porsa2016direct}, direct multiple shooting is not a limitation to the performances (cost value and time to convergence), since, in our experience, the performances of \bioptim often outperform state-of-the-art results.
 
@@ -87,5 +87,4 @@ The formulation of moving horizon schemes (MHE, Nonlinear Model Predictive Contr
 The implementation of muscle-tendon equilibrium is planned for fast movements or those with large ranges of motions. 
 It will require an additional optimization step to achieve the equilibrium as done in \textit{CEINMS} \cite{pizzolato2015ceinms} or the addition of muscle lengths as state variables, as in \cite{van2011implicit}.  
 Moreover, an effort will be made to extend the compatibility of \acados with all the features of \bioptim (multiphase, nonlinear constraints, etc.). 
-Finally, we plan to add an inverse optimal control module to \bioptim.
-\hl{Muscle synergy dynamics ref friegly??}.
+Finally, we plan to add an inverse optimal control module to \bioptim and muscle synergy dynamics to improve motion predictions \cite{walter2014muscle}.
