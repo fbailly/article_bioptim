@@ -170,6 +170,7 @@ cython_debug/
 
 # ACADOS
 *.json
+*c_generated_code
 
 # Figures and data
 *.eps

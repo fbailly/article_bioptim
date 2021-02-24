@@ -1,5 +1,6 @@
 from jumper.generate_table import generate_table as jumper_table
 from pendulum.generate_table import generate_table as pendulum_table
+from pointing.generate_table import generate_table as pointing_table
 from walking.generate_table import generate_table as walking_table
 # from TwistQuat_example.main import generate_table as TwistQuat_table
 
@@ -97,17 +98,17 @@ class TableOCP:
 
 table = TableOCP()
 
-# table.add("pointing")
 table.add("jumper")
 table.add("pendulum")
+table.add("pointing")
 table.add("walking")
 # table.add("TwistQuat_quaternion")
 # table.add("TwistQuat_euler")
 # table.add("gait")
 
-# pointing_table(table["pointing"])
 jumper_table(table["jumper"])
 pendulum_table(table["pendulum"])
+pointing_table(table["pointing"])
 walking_table(table["walking_table"])
 # TwistQuat_table(table["TwistQuat_quaternion"], True)
 # TwistQuat_table(table["TwistQuat_euler"], False)
