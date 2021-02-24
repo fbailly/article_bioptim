@@ -1,6 +1,6 @@
 This example is presented to introduce \textit{bioptim}'s ability to deal with a multiphase locomotion estimation problem including muscle actuation and contact forces.
 The goal was to estimate muscle activations by tracking markers trajectories and ground reaction forces and moments. 
-The model was a 3D leg with 12 DoFs (6-DoFs pelvis, 3-DoFs hip, 1-DoF knee and 2-DoFs ankle), driven by 17 muscle activations and residual joint torques to compensate for potential muscle actuation weaknesses. 
+The model was a 3D leg with 12 DoFs (6-DoFs pelvis, 3-DoFs hip, 1-DoF knee and 2-DoFs ankle), driven by 19 muscle activations and residual joint torques to compensate for potential muscle actuation weaknesses. 
 The gait cycle was defined from the first heel strike to the end of the swing phase discretized into 90~shooting intervals. 
 To approximate the natural rolling of the foot, the stance was divided into three phases (heel, flatfoot and forefoot contacts) of fixed duration deduced from experimental force platform data and markers position ($0.05$, $0.36$ and $0.16$\:s).
 The swing phase lasted $0.38$\:s. 
@@ -34,5 +34,5 @@ The root mean square tracking error on markers trajectories was $27$ mm (mean er
 Concerning ground reaction forces tracking, the root mean square error was $4.85$ N.
 During the stance phase, Gluteal muscles and Vastus Medialis were mainly activated during the loading response (10 \%) and hamstrings during initial contact (1 \%) (Fig.~\ref{fig:snapshots_multiphase_walking_cycle}). 
 These results were similar to the characteristic average activity patterns of the lower limb muscles during locomotion described in~\cite{winter_biomechanics_1991}. 
-The transition from stance to swing (60 \% - 70 \%) was highly actuated by the Rectus Femoris and leg muscles (Gastocnemius Medialis and Tibialis Anterior).
+The transition from stance to swing (60 \% - 70 \%) was highly actuated by hip flexors (Iliopsoas and Rectus Femoris) and leg muscles (Gastocnemius Medialis and Tibialis Anterior).
 
