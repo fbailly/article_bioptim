@@ -1,5 +1,6 @@
 from Pendulum_example.main import generate_table as pendulum_table
 from muscle_exc_pointing.main import generate_table as pointing_table
+from MHE_example.main import generate_table as MHE_table
 from TwistQuat_example.main import generate_table as TwistQuat_table
 from Example_multiphase_walking.main import generate_table as gait_table
 from jumper.main import generate_table as jumper_table
@@ -8,7 +9,6 @@ from jumper.main import generate_table as jumper_table
 
 import numpy as np
 from bioptim import Shooting
-import casadi as cas
 
 class TableOCP:
     def __init__(self):
@@ -100,18 +100,21 @@ class TableOCP:
 
 table = TableOCP()
 
-# table.add("pointing")
-# table.add("pendulum")
-# table.add("jumper")
+
+table.add("pointing")
+table.add("pendulum")
+table.add("MHE")
+table.add("jumper")
 table.add("TwistQuat_quaternion")
 table.add("TwistQuat_euler")
-# table.add("gait")
+table.add("gait")
 
-# pointing_table(table["pointing"])
-# pendulum_table(table["pendulum"])
-# jumper_table(table["jumper"])
+pointing_table(table["pointing"])
+pendulum_table(table["pendulum"])
+MHE_table(table['MHE'])
+jumper_table(table["jumper"])
 TwistQuat_table(table["TwistQuat_quaternion"], True)
 TwistQuat_table(table["TwistQuat_euler"], False)
-# gait_table(table["gait"])
+gait_table(table["gait"])
 
 table.print()
