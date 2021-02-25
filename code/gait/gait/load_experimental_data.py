@@ -174,7 +174,7 @@ class LoadData:
         # files path
         self.c3d_data = C3dData(c3d_file)
         self.q = load_txt_file(q_file, self.nb_q)
-        self.q = load_txt_file(qdot_file, self.nb_qdot)
+        self.qdot = load_txt_file(qdot_file, self.nb_qdot)
 
     def dispatch_data(self, data, nb_shooting):
         """

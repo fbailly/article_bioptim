@@ -496,7 +496,7 @@ def get_phase_time_shooting_numbers(data, dt):
 
 def get_experimental_data(data, number_shooting_points):
     q_ref = data.dispatch_data(data=data.q, nb_shooting=number_shooting_points)
-    qdot_ref = data.dispatch_data(data=data.q, nb_shooting=number_shooting_points)
+    qdot_ref = data.dispatch_data(data=data.qdot, nb_shooting=number_shooting_points)
     markers_ref = data.dispatch_data(data=data.c3d_data.trajectories, nb_shooting=number_shooting_points)
     grf_ref = data.dispatch_data(data=data.c3d_data.forces, nb_shooting=number_shooting_points)
     moments_ref = data.dispatch_data(data=data.c3d_data.moments, nb_shooting=number_shooting_points)

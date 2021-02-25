@@ -20,7 +20,8 @@ def generate_table(out):
     jumper = Jumper5Phases(model_paths, n_shoot, time_min, phase_time, time_max, initial_pose, n_thread=8)
 
     tic = time()
-    sol = jumper.solve(limit_memory_max_iter=200, exact_max_iter=1000, force_no_graph=True)
+    sol = jumper.solve(limit_memory_max_iter=2, exact_max_iter=1, force_no_graph=True)
+    # 200 , 1000
     toc = time() - tic
     sol_merged = sol.merge_phases()
 
