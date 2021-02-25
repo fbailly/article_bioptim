@@ -1,17 +1,13 @@
 \begin{abstract}
-Musculoskeletal simulations are useful in biomechanics to investigate the causes of movement disorder, to estimate non-measurable physiological quantities or to study the optimality of animal movement.
-We introduce \bioptim, a Python interface for optimal control of musculoskeletal models. 
-\bioptim uses the direct multiple shooting formulation and it is interfaced with several nonlinear solvers.
-The software is intended to be computationally efficient and, at the same time, easily customizable by the user.
-It allows to quickly define a variety of biomechanical problems such as motion tracking or prediction, electromyography-driven simulation, parameter optimization, real-time moving horizon estimation, multiphase problems, etc. 
-To show \bioptim's abilities, six examples are developed in this paper.
-First, a muscle activation-driven pointing task is performed. 
-Next, a twisting somersault is obtained with a quaternion-based model.
-Then, a position controller using external forces is presented.
-Next, a multiphase muscle activation-driven walking cycle is optimized.
-Then, a real-time moving horizon estimation of muscle forces is performed.
-Finally, a multiphase torque-driven vertical jump motion is presented. 
+Musculoskeletal simulations are useful in biomechanics to investigate the causes of movement disorder, to estimate non-measurable physiological quantities or to study the optimality of human movement.
+We introduce \bioptim, an easy-to-use Python framework for biomechanical optimal control, handling musculoskeletal models. 
+Relying on algorithmic differentiation and the multiple shooting formulation, \bioptim interfaces nonlinear solvers to quickly provide dynamically consistent optimal solutions.
+The software is both computationally efficient (C++ core) and easily customizable, thanks to its Python interface.
+It allows to quickly define a variety of biomechanical problems such as motion tracking/prediction, muscle-driven simulations, parameters optimization, multiphase problems, etc.
+It is also intended for real-time applications such as moving horizon estimation and model predictive control.
+Six contrasting examples are presented, comprising various models, dynamics, objective functions and constraints. 
+They include data-driven simulations (i.e., a multiphase muscle driven gait cycle and an upper-limb real-time moving horizon estimation of muscle forces) and predictive simulations (i.e., a muscle-driven pointing task, a twisting somersault with a quaternion-based model, a position controller using external forces, and a multiphase torque-driven maximum-height jump motion).
 \end{abstract}
 
-\textbf{Keywords -- Biomechanics, Optimization, Software, Optimal control, Musculoskeletal}
+\textbf{Keywords -- Biomechanics, Optimization, Optimal control, Musculoskeletal simulation, Software}
 

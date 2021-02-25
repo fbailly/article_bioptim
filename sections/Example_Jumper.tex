@@ -23,6 +23,11 @@ $\mathbf{\dot{q}}$ is the generalized velocities part of the state vector $\math
 and $\mathbf{\tilde{x}}$ is the state vector excluding the translations of the root segment. 
 The $\mathbf{\tilde{x}}^*$ corresponds to a reference static position of the avatar with its knee slightly flexed and its arms horizontal.
 
+\begin{figure}[t!]
+\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
+\caption{Snapshots of the push-off phase of a vertical jump (Ex.~\ref{ex:jump}). The avatar reproduces a human-like jump movement. The first four positions represent the first phase of the optimization (i.e., heel and toe in contact with the floor) and the fifth position depicts the end of the second phase (i.e., only the heel in contact with the floor)} 
+\label{fig:jump}
+\end{figure}
 Joint angles were bounded to human-like limits.
 The first node of the first phase was enforced to be equal to $\mathbf{x^*}$ (i.e., including the translations of the root segment to be at the origin). 
 Joint velocities were arbitrarily bounded to human-like limits.
