@@ -29,7 +29,7 @@ The three Lagrange terms  were added for control (muscle activation $\bf{a}$ and
 \]
 
 \noindent where $T\!=\!\SI{2}{\second}$ is the duration of the motion, and $\omega_1\!=\!1e5$.
-The problem was discretized using 50~shooting nodes with a 5-steps RK4 integration in-between.
+The problem was discretized using 50~shooting nodes with a 5-steps Runge-Kutta-4 (RK4) integration in-between.
 The problem was solved using \ipopt (with exact Hessian computations) and \acados (with a Gauss-Newton approximation of the Hessian) resulting in two very close solutions.
 \acados was about 50 times faster than \ipopt and was better at enforcing the continuity constraints (as shown by the single shooting error in Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}).
 \ipopt however ended up with a smaller optimized objective (20.8 \textit{vs} 23.2), leading to a more optimal solution than \acados. 
