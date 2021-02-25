@@ -52,12 +52,30 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
     dynamics = DynamicsList()
     dynamics.add(DynamicsFcn.TORQUE_DRIVEN)
 
+    # Initial guesses
+    vz0 = 6.0
+    x = np.vstack((np.zeros((n_q, n_shooting + 1)), np.ones((n_qdot, n_shooting + 1))))
+    x[2, :] = (
+        vz0 * np.linspace(0, final_time, n_shooting + 1) + -9.81 / 2 * np.linspace(0, final_time, n_shooting + 1) ** 2
+    )
+    x[3, :] = np.linspace(0, 2 * np.pi, n_shooting + 1)
+    x[5, :] = np.linspace(0, 2 * np.pi, n_shooting + 1)
+    x[6, :] = np.random.random((1, n_shooting + 1)) * np.pi - np.pi
+    x[7, :] = np.random.random((1, n_shooting + 1)) * np.pi
+
+    x[n_q + 2, :] = vz0 - 9.81 * np.linspace(0, final_time, n_shooting + 1)
+    x[n_q + 3, :] = 2 * np.pi / final_time
+    x[n_q + 5, :] = 2 * np.pi / final_time
+
+    x_init = InitialGuessList()
+    x_init.add(x, interpolation=InterpolationType.EACH_FRAME)
+
     # Path constraint
     x_bounds = BoundsList()
     x_min = np.zeros((n_q + n_qdot, 3))
     x_max = np.zeros((n_q + n_qdot, 3))
-    x_min[:, 0] = [0, 0, 0, 0, 0, 0, -2.8, 2.8, -1, -1, 7, 4, 0, 0, 0, 0]
-    x_max[:, 0] = [0, 0, 0, 0, 0, 0, -2.8, 2.8, 1, 1, 10, 10, 0, 0, 0, 0]
+    x_min[:, 0] = [0, 0, 0, 0, 0, 0, -2.8, 2.8, -1, -1, 7, x[n_q + 3, 0], 0, x[n_q + 5, 0], 0, 0]
+    x_max[:, 0] = [0, 0, 0, 0, 0, 0, -2.8, 2.8, 1, 1, 10, x[n_q + 3, 0], 0, x[n_q + 5, 0], 0, 0]
     x_min[:, 1] = [
         -1,
         -1,
@@ -115,29 +133,11 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
     ]
     x_bounds.add(bounds=Bounds(x_min, x_max, interpolation=InterpolationType.CONSTANT_WITH_FIRST_AND_LAST_DIFFERENT))
 
-    # Initial guesses
-    vz0 = 6.0
-    x = np.vstack((np.zeros((n_q, n_shooting + 1)), np.ones((n_qdot, n_shooting + 1))))
-    x[2, :] = (
-        vz0 * np.linspace(0, final_time, n_shooting + 1) + -9.81 / 2 * np.linspace(0, final_time, n_shooting + 1) ** 2
-    )
-    x[3, :] = np.linspace(0, 2 * np.pi, n_shooting + 1)
-    x[5, :] = np.linspace(0, 2 * np.pi, n_shooting + 1)
-    x[6, :] = np.random.random((1, n_shooting + 1)) * np.pi - np.pi
-    x[7, :] = np.random.random((1, n_shooting + 1)) * np.pi
-
-    x[n_q + 2, :] = vz0 - 9.81 * np.linspace(0, final_time, n_shooting + 1)
-    x[n_q + 3, :] = 2 * np.pi / final_time
-    x[n_q + 5, :] = 2 * np.pi / final_time
-
-    x_init = InitialGuessList()
-    x_init.add(x, interpolation=InterpolationType.EACH_FRAME)
-
     # Define control path constraint
     u_bounds = BoundsList()
     u_bounds.add([tau_min] * n_tau, [tau_max] * n_tau)
 
-    u_mapping = BiMapping([-1, -1, -1, -1, -1, -1, 0, 1], [0, 1])
+    u_mapping = BiMapping([None, None, None, None, None, None, 0, 1], [0, 1])
 
     u_init = InitialGuessList()
     u_init.add([tau_init] * n_tau)
@@ -317,7 +317,7 @@ def prepare_ocp_quaternion(biorbd_model_path, final_time, n_shooting):
     u_bounds = BoundsList()
     u_bounds.add([tau_min] * n_tau, [tau_max] * n_tau)
 
-    u_mapping = BiMapping([-1, -1, -1, -1, -1, -1, 0, 1], [0, 1])
+    u_mapping = BiMapping([None, None, None, None, None, None, 0, 1], [0, 1])
 
     u_init = InitialGuessList()
     u_init.add([tau_init] * n_tau)
