@@ -8,7 +8,7 @@ from somersault.somersault.ocp import prepare_ocp, prepare_ocp_quaternion
 
 
 def run_ocp(is_quaternion):
-    np.random.seed(42)
+    np.random.seed(0)
 
     if is_quaternion:
         ocp = prepare_ocp_quaternion(root_folder + "/models/JeChMesh_RootQuat.bioMod", final_time=1.5, n_shooting=100)
