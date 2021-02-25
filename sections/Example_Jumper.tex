@@ -1,8 +1,8 @@
-This example was designed to introduce \bioptim's ability to reduce the number of degrees-of-freedom (DoF) of a model via the \texttt{BiMapping} feature, to account for nonlinear boundaries on the controls, and to solve complex multiphase programs.
+This example was designed to introduce \bioptim's ability to reduce the number of degrees-of-freedom (DoF) of a model via the \texttt{BiMapping} feature, to account for nonlinear boundaries on the controls, and to solve complex multiphase OCP.
 A total of five phases were used to describe the various dynamics of the jump, namely the push-off phase (i.e., flat foot (two floor contacts\footnote{A contact is defined as a point where forces are applied to cancel its acceleration.}) and then toe only (one contact)), flight (free fall, i.e., no contact) and landing (toe (one contact) and then flat foot (two contacts)).
-The transitions between phases where contacts are added are approximated with the build-in inelastic impact \texttt{PhaseTransition.IMPACT}, which computes the velocity of the kinematic chain after an impact.
+When a contact was added between two phases, we used the build-in inelastic collision phase transition \texttt{PhaseTransition.IMPACT} to compute the velocities of the kinematic chain at the beginning of the post-impact phase.
 A pseudo-2D full-body symmetrized model consisting of 3~DoFs at the pelvis (forward and upward translations, tranverse rotation), 1~DoF at the upper limb (shoulder flexion), and 3~DoFs at the lower limb (hip, knee and ankle flexion) was used.
-Since this is a full-body model, the root segment (i.e., the pelvis) was left uncontrolled, reducing the number of control variables to 4, namely the shoulder, hip, knee and ankle flexions. 
+Since this is a full-body model, the root segment (i.e., the pelvis) was left uncontrolled, reducing the number of control variables to four, namely the shoulder, hip, knee and ankle flexions. 
 The objective function with the most important weight was a Mayer objective computed at the end of the push-off phase consisting in maximizing the jump height ($h$) from the free fall equations applied to the center of mass.
 The remaining objective functions were regularization terms and terms that favoured a human-like solution. 
 \[ 
@@ -26,12 +26,12 @@ The $\mathbf{\tilde{x}}^*$ corresponds to a reference static position of the ava
 Joint angles were bounded to human-like limits.
 The first node of the first phase was enforced to be equal to $\mathbf{x^*}$ (i.e., including the translations of the root segment to be at the origin). 
 Joint velocities were arbitrarily bounded to human-like limits.
-Joint torques were bounded with nonlinear torque/angle/velocity relashionships measured on a high-level athlete using an isokinetic dynamometer. 
+Joint torques were bounded with nonlinear torque/angle/velocity relashionships measured on a high-level athlete using an isokinetic dynamometer \cite{jacksonMechanicsTableContact2010}. 
 Non slipping (\texttt{NON\_SLIPPING}) and unilateral (\texttt{CONTACT\_FORCE}) contact force constraints were added to prevent the contact points from slipping and pulling on the ground.
 During the ground phases, the heels had to remain over the floor.
-To speed-up the solving with \emph{ipopt}, the problem was first solved using a BFGS Hessian approximation for 200 iterations.
+To speed-up the convergence with \ipopt, the problem was first solved using a BFGS Hessian approximation for 200 iterations.
 Then, starting from this first solution, the problem was re-optimized, with the exact-Hessian computations.
 
-The optimized solution was obtained in 148 iterations of the exact-Hessian optimization \comment{for a total optimization time of $\SI{1780}{\second}$ ($\approx\SI{30}{\minute}$)}{A déplacer dans le tableau}, resulting in a $\SI{1.28}{\meter}$ jump height.
-The optimized time for the phases $1$ to $5$ were $0.70, 0.05, 0.99, 0.36, 0.21$ seconds.
+The optimized solution was obtained in 148 iterations of the exact-Hessian optimization resulting in a \SI{1.28}{\meter} jump height.
+The optimized time for phases $1$ to $5$ were $0.70, 0.05, 0.99, 0.36$, \SI{0.21}{\second}.
 The solution reproduced a human proximo-distal strategy (Fig~\ref{fig:jump}), i.e., activating large segments first (for instance the torso) and sequentially adding more distal segments, consequently ending up with the feet.
