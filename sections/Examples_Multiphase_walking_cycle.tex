@@ -25,6 +25,15 @@ $}
 \label{eq:ocp_walk}  
 \]
 
+\begin{figure*}[t!] 
+\centering 
+\includegraphics[width=\textwidth]{figures/MHE_results.pdf}\\
+\caption{Ex.~\ref{ex:mhe}. Top row - Real-time estimated joint angles (blue), ground-truth joint angles (orange) and tracked noisy joint angles (green) for a cyclic motion of the arm.
+Bottom row - Real-time estimated muscle forces (blue) and ground truth muscle forces (orange) for the same motion.
+Only four muscles with significative action (peak forces $>$ $\SI{15}{\newton}$), on the two selected DoFs, are shown.
+Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.} 
+\label{fig:MHE_results}
+\end{figure*} 
 \noindent where $\omega_1=10^5$, $\omega_2=\omega_3=10^{-1}$, $\omega_4=10$ are weighting factors, $T_0=0$ and $T_i$, $i \in [1, 2, 3, 4]$, are the final time of the i$^{th}$ phase. 
 Ground reaction forces and moments were only tracked during the stance phase, hence $\alpha = 0$ during the swing phase and $\alpha = 1$ otherwise. 
 Non-slipping (\texttt{NON\_SLIPPING}) and unilateral contact force (\texttt{CONTACT\_FORCE}) constraints were added to prevent the foot from slipping and pulling from the ground. 

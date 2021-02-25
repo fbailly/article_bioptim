@@ -1,9 +1,3 @@
-\subsection{Implementation and dependencies}
-\bioptim is the top layer of a series of libraries (\biorbd: dynamics and MSK modeling; \casadi: automatic differentiation; \ipopt/\acados: optimization; \bioviz: visualization).
-Within this software suite, \bioptim 's main role is to shape the problem to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
-Therefore, it was written in Python for its flexibility and its widespread use among researchers.
-However, all intensive calculations behind the interface are performed in C/C++, keeping \bioptim both fast and easy to customize.
-
 \begin{figure}[t!]
 \centering
 \includegraphics[width=0.9\columnwidth]{figures/design.eps}
@@ -11,7 +5,11 @@ However, all intensive calculations behind the interface are performed in C/C++,
 \label{fig:flowchart}
 \vspace*{-0.5cm}
 \end{figure}
-
+\subsection{Implementation and dependencies}
+\bioptim is the top layer of a series of libraries (\biorbd: dynamics and MSK modeling; \casadi: automatic differentiation; \ipopt/\acados: optimization; \bioviz: visualization).
+Within this software suite, \bioptim 's main role is to shape the problem to allow its dependencies to communicate efficiently, while providing an intuitive and flexible interface to the user (Fig.~\ref{fig:dependencies}).
+Therefore, it was written in Python for its flexibility and its widespread use among researchers.
+However, all intensive calculations behind the interface are performed in C/C++, keeping \bioptim both fast and easy to customize.
 
 \subsection{Design}
 \bioptim shapes and solves optimal control problems whose two required entries are a model (.\textit{bioMod} file) and an OCP.
@@ -59,12 +57,25 @@ Essentially, the \texttt{Bounds} are constraints directly related to the states,
 They are useful to define model-related constraints such as kinematic, torque or muscle excitation\:/\:activation limits. 
 
 \subsubsection{Shooting points and problem duration}
-In a direct multiple shooting formulation, the total duration of the problem is divided into smaller intervals whose initial values are called shooting points. 
+In direct multiple shooting, the total duration of the problem is divided into smaller intervals whose initial values are called shooting points. 
 In \bioptim, the user is asked to define a number of shooting points and a problem duration, per phase.
 Possibly, the problem duration can be part of the optimization variables, allowing for, e.g., minimal time formulations.
 
+\begin{figure}[t!]
+\centering
+\includegraphics[width=\columnwidth]{figures/activation_pointing.jpeg}\\
+\caption{Snapshots of an optimized activation-driven pointing task with \acados. The arm starts facing upwards in left hand part of the picture and ends facing downwards in the right hand part. The marker fixed on the ulna head is depicted in blue and the scene-fixed target marker is depicted in red. Red lines show the lines of actions of the muscles.}
+\label{fig:snapshots_activation_driven_pointing}
+\vspace*{-0.5cm}
+\end{figure}
 \subsubsection{Initial guesses}
-Once the problem is set up, the user can provide an \texttt{InitialGuess} for all the optimization variables, at each shooting point.
+The user can provide an \texttt{InitialGuess} for all the optimization variables, at each shooting point.
 This feature aims at providing prior information to the solver.
-Several \texttt{InterpolationTypes} are implemented in \bioptim (constant, linear, spline, each shooting point, etc.), to quickly let the user define the initial guesses.
+Several \texttt{InterpolationTypes} are implemented (constant, linear, spline, each point, etc.), to quickly let the user define the initial guesses.
 A custom \texttt{InterpolationType} is also possible to implement.
+\begin{figure*}[t!]
+\centering
+\includegraphics[width=\textwidth]{figures/Euler_Bioptim_MaxVrille_dos_7frames.png}
+\caption{Snapshots of maximally twisting somersaults driven by shoulder torque actuators and a free base whose rotation is either expressed by Euler angles (top) or by quaternions (bottom).}
+\label{fig:snapshots_quaternion_base_twisting_somersault}
+\end{figure*}

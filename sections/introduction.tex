@@ -3,7 +3,13 @@ The musculoskeletal models used in these simulations generally have a large numb
 The complexity of these systems has led scientists to formulate their simulations as optimal control problems (OCP), relying on efficient non-linear optimization software to find trajectories that fulfill a desired task while enforcing the system dynamics and minimizing a cost (e.g. motion duration, energy expenditure, matching experimental data, etc.).
 Up to very recently, there was no off-the-shelf software available to the community to quickly formulate and solve such musculoskeletal OCPs \cite{Charles2013}. 
 Consequently, researchers had to develop their own solutions, with little or no dissemination to the community, limiting  synergies between researchers.
-
+\begin{figure}[t!]
+\centering
+\includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
+\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:flowchart}.}
+\label{fig:dependencies}
+\vspace*{-0.8cm}
+\end{figure}
 
 As a result, many approaches coexist to formulate and solve OCPs in the biomechanical literature. 
 The formulation, also called discretization, consists in turning a continuous trajectory optimization problem into a generic discrete non-linear program (NLP) that is solved using a dedicated algorithm. 
@@ -20,14 +26,6 @@ Besides direct methods, other choices can be made, as in \cite{yeadon2000mechani
 These last approaches are less generic than the direct methods as they either require a prior knowledge about the state and control trajectories. 
 Most of the time, when investigating complex biomechanics issues, we do not have this information. 
 
-\begin{figure}[t!]
-\centering
-\includegraphics[width=0.9\columnwidth]{figures/dependencies.eps}
-\caption{\bioptim dependencies flowchart. The red-boxed software are developed by the S2M team. The \bioptim part is further detailed in Fig.~\ref{fig:flowchart}.}
-\label{fig:dependencies}
-\vspace*{-0.8cm}
-\end{figure}
-
 Concerning the non-linear solver, a variety of software exist and have been used to solve transcribed musculoskeletal NLPs.
 They can use different heuristics: interior point methods (\ipopt, \cite{wachter2006implementation}) or sequential quadratic programming (\textit{snopt} \cite{gill2005snopt}, \acados \cite{verschueren2018towards}), but they are all gradient based.
 Therefore, derivatives of the NLP cost function and constraints are required to perform optimization.
@@ -39,7 +37,8 @@ The biomechanics community being mainly composed of software users, such a tool 
 To develop such a software, four interrelated components are essential in our opinion: \textit{i)} a musculoskeletal modeling software, with a visualization module (multibody kinematics and dynamics, muscle dynamics, etc.), \textit{ii)} a method for automatic differentiation, \textit{iii)} a discretization approach, and \textit{iv)} one or several nonlinear programming (NLP) solvers. 
 General-purpose optimal control software (e.g. \gpopsii \cite{patterson2014gpops}, \muscodii \cite{leineweber2003efficient1,leineweber2003efficient2}, \acado \cite{houska2011acado}]) address \textit{ii)} to \textit{iv)} but they need to be interfaced with a musculoskeletal modeling module and they do not provide any built-in biomechanics features (physiological cost functions, kinematic constraints, etc.). 
 In that sense, the aforementioned \moco, is a welcome initiative that draws its strength from its integration with the widely used \opensim.
-However, it faces the following limitations: it uses finite differences to avoid the complexity of adapting the \opensim codebase to support automatic differentiation, it uses direct collocation as transcription method, preventing the use of adaptive ODE solvers and it is not as flexible as required by the community, since it requires the user to develop new features, such as new objective functions, in C++. 
+However, it faces the following limitations: it uses finite differences to avoid the complexity of adapting the \opensim codebase to support automatic differentiation, it uses direct collocation as transcription method, preventing the use of adaptive ODE solvers and it is not as flexible as required by the community, since it requires the user to develop new features, such as new objective functions, in C++.\\
+\newpage
 
 The objective of the present paper is to introduce \bioptim\footnote{
 \href{https://github.com/pyomeca/bioptim}{https://github.com/pyomeca/bioptim}}, an open-source optimal control software dedicated to musculoskeletal biomechanics.

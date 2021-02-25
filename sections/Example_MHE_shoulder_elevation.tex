@@ -7,20 +7,6 @@ Each time one subproblem is solved, a new measurement is added, the oldest one i
 Due to their similarities, the solution of the previous OCP is a good initial guess to the new one. 
 The dynamical consistency of the final solution is enforced by continuity constraints on the initial state. 
 Each objective function (Eq.~\ref{eq:ocp_exMHE}) was written as the sum of three terms: tracking reference joint angles ($\bf{q^*}$), states and muscle activations regularizations (i.e., least-square criteria): 
-\begin{figure}[t!]
-\includegraphics[width=\columnwidth]{figures/kinogramme_jump}
-\caption{Snapshots of the push-off phase of a vertical jump (Ex.~\ref{ex:jump}). The avatar reproduces a human-like jump movement. The first four positions represent the first phase of the optimization (i.e., heel and toe in contact with the floor) and the fifth position depicts the end of the second phase (i.e., only the heel in contact with the floor)} 
-\label{fig:jump}
-\end{figure}
-\begin{figure*}[t!] 
-\centering 
-\includegraphics[width=\textwidth]{figures/MHE_results.pdf}\\
-\caption{Ex.~\ref{ex:mhe}. Top row - Real-time estimated joint angles (blue), ground-truth joint angles (orange) and tracked noisy joint angles (green) for a cyclic motion of the arm.
-Bottom row - Real-time estimated muscle forces (blue) and ground truth muscle forces (orange) for the same motion.
-Only four muscles with significative action (peak forces $>$ $\SI{15}{\newton}$), on the two selected DoFs, are shown.
-Muscle abbreviations stand for (from left to right): Triceps Long head, Deltoid Middle, Infraspinatus, Biceps Brachial Short head.} 
-\label{fig:MHE_results}
-\end{figure*} 
 \\ 
 \[ 
 \resizebox{0.9\columnwidth}{!}{$ 
