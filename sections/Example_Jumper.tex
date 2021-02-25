@@ -29,9 +29,9 @@ Joint velocities were arbitrarily bounded to human-like limits.
 Joint torques were bounded with nonlinear torque/angle/velocity relashionships measured on a high-level athlete using an isokinetic dynamometer \cite{jacksonMechanicsTableContact2010}. 
 Non slipping (\texttt{NON\_SLIPPING}) and unilateral (\texttt{CONTACT\_FORCE}) contact force constraints were added to prevent the contact points from slipping and pulling on the ground.
 During the ground phases, the heels had to remain over the floor.
-To speed-up the convergence with \emph{ipopt}, the problem was first solved using a BFGS Hessian approximation for 200 iterations.
+To speed-up the convergence with \ipopt, the problem was first solved using a BFGS Hessian approximation for 200 iterations.
 Then, starting from this first solution, the problem was re-optimized, with the exact-Hessian computations.
 
 The optimized solution was obtained in 148 iterations of the exact-Hessian optimization resulting in a \SI{1.28}{\meter} jump height.
-The optimized time for the phases $1$ to $5$ were $0.70, 0.05, 0.99, 0.36, 0.21$ seconds.
+The optimized time for phases $1$ to $5$ were $0.70, 0.05, 0.99, 0.36$, \SI{0.21}{\second}.
 The solution reproduced a human proximo-distal strategy (Fig~\ref{fig:jump}), i.e., activating large segments first (for instance the torso) and sequentially adding more distal segments, consequently ending up with the feet.
