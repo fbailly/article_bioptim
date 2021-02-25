@@ -1,14 +1,13 @@
-from Pendulum_example.main import generate_table as pendulum_table
-from muscle_exc_pointing.main import generate_table as pointing_table
-from MHE_example.main import generate_table as MHE_table
-from TwistQuat_example.main import generate_table as TwistQuat_table
-from Example_multiphase_walking.main import generate_table as gait_table
-from jumper.main import generate_table as jumper_table
-
-
+from gait.generate_table import generate_table as gait_table
+from jumper.generate_table import generate_table as jumper_table
+from mhe.generate_table import generate_table as mhe_table
+from pendulum.generate_table import generate_table as pendulum_table
+from pointing.generate_table import generate_table as pointing_table
+from somersault.generate_table import generate_table as somersault_table
 
 import numpy as np
 from bioptim import Shooting
+
 
 class TableOCP:
     def __init__(self):
@@ -65,14 +64,17 @@ class TableOCP:
 
                 if sol_merged.phase_time[-1] < duration and not use_final_time:
                     raise ValueError(
-                        f'Single shooting integration duration must be smaller than ocp duration :{sol_merged.phase_time[-1]} s. '
-                        f'You can set use_final_time=True if you want to use the final time for the Single shooting integration duration')
+                        f"Single shooting integration duration must be smaller than "
+                        f"ocp duration: {sol_merged.phase_time[-1]} s. "
+                        f"You can set use_final_time=True if you want to use the final time for the "
+                        f"Single shooting integration duration"
+                    )
 
                 trans_idx = []
                 rot_idx = []
-                for i in sol.ocp.nlp[0].mapping['q'].to_second.map_idx:
+                for i in sol.ocp.nlp[0].mapping["q"].to_second.map_idx:
                     if i is not None:
-                        if sol.ocp.nlp[0].model.nameDof()[i].to_string()[-4:-1] == 'Rot':
+                        if sol.ocp.nlp[0].model.nameDof()[i].to_string()[-4:-1] == "Rot":
                             rot_idx += [i]
                         else:
                             trans_idx += [i]
@@ -85,36 +87,42 @@ class TableOCP:
                 else:
                     sn_1s = int(sol_int.ns[0] / sol_int.phase_time[-1] * duration)  # shooting node at {duration} second
                 if len(rot_idx) > 0:
-                    self.single_shoot_error_r = np.sqrt(
-                            np.mean((sol_int.states['q'][rot_idx, sn_1s] - sol_merged.states['q'][rot_idx, sn_1s]) ** 2))\
-                                                * 180 / np.pi
+                    self.single_shoot_error_r = (
+                        np.sqrt(
+                            np.mean((sol_int.states["q"][rot_idx, sn_1s] - sol_merged.states["q"][rot_idx, sn_1s]) ** 2)
+                        )
+                        * 180
+                        / np.pi
+                    )
                 else:
-                    self.single_shoot_error_r = 'N.A.'
+                    self.single_shoot_error_r = "N.A."
                 if len(trans_idx) > 0:
-                    self.single_shoot_error_t = np.sqrt(np.mean(
-                        (sol_int.states['q'][trans_idx, sn_1s] - sol_merged.states['q'][trans_idx, sn_1s]) ** 2)) / 1000
+                    self.single_shoot_error_t = (
+                        np.sqrt(
+                            np.mean(
+                                (sol_int.states["q"][trans_idx, sn_1s] - sol_merged.states["q"][trans_idx, sn_1s]) ** 2
+                            )
+                        )
+                        / 1000
+                    )
                 else:
-                    self.single_shoot_error_t = 'N.A.'
-
+                    self.single_shoot_error_t = "N.A."
 
 
 table = TableOCP()
 
-
-table.add("pointing")
-table.add("pendulum")
-table.add("MHE")
-table.add("jumper")
-table.add("TwistQuat_quaternion")
-table.add("TwistQuat_euler")
 table.add("gait")
+table.add("jumper")
+table.add("mhe")
+table.add("pendulum")
+table.add("pointing")
+table.add("somersault")
 
-pointing_table(table["pointing"])
-pendulum_table(table["pendulum"])
-MHE_table(table['MHE'])
-jumper_table(table["jumper"])
-TwistQuat_table(table["TwistQuat_quaternion"], True)
-TwistQuat_table(table["TwistQuat_euler"], False)
 gait_table(table["gait"])
+jumper_table(table["jumper"])
+mhe_table(table["mhe"])
+pendulum_table(table["pendulum"])
+pointing_table(table["pointing"])
+somersault_table(table["somersault"])
 
 table.print()
