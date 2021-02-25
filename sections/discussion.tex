@@ -1,4 +1,4 @@
-The purpose of \textit{bioptim} is to solve a variety of biomechanical OCPs with minimal user effort and high performances in terms of computational time. 
+The purpose of \bioptim is to solve a variety of biomechanical OCPs with minimal user effort and high performances in terms of computational time. 
 The main features illustrated by the six provided examples are (Tab.~\ref{tab:Perfs_and_detailed_implementations_of_each_example}): 
 \begin{itemize}
 \item the possibility to use torque- or muscle-driven models (and their combinations);
@@ -8,13 +8,13 @@ The main features illustrated by the six provided examples are (Tab.~\ref{tab:Pe
 \item the interface with two different NLP solvers
 \end{itemize}
 In addition, every feature of \bioptim is thoroughly illustrated by the examples of the \href{https://github.com/pyomeca/bioptim/tree/master/examples/getting_started}{getting\_started} folder (parameter optimization, custom objects, etc.).
-In the following, several aspects of \textit{bioptim} are discussed.
+In the following, several aspects of \bioptim are discussed.
 
 
 \subsection{Direct multiple shooting-based}
 
 While the debate remains about the performances of direct collocations versus direct multiple shooting \cite{diehl2006fast, porsa2016direct}, the development of \bioptim was oriented toward the latter, because: \textit{i)} it allows to select effortlessly an arbitrary accuracy for the integration (e.g., order and numbers of RK steps); \textit{ii)} it allows to use multiple shooting-based fast NLP solvers such as \acados.
-Concerning the integration, either internally or via \acados, several schemes are implemented in \textit{bioptim} (RK4, RK8, implicit RK).
+Concerning the integration, either internally or via \acados, several schemes are implemented in \bioptim (RK4, RK8, implicit RK).
 While IRK showed better convergence in our experience with hard problems in \acados, RK4 showed to be a good speed/robustness tradeoff in most of the cases. 
 In contrast to what is claimed in \cite{porsa2016direct}, direct multiple shooting is not a limitation to the performances (cost value and time to convergence), since, in our experience, the performances of \bioptim often outperform state-of-the-art results.
 
@@ -79,7 +79,7 @@ Via-points and pre-processed moment arms \cite{van2011implicit} (to be expressed
 
 \subsection{Future directions}
 
-\bioptim v1.0 was released in January 2021, with all the features presented in this communication.
+\bioptim, code name \textit{PaperWork} (Version 1.1.0), was released in February 2021, with all the features presented in this communication.
 Some improvements are expected in a near future.
 First, a graphical model builder is planned in \biorbd, to easily generate \textit{.bioMod} files.
 Also, models of muscular fatigue are to be included in \bioptim, to predict adapted motor strategies for long or demanding motions.
