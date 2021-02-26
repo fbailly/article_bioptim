@@ -81,7 +81,8 @@ class TableOCP:
                 rot_idx = np.array(list(set(rot_idx)))
                 trans_idx = np.array(list(set(trans_idx)))
 
-                sol_int = sol.integrate(shooting_type=Shooting.SINGLE_CONTINUOUS, merge_phases=True, keepdims=True)
+                sol_int = sol.integrate(shooting_type=Shooting.SINGLE_CONTINUOUS, merge_phases=False, keepdims=True)
+                sol_int = sol_int.merge_phases()
                 if use_final_time:
                     sn_1s = -1
                 else:
