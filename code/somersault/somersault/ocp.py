@@ -138,7 +138,7 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
     u_bounds = BoundsList()
     u_bounds.add([tau_min] * n_tau, [tau_max] * n_tau)
 
-    u_mapping = BiMapping([None, None, None, None, None, None, 0, 1], [0, 1])
+    u_mapping = BiMapping([None, None, None, None, None, None, 0, 1], [6, 7])
 
     u_init = InitialGuessList()
     u_init.add([tau_init] * n_tau)
@@ -189,7 +189,7 @@ def states_to_euler_rate(states):
     euler = biorbd.Rotation.toEulerAngles(biorbd.Quaternion.toMatrix(quaternion), "xyz").to_mx()
     eul_rate = body_vel_to_euler_rate(omega, euler)
 
-    return cas.Function("max_twist", [states], [eul_rate])
+    return cas.Function("max_twist", [states], [eul_rate]).expand()
 
 
 def prepare_ocp_quaternion(biorbd_model_path, final_time, n_shooting):
@@ -271,8 +271,8 @@ def prepare_ocp_quaternion(biorbd_model_path, final_time, n_shooting):
     x_bounds = BoundsList()
     x_min = np.zeros((n_q + n_qdot, 3))
     x_max = np.zeros((n_q + n_qdot, 3))
-    x_min[:, 0] = [0, 0, 0, x[3, 0], x[4, 0], x[5, 0], -2.8, 2.8, -1.05, -1, -1, 4, x[12, 0], x[13, 0], x[14, 0], 0, 0]
-    x_max[:, 0] = [0, 0, 0, x[3, 0], x[4, 0], x[5, 0], -2.8, 2.8, 1.05, 1, 1, 10, x[12, 0], x[13, 0], x[14, 0], 0, 0]
+    x_min[:, 0] = [0, 0, 0, x[3, 0], x[4, 0], x[5, 0], -2.8, 2.8, x[8, 0], -1, -1, 4, x[12, 0], x[13, 0], x[14, 0], 0, 0]
+    x_max[:, 0] = [0, 0, 0, x[3, 0], x[4, 0], x[5, 0], -2.8, 2.8, x[8, 0], 1, 1, 10, x[12, 0], x[13, 0], x[14, 0], 0, 0]
     x_min[:, 1] = [
         -1,
         -1,
@@ -319,7 +319,7 @@ def prepare_ocp_quaternion(biorbd_model_path, final_time, n_shooting):
     u_bounds = BoundsList()
     u_bounds.add([tau_min] * n_tau, [tau_max] * n_tau)
 
-    u_mapping = BiMapping([None, None, None, None, None, None, 0, 1], [0, 1])
+    u_mapping = BiMapping([None, None, None, None, None, None, 0, 1], [6, 7])
 
     u_init = InitialGuessList()
     u_init.add([tau_init] * n_tau)
