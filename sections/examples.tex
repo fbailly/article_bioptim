@@ -43,15 +43,15 @@ In the following, bold symbols denote vectors and starred ones ($^*$) denote ref
                       & \# shooting nodes      &   & 50 &                  & 100    & & 100    & \multicolumn{3}{c}{100}    &  \multicolumn{3}{c}{90}    &   \multicolumn{3}{c}{259}     &  \multicolumn{3}{c}{125}\\
                       & \# phases              &   & 1  &                  & 1      & & 1      & \multicolumn{3}{c}{2}      &  \multicolumn{3}{c}{4}     &   \multicolumn{3}{c}{---}     &  \multicolumn{3}{c}{5}\\
                       & OCP duration (s)       &   & 2  &                  & 1.5    & & 1.5    & \multicolumn{3}{c}{10}     &  \multicolumn{3}{c}{0.94}  &   \multicolumn{3}{c}{8}    &  \multicolumn{3}{c}{2.3}\\
-                      &       Integrator       & \multicolumn{3}{c}{RK4}   & RK8    & & RK8    & \multicolumn{3}{c}{RK4}    &  \multicolumn{3}{c}{RK4}   &   \multicolumn{3}{c}{IRK}     & \multicolumn{3}{c}{RK4} \\
+                      &       Integrator       & \multicolumn{3}{c}{RK4}   & \multicolumn{3}{c}{RK4}    & \multicolumn{3}{c}{RK4}    &  \multicolumn{3}{c}{RK4}   &   \multicolumn{3}{c}{IRK}     & \multicolumn{3}{c}{RK4} \\
                       &&&&&&&&&\\
                       &       Solver           & \ipopt & & \acados        & \ipopt & & \ipopt & \multicolumn{3}{c}{\ipopt} & \multicolumn{3}{c}{\ipopt} & \multicolumn{3}{c}{\acados} & \multicolumn{3}{c}{\ipopt} \\
 
-\mymultirow{3}{Solve} & \# NLP iterations                              & 47                 &   & 19                &--& & 200               & \multicolumn{3}{c}{192} & \multicolumn{3}{c}{322} & \multicolumn{3}{c}{---}&\multicolumn{3}{c}{--}\\
-                      & Optimized cost                                 & 20.8               &   & 23.2              &--& & -397.5            & \multicolumn{3}{c}{$7.2\times10^{-3}$} & \multicolumn{3}{c}{1588.67} & \multicolumn{3}{c}{---} & \multicolumn{3}{c}{--}\\
-                      & Time to convergence (s)                        & \SI{20.4}{\second} &   & \SI{0.8}{\second} &--& & \SI{384}{\second} & \multicolumn{3}{c}{\SI{5.8}{\second}} &\multicolumn{3}{c}{\SI{265}{\minute}} & \multicolumn{3}{c}{\SI{5.7}{\second}} & \multicolumn{3}{c}{--}\\
-                      & S-S rotation error ($\SI{}{\degree}$)          & $<10^{-6}$         &   & $<10^{-13}$       &--& & $<10^{-5}$        & \multicolumn{3}{c}{$<10^{-7}$} & \multicolumn{3}{c}{0.26} & \multicolumn{3}{c}{0.09} & \multicolumn{3}{c}{--}\\
-                      & S-S translation error ($\SI{}{\milli\meter}$)  & ---                &   & ---               &--& & $<10^{-10}$       & \multicolumn{3}{c}{$<10^{-14}$} &\multicolumn{3}{c}{$<10^{-6}$}&\multicolumn{3}{c}{---} & \multicolumn{3}{c}{--}\\
+\mymultirow{3}{Solve} & \# NLP iterations                              & 47                 &   & 19                & 135 & & 111               & \multicolumn{3}{c}{192} & \multicolumn{3}{c}{322} & \multicolumn{3}{c}{---}&\multicolumn{3}{c}{193}\\
+                      & Optimized cost                                 & 20.8               &   & 23.2              &-15.5& & -365            & \multicolumn{3}{c}{$7.2\times10^{-3}$} & \multicolumn{3}{c}{1588.67} & \multicolumn{3}{c}{---} & \multicolumn{3}{c}{-119.9}\\
+                      & Time to convergence (s)                        & \SI{20.4}{\second} &   & \SI{0.8}{\second} & \SI{88}{\second} & & \SI{78}{\second} & \multicolumn{3}{c}{\SI{5.8}{\second}} &\multicolumn{3}{c}{\SI{265}{\minute}} & \multicolumn{3}{c}{\SI{5.7}{\second}} & \multicolumn{3}{c}{\SI{35}{\minute}}\\
+                      & S-S rotation error ($\SI{}{\degree}$)          & $<10^{-6}$         &   & $<10^{-13}$       & $<10^{-3}$ & & $<10^{-6}$        & \multicolumn{3}{c}{$<10^{-7}$} & \multicolumn{3}{c}{0.26} & \multicolumn{3}{c}{0.09} & \multicolumn{3}{c}{$<10^{-3}$}\\
+                      & S-S translation error ($\SI{}{\milli\meter}$)  & ---                &   & ---               & $<10^{-9}$ & & $<10^{-10}$       & \multicolumn{3}{c}{$<10^{-14}$} &\multicolumn{3}{c}{$<10^{-6}$}&\multicolumn{3}{c}{---} & \multicolumn{3}{c}{$<10^{-9}$}\\
 %Example & Link & IPOPT & ACADOS \\ 
 
 %\midrule
