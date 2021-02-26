@@ -1,9 +1,11 @@
 from time import time
+from numpy import random
 
 from .somersault.ocp import prepare_ocp, prepare_ocp_quaternion
 
 
 def generate_table(out):
+    random.seed(0)
     root_folder = "/".join(__file__.split("/")[:-1])
     ocp_euler = prepare_ocp(root_folder + "/models/JeChMesh_8DoF.bioMod", final_time=1.5, n_shooting=100)
     ocp_quaternion = prepare_ocp_quaternion(
@@ -13,12 +15,12 @@ def generate_table(out):
     # --- Solve the program --- #
     tic = time()
     sol_euler = ocp_euler.solve(
-        solver_options={"tol": 1e-15, "constr_viol_tol": 1e-15, "max_iter": 1000, "linear_solver": "ma57"}
+        solver_options={"tol": 1e-15, "constr_viol_tol": 1e-15, "max_iter": 1, "linear_solver": "ma57"}
     )
     toc_euler = time() - tic
     tic = time()
     sol_quaternion = ocp_quaternion.solve(
-        solver_options={"tol": 1e-15, "constr_viol_tol": 1e-15, "max_iter": 1000, "linear_solver": "ma57"}
+        solver_options={"tol": 1e-15, "constr_viol_tol": 1e-15, "max_iter": 10000, "linear_solver": "ma57"}
     )
     toc_quaternion = time() - tic
 

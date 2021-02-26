@@ -37,6 +37,7 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
     """
 
     # --- Options --- #
+    np.random.seed(0)
     biorbd_model = biorbd.Model(biorbd_model_path)
     tau_min, tau_max, tau_init = -100, 100, 0
     n_q = biorbd_model.nbQ()
@@ -208,6 +209,7 @@ def prepare_ocp_quaternion(biorbd_model_path, final_time, n_shooting):
     """
 
     # --- Options --- #
+    np.random.seed(0)
     biorbd_model = biorbd.Model(biorbd_model_path)
     tau_min, tau_max, tau_init = -100, 100, 0
     n_q = biorbd_model.nbQ()
