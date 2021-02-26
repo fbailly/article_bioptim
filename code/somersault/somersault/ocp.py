@@ -160,7 +160,7 @@ def prepare_ocp(biorbd_model_path: str, final_time: float, n_shooting: int) -> O
         constraints,
         n_threads=8,
         tau_mapping=u_mapping,
-        ode_solver=OdeSolver.RK8(),
+        ode_solver=OdeSolver.RK4(),
     )
 
 
@@ -348,7 +348,7 @@ def prepare_ocp_quaternion(biorbd_model_path, final_time, n_shooting):
         constraints,
         n_threads=8,
         tau_mapping=u_mapping,
-        ode_solver=OdeSolver.RK8(),
+        ode_solver=OdeSolver.RK4(),
     )
 
 
