@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn
 
-from somersault.somersault.ocp import prepare_ocp, prepare_ocp_quaternion
+from somersault.ocp import prepare_ocp, prepare_ocp_quaternion
 
 
 def run_ocp(is_quaternion):
@@ -15,13 +15,13 @@ def run_ocp(is_quaternion):
     else:
         ocp = prepare_ocp(root_folder + "/models/JeChMesh_8DoF.bioMod", final_time=1.5, n_shooting=100)
 
-    sol = ocp.solve(solver_options={"tol": 1e-15, "constr_viol_tol": 1e-15, "max_iter": 1000})
+    sol = ocp.solve()
     return sol.states
 
 
 root_folder = "/".join(__file__.split("/")[:-1])
-q_euler = run_ocp(False)
-q_quaternion = run_ocp(True)
+q_euler = run_ocp(False)['q']
+q_quaternion = run_ocp(True)['q']
 
 time_vector = np.linspace(0, 100, 101)
 
